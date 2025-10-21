@@ -53,36 +53,41 @@ def limpar_rate_limiter():
 
 @pytest.fixture(scope="function", autouse=True)
 def limpar_banco_dados():
-    """Limpa o banco de dados antes de cada teste para garantir isolamento"""
+    """Limpa todas as tabelas do banco antes de cada teste para evitar interferência"""
+    # Importar após configuração do banco de dados
     from util.db_util import get_connection
-    import sqlite3
 
-    yield  # Executar teste primeiro
+    def _limpar_tabelas():
+        """Limpa tabelas se elas existirem"""
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            # Verificar se tabelas existem antes de limpar
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'usuario', 'configuracao', 'candidatura', 'vaga')"
+            )
+            tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
-    # Limpar após cada teste
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        # Tentar limpar cada tabela, ignorando se não existir
-        try:
-            cursor.execute("DELETE FROM tarefa")
-        except sqlite3.OperationalError:
-            pass
-        try:
-            cursor.execute("DELETE FROM usuario")
-        except sqlite3.OperationalError:
-            pass
-        try:
-            cursor.execute("DELETE FROM configuracao")
-        except sqlite3.OperationalError:
-            pass
-        try:
-            cursor.execute("DELETE FROM candidatura")
-        except sqlite3.OperationalError:
-            pass
-        try:
-            cursor.execute("DELETE FROM vaga")
-        except sqlite3.OperationalError:
-            pass
+            # Limpar apenas tabelas que existem (respeitando foreign keys)
+            if 'tarefa' in tabelas_existentes:
+                cursor.execute("DELETE FROM tarefa")
+            if 'candidatura' in tabelas_existentes:
+                cursor.execute("DELETE FROM candidatura")
+            if 'vaga' in tabelas_existentes:
+                cursor.execute("DELETE FROM vaga")
+            if 'usuario' in tabelas_existentes:
+                cursor.execute("DELETE FROM usuario")
+            if 'configuracao' in tabelas_existentes:
+                cursor.execute("DELETE FROM configuracao")
+
+            conn.commit()
+
+    # Limpar antes do teste
+    _limpar_tabelas()
+
+    yield
+
+    # Limpar depois do teste também
+    _limpar_tabelas()
 
 
 @pytest.fixture(scope="function")

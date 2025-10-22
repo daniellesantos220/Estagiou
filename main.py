@@ -9,6 +9,9 @@ from pathlib import Path
 # Configurações
 from util.config import APP_NAME, SECRET_KEY, HOST, PORT, RELOAD, VERSION
 
+# Security
+from util.security_headers import SecurityHeadersMiddleware
+
 # Logger
 from util.logger_config import logger
 
@@ -22,7 +25,16 @@ from util.exception_handlers import (
 from util.exceptions import FormValidationError
 
 # Repositórios
-from repo import usuario_repo, configuracao_repo, tarefa_repo
+from repo import (
+    usuario_repo,
+    configuracao_repo,
+    tarefa_repo,
+    area_repo,
+    empresa_repo,
+    vaga_repo,
+    endereco_repo,
+    candidatura_repo
+)
 
 # Rotas
 from routes.auth_routes import router as auth_router
@@ -43,6 +55,10 @@ app = FastAPI(title=APP_NAME, version=VERSION)
 
 # Configurar SessionMiddleware
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+# Configurar SecurityHeadersMiddleware
+app.add_middleware(SecurityHeadersMiddleware)
+logger.info("Security headers middleware registrado")
 
 # Registrar Exception Handlers
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)  # type: ignore[arg-type]
@@ -68,6 +84,21 @@ try:
 
     tarefa_repo.criar_tabela()
     logger.info("Tabela 'tarefa' criada/verificada")
+
+    area_repo.criar_tabela()
+    logger.info("Tabela 'area' criada/verificada")
+
+    empresa_repo.criar_tabela()
+    logger.info("Tabela 'empresa' criada/verificada")
+
+    vaga_repo.criar_tabela()
+    logger.info("Tabela 'vaga' criada/verificada")
+
+    endereco_repo.criar_tabela()
+    logger.info("Tabela 'endereco' criada/verificada")
+
+    candidatura_repo.criar_tabela()
+    logger.info("Tabela 'candidatura' criada/verificada")
 
 except Exception as e:
     logger.error(f"Erro ao criar tabelas: {e}")

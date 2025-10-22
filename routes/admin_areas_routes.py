@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
@@ -5,7 +6,7 @@ from pydantic import ValidationError
 from model.area_model import Area
 from repo import area_repo
 from dtos.area_dto import CriarAreaDTO, AlterarAreaDTO
-from util.auth_decorator import exigir_login, exigir_perfil
+from util.auth_decorator import requer_autenticacao
 from util.perfis import Perfil
 from util.flash_messages import informar_sucesso, informar_erro
 from util.template_util import criar_templates
@@ -16,9 +17,8 @@ router = APIRouter(prefix="/admin/areas")
 templates = criar_templates("templates/admin/areas")
 
 @router.get("/")
-@exigir_login
-@exigir_perfil(Perfil.ADMIN)
-async def listar_areas(request: Request):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def listar_areas(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todas as áreas."""
     areas = area_repo.obter_todas()
     return templates.TemplateResponse("listar.html", {
@@ -27,9 +27,8 @@ async def listar_areas(request: Request):
     })
 
 @router.get("/nova")
-@exigir_login
-@exigir_perfil(Perfil.ADMIN)
-async def nova_area(request: Request):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def nova_area(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário para nova área."""
     return templates.TemplateResponse("form.html", {
         "request": request,
@@ -37,12 +36,12 @@ async def nova_area(request: Request):
     })
 
 @router.post("/nova")
-@exigir_login
-@exigir_perfil(Perfil.ADMIN)
+@requer_autenticacao([Perfil.ADMIN.value])
 async def criar_area(
     request: Request,
     nome: str = Form(),
-    descricao: str = Form()
+    descricao: str = Form(),
+    usuario_logado: Optional[dict] = None
 ):
     """Cria uma nova área."""
     dados_formulario = {"nome": nome, "descricao": descricao}
@@ -85,9 +84,8 @@ async def criar_area(
         )
 
 @router.get("/{id_area}/editar")
-@exigir_login
-@exigir_perfil(Perfil.ADMIN)
-async def editar_area(request: Request, id_area: int):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def editar_area(request: Request, id_area: int, usuario_logado: Optional[dict] = None):
     """Exibe formulário para editar área."""
     area = area_repo.obter_por_id(id_area)
     if not area:
@@ -100,13 +98,13 @@ async def editar_area(request: Request, id_area: int):
     })
 
 @router.post("/{id_area}/editar")
-@exigir_login
-@exigir_perfil(Perfil.ADMIN)
+@requer_autenticacao([Perfil.ADMIN.value])
 async def salvar_area(
     request: Request,
     id_area: int,
     nome: str = Form(),
-    descricao: str = Form()
+    descricao: str = Form(),
+    usuario_logado: Optional[dict] = None
 ):
     """Salva alterações da área."""
     dados_formulario = {"nome": nome, "descricao": descricao}
@@ -140,9 +138,8 @@ async def salvar_area(
         )
 
 @router.post("/{id_area}/excluir")
-@exigir_login
-@exigir_perfil(Perfil.ADMIN)
-async def excluir_area(request: Request, id_area: int):
+@requer_autenticacao([Perfil.ADMIN.value])
+async def excluir_area(request: Request, id_area: int, usuario_logado: Optional[dict] = None):
     """Exclui uma área."""
     # Verificar se área está sendo usada
     if area_repo.verificar_uso(id_area) > 0:

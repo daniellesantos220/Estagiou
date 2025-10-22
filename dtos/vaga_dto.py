@@ -71,6 +71,6 @@ class BuscarVagasDTO(BaseModel):
     cidade: Optional[str] = None
     uf: Optional[str] = None
     modalidade: Optional[str] = None
-    salario_minimo: Optional[float] = None
-    limite: int = 50
+    salario_min: Optional[float] = None
+    limit: int = 50
     offset: int = 0

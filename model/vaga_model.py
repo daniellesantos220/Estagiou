@@ -36,13 +36,13 @@ class Vaga:
     id_empresa: int
     id_recrutador: int
     status_vaga: str
+    titulo: str
     descricao: str
     numero_vagas: int
     salario: float
     data_cadastro: str
 
-    # Campos adicionais
-    titulo: Optional[str] = None
+    # Campos opcionais
     requisitos: Optional[str] = None
     beneficios: Optional[str] = None
     carga_horaria: Optional[int] = None

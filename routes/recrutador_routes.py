@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Request, Form, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
@@ -5,7 +6,7 @@ from pydantic import ValidationError
 from model.vaga_model import Vaga
 from repo import vaga_repo, empresa_repo, area_repo
 from dtos.vaga_dto import CriarVagaDTO, AlterarVagaDTO
-from util.auth_decorator import exigir_login, exigir_perfil
+from util.auth_decorator import requer_autenticacao
 from util.perfis import Perfil
 from util.flash_messages import informar_sucesso, informar_erro
 from util.template_util import criar_templates
@@ -16,12 +17,11 @@ router = APIRouter(prefix="/recrutador")
 templates = criar_templates("templates/recrutador")
 
 @router.get("/dashboard")
-@exigir_login
-@exigir_perfil(Perfil.RECRUTADOR)
-async def dashboard(request: Request):
+@requer_autenticacao([Perfil.RECRUTADOR.value])
+async def dashboard(request: Request, usuario_logado: Optional[dict] = None):
     """Dashboard do recrutador."""
-    usuario = request.session.get("usuario_logado")
-    id_recrutador = usuario["id"]
+    assert usuario_logado is not None
+    id_recrutador = usuario_logado["id"]
 
     # Buscar vagas do recrutador
     vagas = vaga_repo.obter_por_recrutador(id_recrutador)
@@ -32,9 +32,8 @@ async def dashboard(request: Request):
     })
 
 @router.get("/vagas/nova")
-@exigir_login
-@exigir_perfil(Perfil.RECRUTADOR)
-async def nova_vaga(request: Request):
+@requer_autenticacao([Perfil.RECRUTADOR.value])
+async def nova_vaga(request: Request, usuario_logado: Optional[dict] = None):
     """Formulário para criar nova vaga."""
     areas = area_repo.obter_todas()
     empresas = empresa_repo.obter_todas()
@@ -47,8 +46,7 @@ async def nova_vaga(request: Request):
     })
 
 @router.post("/vagas/nova")
-@exigir_login
-@exigir_perfil(Perfil.RECRUTADOR)
+@requer_autenticacao([Perfil.RECRUTADOR.value])
 async def criar_vaga(
     request: Request,
     id_area: int = Form(),
@@ -62,11 +60,12 @@ async def criar_vaga(
     carga_horaria: int = Form(None),
     modalidade: str = Form(None),
     cidade: str = Form(""),
-    uf: str = Form("")
+    uf: str = Form(""),
+    usuario_logado: Optional[dict] = None
 ):
     """Cria nova vaga."""
-    usuario = request.session.get("usuario_logado")
-    id_recrutador = usuario["id"]
+    assert usuario_logado is not None
+    id_recrutador = usuario_logado["id"]
 
     dados_formulario = {
         "id_area": id_area,

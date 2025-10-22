@@ -1,3 +1,4 @@
+import sqlite3
 from typing import Optional
 from model.configuracao_model import Configuracao
 from sql.configuracao_sql import *
@@ -58,6 +59,6 @@ def inserir_padrao() -> None:
         for chave, valor, descricao in configs_padrao:
             try:
                 cursor.execute(INSERIR, (chave, valor, descricao))
-            except:
-                pass  # Já existe
+            except sqlite3.IntegrityError:
+                pass  # Configuração já existe (chave única)
         conn.commit()

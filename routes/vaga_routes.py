@@ -27,8 +27,8 @@ async def listar_vagas(
         cidade=cidade,
         uf=uf,
         modalidade=modalidade,
-        salario_minimo=salario_min,
-        limite=limite,
+        salario_min=salario_min,
+        limit=limite,
         offset=offset
     )
 

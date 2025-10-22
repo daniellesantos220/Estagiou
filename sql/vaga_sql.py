@@ -28,11 +28,11 @@ CREATE TABLE IF NOT EXISTS vaga (
 
 INSERIR = """
 INSERT INTO vaga (
-    id_area, id_empresa, id_recrutador, titulo, descricao,
+    id_area, id_empresa, id_recrutador, status_vaga, titulo, descricao,
     numero_vagas, salario, requisitos, beneficios,
     carga_horaria, modalidade, cidade, uf
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 ALTERAR = """

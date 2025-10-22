@@ -83,6 +83,22 @@ FROM candidatura
 WHERE status = ?
 """
 
+OBTER_QUANTIDADE = """
+SELECT COUNT(*) as quantidade
+FROM candidatura
+"""
+
+OBTER_POR_STATUS = """
+SELECT c.*,
+       v.titulo as vaga_titulo, v.salario as vaga_salario,
+       u.nome as candidato_nome, u.email as candidato_email
+FROM candidatura c
+LEFT JOIN vaga v ON c.id_vaga = v.id_vaga
+LEFT JOIN usuario u ON c.id_candidato = u.id
+WHERE c.status = ?
+ORDER BY c.data_candidatura DESC
+"""
+
 # Obter candidaturas com filtros
 BUSCAR_POR_STATUS_E_VAGA = """
 SELECT c.*,

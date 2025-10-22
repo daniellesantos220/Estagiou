@@ -63,17 +63,24 @@ def limpar_banco_dados():
             cursor = conn.cursor()
             # Verificar se tabelas existem antes de limpar
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'usuario', 'configuracao', 'candidatura', 'vaga')"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'usuario', 'configuracao', 'candidatura', 'vaga', 'area', 'empresa', 'endereco')"
             )
             tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
             # Limpar apenas tabelas que existem (respeitando foreign keys)
-            if 'tarefa' in tabelas_existentes:
-                cursor.execute("DELETE FROM tarefa")
+            # Ordem correta: primeiro tabelas dependentes, depois as independentes
             if 'candidatura' in tabelas_existentes:
                 cursor.execute("DELETE FROM candidatura")
             if 'vaga' in tabelas_existentes:
                 cursor.execute("DELETE FROM vaga")
+            if 'endereco' in tabelas_existentes:
+                cursor.execute("DELETE FROM endereco")
+            if 'tarefa' in tabelas_existentes:
+                cursor.execute("DELETE FROM tarefa")
+            if 'empresa' in tabelas_existentes:
+                cursor.execute("DELETE FROM empresa")
+            if 'area' in tabelas_existentes:
+                cursor.execute("DELETE FROM area")
             if 'usuario' in tabelas_existentes:
                 cursor.execute("DELETE FROM usuario")
             if 'configuracao' in tabelas_existentes:
@@ -111,7 +118,7 @@ def usuario_teste():
         "nome": "Usuario Teste",
         "email": "teste@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value  # Usa Enum Perfil
+        "perfil": Perfil.ESTUDANTE.value  # Usa Enum Perfil
     }
 
 
@@ -132,7 +139,7 @@ def criar_usuario(client):
     Fixture que retorna uma função para criar usuários
     Útil para criar múltiplos usuários em um teste
     """
-    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.CLIENTE.value):
+    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.ESTUDANTE.value):
         """Cadastra um usuário via endpoint de cadastro"""
         response = client.post("/cadastrar", data={
             "perfil": perfil,

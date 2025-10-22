@@ -31,7 +31,6 @@ env/
 .env
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -71,7 +70,6 @@ ROTEIRO.md
 TODO.md
 AGENT.md
 codebase.md
-.claude/
 .mcp/
 .aidigestignore
 codebase*

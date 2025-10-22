@@ -721,3 +721,46 @@ def validar_perfil_usuario(perfil_enum: Any) -> Callable[[Any, Any], Any]:
         return v
 
     return validator
+
+def validar_cnpj():
+    """Validador de CNPJ."""
+    def validator(cls, v: str) -> str:
+        import re
+        # Remove caracteres não numéricos
+        cnpj = re.sub(r'[^0-9]', '', v)
+
+        if len(cnpj) != 14:
+            raise ValueError('CNPJ deve ter 14 dígitos')
+
+        # Validação básica (verificar se não são todos iguais)
+        if cnpj == cnpj[0] * 14:
+            raise ValueError('CNPJ inválido')
+
+        # Aqui você pode adicionar validação completa de CNPJ se necessário
+        return cnpj
+
+    return validator
+
+def validar_uf():
+    """Validador de UF (estado)."""
+    def validator(cls, v: str) -> str:
+        ufs_validas = [
+            "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+            "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+            "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+        ]
+        v = v.upper()
+        if v not in ufs_validas:
+            raise ValueError(f"UF inválida. Use uma de: {', '.join(ufs_validas)}")
+        return v
+    return validator
+
+def validar_cep():
+    """Validador de CEP."""
+    def validator(cls, v: str) -> str:
+        import re
+        cep = re.sub(r'[^0-9]', '', v)
+        if len(cep) != 8:
+            raise ValueError("CEP deve ter 8 dígitos")
+        return cep
+    return validator

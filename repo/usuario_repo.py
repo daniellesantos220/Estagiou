@@ -17,11 +17,13 @@ def inserir(usuario: Usuario) -> Optional[int]:
             usuario.nome,
             usuario.email,
             usuario.senha,
-            usuario.perfil
+            usuario.perfil,
+            usuario.data_nascimento,
+            usuario.telefone,
+            usuario.numero_documento
         ))
         usuario_id = cursor.lastrowid
 
-        # Criar foto padrão para o novo usuário
         if usuario_id:
             criar_foto_padrao_usuario(usuario_id)
 
@@ -34,9 +36,20 @@ def alterar(usuario: Usuario) -> bool:
             usuario.nome,
             usuario.email,
             usuario.perfil,
+            usuario.data_nascimento,
+            usuario.telefone,
+            usuario.numero_documento,
             usuario.id
         ))
         return cursor.rowcount > 0
+
+def atualizar_curriculo(id: int, curriculo_path: str) -> bool:
+    """Atualiza o caminho do currículo do usuário."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(ATUALIZAR_CURRICULO, (curriculo_path, id))
+        return cursor.rowcount > 0
+
 
 def atualizar_senha(id: int, senha: str) -> bool:
     with get_connection() as conn:
@@ -48,6 +61,13 @@ def excluir(id: int) -> bool:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id,))
+        return cursor.rowcount > 0
+    
+def confirmar_email(id: int) -> bool:
+    """Marca o e-mail do usuário como confirmado."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(CONFIRMAR_EMAIL, (id,))
         return cursor.rowcount > 0
 
 def obter_por_id(id: int) -> Optional[Usuario]:
@@ -62,9 +82,14 @@ def obter_por_id(id: int) -> Optional[Usuario]:
                 email=row["email"],
                 senha=row["senha"],
                 perfil=row["perfil"],
-                token_redefinicao=row["token_redefinicao"],
-                data_token=row["data_token"],
-                data_cadastro=row["data_cadastro"]
+                data_nascimento=row.get("data_nascimento"),
+                telefone=row.get("telefone"),
+                numero_documento=row.get("numero_documento"),
+                confirmado=bool(row.get("confirmado", 0)),
+                curriculo_path=row.get("curriculo_path"),
+                token_redefinicao=row.get("token_redefinicao"),
+                data_token=row.get("data_token"),
+                data_cadastro=row.get("data_cadastro")
             )
         return None
 

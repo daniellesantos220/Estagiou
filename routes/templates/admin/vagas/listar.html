@@ -1,0 +1,214 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Moderar Vagas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-clipboard-check"></i> Moderar Vagas</h2>
+        </div>
+
+        <!-- Filtro por Status -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <form method="GET" action="/admin/vagas/listar" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="status_filtro" class="form-label fw-bold">Filtrar por Status</label>
+                        <select name="status_filtro" id="status_filtro" class="form-select">
+                            <option value="">Todos</option>
+                            {% for opcao in status_opcoes %}
+                            <option value="{{ opcao }}" {% if opcao == status_filtro %}selected{% endif %}>
+                                {{ opcao }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-funnel"></i> Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de Vagas -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if vagas %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Empresa</th>
+                                <th>Área</th>
+                                <th>Status</th>
+                                <th>Data Cadastro</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in vagas %}
+                            {% set vaga = item.vaga %}
+                            <tr>
+                                <td>{{ vaga.id_vaga }}</td>
+                                <td>
+                                    <strong>{{ vaga.titulo }}</strong>
+                                    {% if vaga.descricao %}
+                                    <br><small class="text-muted">
+                                        {{ vaga.descricao[:60] }}{% if vaga.descricao|length > 60 %}...{% endif %}
+                                    </small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.empresa_nome }}</td>
+                                <td>{{ item.area_nome }}</td>
+                                <td>
+                                    {% if vaga.status == "Pendente" %}
+                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                    {% elif vaga.status == "Aprovada" %}
+                                    <span class="badge bg-success">Aprovada</span>
+                                    {% elif vaga.status == "Reprovada" %}
+                                    <span class="badge bg-danger">Reprovada</span>
+                                    {% elif vaga.status == "Arquivada" %}
+                                    <span class="badge bg-secondary">Arquivada</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ vaga.data_cadastro|data_br if vaga.data_cadastro else '-' }}</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        {% if vaga.status == "Pendente" %}
+                                        <button type="button" class="btn btn-outline-success" title="Aprovar"
+                                            onclick="aprovarVaga({{ vaga.id_vaga }}, '{{ vaga.titulo|replace("'", "\\'") }}')">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger" title="Reprovar"
+                                            onclick="reprovarVaga({{ vaga.id_vaga }}, '{{ vaga.titulo|replace("'", "\\'") }}')">
+                                            <i class="bi bi-x-circle"></i>
+                                        </button>
+                                        {% endif %}
+
+                                        {% if vaga.status in ["Aprovada", "Reprovada"] %}
+                                        <button type="button" class="btn btn-outline-secondary" title="Arquivar"
+                                            onclick="arquivarVaga({{ vaga.id_vaga }}, '{{ vaga.titulo|replace("'", "\\'") }}')">
+                                            <i class="bi bi-archive"></i>
+                                        </button>
+                                        {% endif %}
+
+                                        <button type="button" class="btn btn-outline-danger" title="Excluir"
+                                            onclick="excluirVaga({{ vaga.id_vaga }}, '{{ vaga.titulo|replace("'", "\\'") }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center mb-0">
+                    <i class="bi bi-info-circle"></i> Nenhuma vaga encontrada com o filtro selecionado.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "components/modal_confirmacao.html" %}
+
+<!-- Modal para Reprovar Vaga -->
+<div class="modal fade" id="modalReprovarVaga" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-x-circle"></i> Reprovar Vaga
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formReprovarVaga" method="POST" action="">
+                <div class="modal-body">
+                    <p id="modalReprovarMensagem" class="mb-3"></p>
+                    <div class="mb-3">
+                        <label for="motivo_reprovacao" class="form-label fw-bold">Motivo da Reprovação *</label>
+                        <textarea name="motivo" id="motivo_reprovacao" class="form-control" rows="3"
+                                  required placeholder="Informe o motivo da reprovação..."></textarea>
+                        <small class="text-muted">Este motivo será enviado ao recrutador.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Reprovar Vaga
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function aprovarVaga(vagaId, vagaTitulo) {
+        const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <strong>Título:</strong> ${vagaTitulo}
+            </div>
+        </div>`;
+
+        abrirModalConfirmacao({
+            url: `/admin/vagas/aprovar/${vagaId}`,
+            mensagem: 'Tem certeza que deseja aprovar esta vaga?',
+            detalhes: detalhes
+        });
+    }
+
+    function reprovarVaga(vagaId, vagaTitulo) {
+        const modal = new bootstrap.Modal(document.getElementById('modalReprovarVaga'));
+        const form = document.getElementById('formReprovarVaga');
+        const mensagem = document.getElementById('modalReprovarMensagem');
+
+        form.action = `/admin/vagas/reprovar/${vagaId}`;
+        mensagem.textContent = `Reprovar vaga: "${vagaTitulo}"`;
+        modal.show();
+    }
+
+    function arquivarVaga(vagaId, vagaTitulo) {
+        const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <strong>Título:</strong> ${vagaTitulo}
+            </div>
+        </div>`;
+
+        abrirModalConfirmacao({
+            url: `/admin/vagas/arquivar/${vagaId}`,
+            mensagem: 'Tem certeza que deseja arquivar esta vaga?',
+            detalhes: detalhes
+        });
+    }
+
+    function excluirVaga(vagaId, vagaTitulo) {
+        const detalhes = `
+        <div class="card bg-light">
+            <div class="card-body">
+                <strong>Título:</strong> ${vagaTitulo}
+            </div>
+        </div>`;
+
+        abrirModalConfirmacao({
+            url: `/admin/vagas/excluir/${vagaId}`,
+            mensagem: 'Tem certeza que deseja excluir esta vaga? Esta ação não pode ser desfeita.',
+            detalhes: detalhes
+        });
+    }
+</script>
+{% endblock %}

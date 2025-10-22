@@ -1,3 +1,17 @@
+from util.logger_config import logger
+from typing import Optional
+from fastapi import APIRouter, Request, status
+from fastapi.responses import RedirectResponse
+from repo import area_repo
+from util.auth_decorator import requer_autenticacao
+from util.flash_messages import informar_erro, informar_sucesso
+from util.perfis import Perfil
+from util.template_util import criar_templates
+
+
+router = APIRouter(prefix="/tarefas")
+templates = criar_templates("templates/tarefas")
+
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):

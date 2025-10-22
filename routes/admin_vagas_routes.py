@@ -1,3 +1,5 @@
+#Aprovação de Vaga
+
 @router.post("/aprovar/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_aprovar(request: Request, id: int, usuario_logado: Optional[dict] = None):
@@ -25,3 +27,5 @@ async def post_aprovar(request: Request, id: int, usuario_logado: Optional[dict]
         informar_erro(request, "Erro ao aprovar vaga")
 
     return RedirectResponse("/admin/vagas/listar?status_filtro=Pendente", status_code=status.HTTP_303_SEE_OTHER)
+
+#Arqui

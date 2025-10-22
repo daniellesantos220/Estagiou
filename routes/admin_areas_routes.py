@@ -1,5 +1,5 @@
 from pydantic import ValidationError
-from dtos.area_dto import CriarAreaDTO
+from dtos.area_dto import AlterarAreaDTO, CriarAreaDTO
 from model.area_model import Area
 from util.exceptions import FormValidationError
 from util.logger_config import logger
@@ -127,3 +127,53 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
         "admin/areas/editar.html",
         {"request": request, "area": area, "dados": dados_area}
     )
+
+@router.post("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_editar(
+    request: Request,
+    id: int,
+    nome: str = Form(...),
+    descricao: str = Form(""),
+    usuario_logado: Optional[dict] = None
+):
+    """Altera dados de uma área"""
+    assert usuario_logado is not None
+
+    area_atual = area_repo.obter_por_id(id)
+    if not area_atual:
+        informar_erro(request, "Área não encontrada")
+        return RedirectResponse("/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    dados_formulario: dict = {"id_area": id, "nome": nome, "descricao": descricao}
+
+    try:
+        # Validar com DTO
+        dto = AlterarAreaDTO(id_area=id, nome=nome, descricao=descricao)
+
+        # Verificar se nome já existe em outra área
+        area_nome = area_repo.obter_por_nome(dto.nome)
+        if area_nome and area_nome.id_area != id:
+            informar_erro(request, "Já existe outra área cadastrada com este nome")
+            return templates.TemplateResponse(
+                "admin/areas/editar.html",
+                {"request": request, "area": area_atual, "dados": dados_formulario}
+            )
+
+        # Atualizar área
+        area_atualizada = Area(id_area=id, nome=dto.nome, descricao=dto.descricao)
+        area_repo.alterar(area_atualizada)
+
+        logger.info(f"Área {id} ('{dto.nome}') alterada por admin {usuario_logado['id']}")
+        informar_sucesso(request, "Área alterada com sucesso!")
+
+        return RedirectResponse("/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        dados_formulario["area"] = area_repo.obter_por_id(id)
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/areas/editar.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="nome",
+        )

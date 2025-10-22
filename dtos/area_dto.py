@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from dtos.validators import validar_nome_generico, validar_id_positivo
+from dtos.validators import validar_nome_generico
 
 class CriarAreaDTO(BaseModel):
     """DTO para criação de área."""

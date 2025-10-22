@@ -11,9 +11,9 @@ class Candidatura:
     id_candidatura: int
     id_vaga: int
     id_candidato: int
-    data_candidatura: datetime
-    Status: str
+    data_candidatura: str
+    status: str  
 
-#Relacionamentos
-    vaga: Optional[Vaga]
-    candidato: Optional[Usuario]
+    # Relacionamentos
+    vaga: Optional[object] = None
+    candidato: Optional[object] = None

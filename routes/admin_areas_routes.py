@@ -50,3 +50,55 @@ async def listar(request: Request, usuario_logado: Optional[dict] = None):
         "admin/areas/listar.html",
         {"request": request, "areas": areas}
     )
+
+@router.get("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de cadastro de área"""
+    return templates.TemplateResponse(
+        "admin/areas/cadastro.html",
+        {"request": request}
+    )
+
+@router.post("/cadastrar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_cadastrar(
+    request: Request,
+    nome: str = Form(...),
+    descricao: str = Form(""),
+    usuario_logado: Optional[dict] = None
+):
+    """Cadastra uma nova área"""
+    assert usuario_logado is not None
+
+    dados_formulario: dict = {"nome": nome, "descricao": descricao}
+
+    try:
+        # Validar com DTO
+        dto = CriarAreaDTO(nome=nome, descricao=descricao)
+
+        # Verificar se área com mesmo nome já existe
+        area_existente = area_repo.obter_por_nome(dto.nome)
+        if area_existente:
+            informar_erro(request, "Já existe uma área cadastrada com este nome")
+            return templates.TemplateResponse(
+                "admin/areas/cadastro.html",
+                {"request": request, "dados": dados_formulario}
+            )
+
+        # Criar área
+        area = Area(id_area=0, nome=dto.nome, descricao=dto.descricao)
+        area_repo.inserir(area)
+
+        logger.info(f"Área '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
+        informar_sucesso(request, "Área cadastrada com sucesso!")
+
+        return RedirectResponse("/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        raise FormValidationError(
+            validation_error=e,
+            template_path="admin/areas/cadastro.html",
+            dados_formulario=dados_formulario,
+            campo_padrao="nome",
+        )

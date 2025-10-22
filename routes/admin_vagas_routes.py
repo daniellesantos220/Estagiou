@@ -1,4 +1,17 @@
 #Aprovação de Vaga
+from util.logger_config import logger
+from typing import Optional
+from fastapi import APIRouter, Request, status
+from fastapi.responses import RedirectResponse
+from repo import vaga_repo
+from util.auth_decorator import requer_autenticacao
+from util.flash_messages import informar_erro, informar_sucesso
+from util.perfis import Perfil
+from util.template_util import criar_templates
+
+
+router = APIRouter(prefix="/admin/vagas")
+templates = criar_templates("templates/admin/vagas")
 
 @router.post("/aprovar/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])

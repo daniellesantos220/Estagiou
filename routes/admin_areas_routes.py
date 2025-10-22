@@ -9,8 +9,8 @@ from util.perfis import Perfil
 from util.template_util import criar_templates
 
 
-router = APIRouter(prefix="/tarefas")
-templates = criar_templates("templates/tarefas")
+router = APIRouter(prefix="/admin/areas")
+templates = criar_templates("templates/admin/areas")
 
 @router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])

@@ -3,24 +3,23 @@ from typing import Optional
 
 class Perfil(str, Enum):
     """
-    Enum centralizado para perfis de usuário.
+    Enum centralizado para perfis de usuário do Estagiou.
 
     Este é a FONTE ÚNICA DA VERDADE para perfis no sistema.
     SEMPRE use este Enum ao referenciar perfis, NUNCA strings literais.
 
     Exemplos:
         - Correto: perfil = Perfil.ADMIN.value
-        - Correto: perfil = Perfil.CLIENTE.value
-        - Correto: perfil = Perfil.VENDEDOR.value
-        - ERRADO: perfil = "admin"
-        - ERRADO: perfil = "cliente"
-        - ERRADO: perfil = "vendedor"
+        - Correto: perfil = Perfil.ESTUDANTE.value
+        - Correto: perfil = Perfil.RECRUTADOR.value
+        - ERRADO: perfil = "Administrador"
+        - ERRADO: perfil = "Estudante"
     """
 
-    # PERFIS DO SEU SISTEMA #####################################
+    # PERFIS DO ESTAGIOU #######################################
     ADMIN = "Administrador"
-    CLIENTE = "Cliente"
-    VENDEDOR = "Vendedor"
+    ESTUDANTE = "Estudante"
+    RECRUTADOR = "Recrutador"
     # FIM DOS PERFIS ############################################
 
     def __str__(self) -> str:
@@ -33,40 +32,18 @@ class Perfil(str, Enum):
         Retorna lista de todos os valores de perfis.
 
         Returns:
-            Lista com os valores: ["admin", "cliente"]
+            Lista com os valores: ["Administrador", "Estudante", "Recrutador"]
         """
         return [perfil.value for perfil in cls]
 
     @classmethod
     def existe(cls, valor: str) -> bool:
-        """
-        Verifica se um valor de perfil é válido.
-
-        Args:
-            valor: String do perfil a validar
-
-        Returns:
-            True se o perfil existe, False caso contrário
-        """
+        """Verifica se um valor de perfil é válido."""
         return valor in cls.valores()
 
     @classmethod
     def from_string(cls, valor: str) -> Optional['Perfil']:
-        """
-        Converte uma string para o Enum Perfil correspondente.
-
-        Args:
-            valor: String do perfil ("admin" ou "cliente")
-
-        Returns:
-            Enum Perfil correspondente ou None se inválido
-
-        Examples:
-            >>> Perfil.from_string("admin")
-            <Perfil.ADMIN: 'admin'>
-            >>> Perfil.from_string("invalido")
-            None
-        """
+        """Converte uma string para o Enum Perfil correspondente."""
         try:
             return cls(valor)
         except ValueError:
@@ -74,18 +51,7 @@ class Perfil(str, Enum):
 
     @classmethod
     def validar(cls, valor: str) -> str:
-        """
-        Valida e retorna o valor do perfil, levantando exceção se inválido.
-
-        Args:
-            valor: String do perfil a validar
-
-        Returns:
-            O valor validado
-
-        Raises:
-            ValueError: Se o perfil não for válido
-        """
+        """Valida e retorna o valor do perfil."""
         if not cls.existe(valor):
             raise ValueError(f'Perfil inválido: {valor}. Use: {", ".join(cls.valores())}')
         return valor

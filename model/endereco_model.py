@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from typing import Optional
+
+from model.usuario_model import Usuario
 
 
 @dataclass
@@ -13,3 +16,6 @@ class Endereco:
     cidade: str
     uf: str
     cep: str
+
+endereco: Optional[Endereco]
+usuario: Optional[Usuario]

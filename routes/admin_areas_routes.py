@@ -1,6 +1,10 @@
+from pydantic import ValidationError
+from dtos.area_dto import CriarAreaDTO
+from model.area_model import Area
+from util.exceptions import FormValidationError
 from util.logger_config import logger
 from typing import Optional
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
 from repo import area_repo
 from util.auth_decorator import requer_autenticacao
@@ -102,3 +106,24 @@ async def post_cadastrar(
             dados_formulario=dados_formulario,
             campo_padrao="nome",
         )
+    
+@router.get("/editar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] = None):
+    """Exibe formulário de alteração de área"""
+    area = area_repo.obter_por_id(id)
+
+    if not area:
+        informar_erro(request, "Área não encontrada")
+        return RedirectResponse("/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    dados_area = {
+        "id_area": area.id_area,
+        "nome": area.nome,
+        "descricao": area.descricao
+    }
+
+    return templates.TemplateResponse(
+        "admin/areas/editar.html",
+        {"request": request, "area": area, "dados": dados_area}
+    )

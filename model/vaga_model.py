@@ -17,8 +17,18 @@ class Vaga:
     descricao: str
     numero_vagas: int
     salario: float
-    data_cadastro: datetime
+    data_cadastro: str
 
-    area: Optional[Area]
-    empresa: Optional[Empresa]
-    recrutador: Optional[Usuario]
+    
+    titulo: Optional[str] = None
+    requisitos: Optional[str] = None
+    beneficios: Optional[str] = None
+    carga_horaria: Optional[int] = None
+    modalidade: Optional[str] = None
+    cidade: Optional[str] = None
+    uf: Optional[str] = None
+
+    
+    area: Optional[object] = None  
+    empresa: Optional[object] = None  
+    recrutador: Optional[object] = None  

@@ -40,3 +40,13 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
     informar_sucesso(request, "Área excluída com sucesso!")
 
     return RedirectResponse("/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+@router.get("/listar")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def listar(request: Request, usuario_logado: Optional[dict] = None):
+    """Lista todas as áreas cadastradas no sistema"""
+    areas = area_repo.obter_todas()
+    return templates.TemplateResponse(
+        "admin/areas/listar.html",
+        {"request": request, "areas": areas}
+    )

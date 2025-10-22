@@ -149,8 +149,12 @@ def verificar_uso(id_area: int) -> int:
     Returns:
         Número de vagas associadas a esta área
     """
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(VERIFICAR_USO, (id_area,))
-        row = cursor.fetchone()
-        return row["quantidade"] if row else 0
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(VERIFICAR_USO, (id_area,))
+            row = cursor.fetchone()
+            return row["quantidade"] if row else 0
+    except Exception:
+        # Se a tabela vaga não existir, retorna 0
+        return 0

@@ -91,11 +91,11 @@ try:
     empresa_repo.criar_tabela()
     logger.info("Tabela 'empresa' criada/verificada")
 
-    vaga_repo.criar_tabela()
-    logger.info("Tabela 'vaga' criada/verificada")
-
     endereco_repo.criar_tabela()
     logger.info("Tabela 'endereco' criada/verificada")
+
+    vaga_repo.criar_tabela()
+    logger.info("Tabela 'vaga' criada/verificada")
 
     candidatura_repo.criar_tabela()
     logger.info("Tabela 'candidatura' criada/verificada")

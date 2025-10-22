@@ -61,6 +61,10 @@ def limpar_banco_dados():
         """Limpa tabelas se elas existirem"""
         with get_connection() as conn:
             cursor = conn.cursor()
+
+            # Desabilitar verificação de foreign keys temporariamente
+            cursor.execute("PRAGMA foreign_keys = OFF")
+
             # Verificar se tabelas existem antes de limpar
             cursor.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'usuario', 'configuracao', 'candidatura', 'vaga', 'area', 'empresa', 'endereco')"
@@ -87,6 +91,9 @@ def limpar_banco_dados():
                 cursor.execute("DELETE FROM configuracao")
 
             conn.commit()
+
+            # Reabilitar verificação de foreign keys
+            cursor.execute("PRAGMA foreign_keys = ON")
 
     # Limpar antes do teste
     _limpar_tabelas()

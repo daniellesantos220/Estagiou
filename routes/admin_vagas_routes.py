@@ -1,4 +1,6 @@
 #Aprovação de Vaga
+from fastapi.params import Form
+from pydantic_core import ValidationError
 from util.logger_config import logger
 from typing import Optional
 from fastapi import APIRouter, Request, status
@@ -7,7 +9,8 @@ from repo import vaga_repo
 from util.auth_decorator import requer_autenticacao
 from util.flash_messages import informar_erro, informar_sucesso
 from util.perfis import Perfil
-from util.template_util import criar_templates
+from util.template_util import criar_templates,  
+from dtos.vaga_dto import ReprovarVagaDTO
 
 
 router = APIRouter(prefix="/admin/vagas")
@@ -104,3 +107,51 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
     informar_sucesso(request, "Vaga excluída com sucesso!")
 
     return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.post("/reprovar/{id}")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def post_reprovar(
+    request: Request,
+    id: int,
+    motivo: str = Form(...),
+    usuario_logado: Optional[dict] = None
+):
+    """Reprova uma vaga pendente com motivo"""
+    assert usuario_logado is not None
+
+    vaga = vaga_repo.obter_por_id(id)
+    if not vaga:
+        informar_erro(request, "Vaga não encontrada")
+        return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    if vaga.status != "Pendente":
+        informar_erro(request, "Apenas vagas pendentes podem ser reprovadas")
+        logger.warning(f"Admin {usuario_logado['id']} tentou reprovar vaga {id} com status '{vaga.status}'")
+        return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+    try:
+        # Validar motivo com DTO
+        dto = ReprovarVagaDTO(motivo=motivo)
+
+        # Atualizar status para Reprovada
+        sucesso = vaga_repo.atualizar_status(id, "Reprovada")
+
+        if sucesso:
+            # Registrar motivo da reprovação
+            vaga_repo.registrar_motivo_reprovacao(id, dto.motivo)
+
+            logger.info(
+                f"Vaga {id} ('{vaga.titulo}') reprovada por admin {usuario_logado['id']} - "
+                f"Motivo: {dto.motivo[:50]}..."
+            )
+            informar_sucesso(request, "Vaga reprovada. O recrutador será notificado.")
+        else:
+            logger.error(f"Erro ao reprovar vaga {id}")
+            informar_erro(request, "Erro ao reprovar vaga")
+
+        return RedirectResponse("/admin/vagas/listar?status_filtro=Pendente", status_code=status.HTTP_303_SEE_OTHER)
+
+    except ValidationError as e:
+        informar_erro(request, f"Motivo inválido: {e.errors()[0]['msg']}")
+        return RedirectResponse("/admin/vagas/listar?status_filtro=Pendente", status_code=status.HTTP_303_SEE_OTHER)

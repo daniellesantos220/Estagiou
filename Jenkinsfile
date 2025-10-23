@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   parameters {
-    string(name: 'APP_NAME', defaultValue: 'meuapp', description: 'Nome/slug do app (também usado como nome do container)')
-    string(name: 'PORT', defaultValue: '8010', description: 'Porta pública no VPS (proxy NGINX -> container)')
+    string(name: 'APP_NAME', defaultValue: 'Estagiou', description: 'Nome/slug do app (também usado como nome do container)')
+    string(name: 'PORT', defaultValue: '8402', description: 'Porta pública no VPS (proxy NGINX -> container)')
     string(name: 'INTERNAL_PORT', defaultValue: '8000', description: 'Porta interna exposta pelo Uvicorn dentro do container')
     string(name: 'DOCKERFILE', defaultValue: 'Dockerfile', description: 'Caminho do Dockerfile')
     string(name: 'DOCKER_CONTEXT', defaultValue: '.', description: 'Contexto de build do Docker')
@@ -14,6 +14,7 @@ pipeline {
     IMAGE = "local/${params.APP_NAME}:${env.BUILD_NUMBER}"
     REPO_IMAGE = "local/${params.APP_NAME}"
     CONTAINER = "${params.APP_NAME}"
+    TAG_LATEST = "${params.TAG_LATEST}"
   }
 
   triggers {

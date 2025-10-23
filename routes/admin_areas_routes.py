@@ -177,3 +177,30 @@ async def post_editar(
             dados_formulario=dados_formulario,
             campo_padrao="nome",
         )
+    
+from typing import Optional
+from fastapi import APIRouter, Form, Request, status
+from fastapi.responses import RedirectResponse
+from pydantic import ValidationError
+
+from dtos.area_dto import CriarAreaDTO, AlterarAreaDTO
+from model.area_model import Area
+from repo import area_repo
+from util.auth_decorator import requer_autenticacao
+from util.template_util import criar_templates
+from util.flash_messages import informar_sucesso, informar_erro
+from util.logger_config import logger
+from util.perfis import Perfil
+from util.exceptions import FormValidationError
+
+router = APIRouter(prefix="/admin/areas")
+templates = criar_templates("templates/admin/areas")
+
+@router.get("/")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def index(request: Request, usuario_logado: Optional[dict] = None):
+    """Redireciona para lista de áreas"""
+    return RedirectResponse("/admin/areas/listar", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+# Código das Seções 1, 2, 3 e 4 (ver seções acima)
+

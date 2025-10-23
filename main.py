@@ -169,3 +169,12 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"Erro ao iniciar servidor: {e}")
         raise
+
+from routes.admin_areas_routes import router as admin_areas_router
+from routes.admin_vagas_routes import router as admin_vagas_router
+
+app.include_router(admin_areas_router, tags=["Admin - Áreas"])
+logger.info("Router admin de áreas incluído")
+
+app.include_router(admin_vagas_router, tags=["Admin - Vagas"])
+logger.info("Router admin de vagas incluído")

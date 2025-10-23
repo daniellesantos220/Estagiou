@@ -722,6 +722,49 @@ def validar_perfil_usuario(perfil_enum: Any) -> Callable[[Any, Any], Any]:
 
     return validator
 
+def validar_nome_generico(
+    min_length: Optional[int] = None,
+    max_length: Optional[int] = None,
+    nome_campo: str = "Nome",
+) -> Callable[[Any, Any], Any]:
+    """
+    Valida nome genérico com comprimento opcional.
+
+    Args:
+        min_length: Comprimento mínimo (opcional)
+        max_length: Comprimento máximo (opcional)
+        nome_campo: Nome do campo para mensagens de erro
+
+    Returns:
+        Função validadora para uso com field_validator
+
+    Example:
+        _validar_nome = field_validator('nome')(
+            validar_nome_generico(min_length=3, max_length=100)
+        )
+    """
+
+    def validator(cls: Any, v: Any) -> Any:  # noqa: N805
+        if not v or not v.strip():
+            raise ValueError(f"{nome_campo} é obrigatório.")
+
+        valor = v.strip()
+
+        if min_length and len(valor) < min_length:
+            raise ValueError(
+                f"{nome_campo} deve ter no mínimo {min_length} caracteres."
+            )
+
+        if max_length and len(valor) > max_length:
+            raise ValueError(
+                f"{nome_campo} deve ter no máximo {max_length} caracteres."
+            )
+
+        return valor
+
+    return validator
+
+
 def validar_cnpj():
     """Validador de CNPJ."""
     def validator(cls, v: str) -> str:

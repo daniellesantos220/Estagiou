@@ -74,3 +74,19 @@ class BuscarVagasDTO(BaseModel):
     salario_min: Optional[float] = None
     limit: int = 50
     offset: int = 0
+
+class ReprovarVagaDTO(BaseModel):
+    """DTO para reprovação de vaga pelo administrador."""
+    motivo: str
+
+    @field_validator("motivo")
+    @classmethod
+    def validar_motivo(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Motivo é obrigatório")
+        valor = v.strip()
+        if len(valor) < 10:
+            raise ValueError("Motivo deve ter no mínimo 10 caracteres")
+        if len(valor) > 500:
+            raise ValueError("Motivo deve ter no máximo 500 caracteres")
+        return valor

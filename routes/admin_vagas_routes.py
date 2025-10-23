@@ -9,7 +9,7 @@ from repo import vaga_repo
 from util.auth_decorator import requer_autenticacao
 from util.flash_messages import informar_erro, informar_sucesso
 from util.perfis import Perfil
-from util.template_util import criar_templates,  
+from util.template_util import criar_templates
 from dtos.vaga_dto import ReprovarVagaDTO
 
 

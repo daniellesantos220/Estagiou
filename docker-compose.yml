@@ -4,4 +4,4 @@ services:
     container_name: estagiou.cachoeiro.es
     build: .
     ports:
-      - "8402:8000"
+      - "8042:8000"

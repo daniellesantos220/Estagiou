@@ -104,3 +104,28 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
     informar_sucesso(request, "Vaga excluída com sucesso!")
 
     return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
+from typing import Optional
+from fastapi import APIRouter, Form, Request, Query, status
+from fastapi.responses import RedirectResponse
+from pydantic import ValidationError
+
+from dtos.vaga_dto import ReprovarVagaDTO
+from repo import vaga_repo, area_repo, empresa_repo
+from util.auth_decorator import requer_autenticacao
+from util.template_util import criar_templates
+from util.flash_messages import informar_sucesso, informar_erro
+from util.logger_config import logger
+from util.perfis import Perfil
+from util.exceptions import FormValidationError
+
+router = APIRouter(prefix="/admin/vagas")
+templates = criar_templates("templates/admin/vagas")
+
+@router.get("/")
+@requer_autenticacao([Perfil.ADMIN.value])
+async def index(request: Request, usuario_logado: Optional[dict] = None):
+    """Redireciona para lista de vagas"""
+    return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+# Código das Seções 5, 6, 7, 8 e 9 (ver seções acima)

@@ -361,3 +361,48 @@ def obter_vagas_abertas(limit: int = 50, offset: int = 0) -> list[Vaga]:
             )
             for row in rows
         ]
+
+def obter_por_status(status: str) -> list[Vaga]:
+    """Busca vagas por status."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM vaga WHERE status = ? ORDER BY data_cadastro DESC",
+            (status,)
+        )
+        rows = cursor.fetchall()
+        return [Vaga(**dict(row)) for row in rows]
+
+def atualizar_status(id_vaga: int, novo_status: str) -> bool:
+    """Atualiza o status de uma vaga."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE vaga SET status = ? WHERE id_vaga = ?",
+            (novo_status, id_vaga)
+        )
+        return cursor.rowcount > 0
+
+def registrar_motivo_reprovacao(id_vaga: int, motivo: str) -> bool:
+    """Registra motivo de reprovação de uma vaga."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE vaga SET motivo_reprovacao = ? WHERE id_vaga = ?",
+            (motivo, id_vaga)
+        )
+        return cursor.rowcount > 0
+
+def contar_candidaturas(id_vaga: int) -> int:
+    """Conta quantas candidaturas existem para uma vaga."""
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT COUNT(*) as quantidade FROM candidatura WHERE id_vaga = ?",
+                (id_vaga,)
+            )
+            row = cursor.fetchone()
+            return row["quantidade"] if row else 0
+    except Exception:
+        return 0

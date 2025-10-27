@@ -22,13 +22,14 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+settings.json
 
 # Virtual Environment
 venv/
 .venv/
 ENV/
 env/
-.env
+# .env
 
 # IDE
 .idea/

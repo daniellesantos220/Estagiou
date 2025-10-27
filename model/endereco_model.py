@@ -16,6 +16,5 @@ class Endereco:
     cidade: str
     uf: str
     cep: str
-
-endereco: Optional[Endereco]
-usuario: Optional[Usuario]
+    
+    usuario: Optional[Usuario] = None

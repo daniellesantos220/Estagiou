@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base_privada.html" %}
 {% from "macros/form_fields.html" import field with context %}
 
@@ -77,4 +78,85 @@
         }
     });
 </script>
+=======
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Cadastrar Usuário{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-person-plus-fill"></i> Cadastrar Novo Usuário</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/admin/usuarios/cadastrar">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alerta_erro.html" %}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {% set perfis_dict = {} %}
+                            {% for perfil in perfis %}
+                            {% set _ = perfis_dict.update({perfil: perfil}) %}
+                            {% endfor %}
+                            {{ field(name='perfil', label='Perfil de Acesso', type='radio', required=true,
+                            radio_style='buttons', options=perfis_dict) }}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='nome', label='Nome Completo', type='text', required=true) }}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='email', label='Email', type='email', required=true) }}
+                        </div>                        
+
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            {{ field(name='senha', label='Senha', type='password', required=true) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            {{ field(name='confirma_senha', label='Confirmar Senha', type='password', required=true) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Cadastrar
+                        </button>
+                        <a href="/admin/usuarios" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Inicializar validador de senha
+    const passwordValidator = new PasswordValidator({
+        passwordFieldId: 'senha',
+        confirmPasswordFieldId: 'confirma_senha',
+        minLength: 6
+    });
+
+    // Validação do formulário
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (!passwordValidator.validateForm()) {
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
+>>>>>>> upstream/main
 {% endblock %}

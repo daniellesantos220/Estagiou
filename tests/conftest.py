@@ -79,20 +79,42 @@ def limpar_banco_dados():
         """Limpa tabelas se elas existirem"""
         with get_connection() as conn:
             cursor = conn.cursor()
-            # Verificar se tabelas existem antes de limpar
+
+            # Desabilitar foreign keys temporariamente para limpeza
+            cursor.execute("PRAGMA foreign_keys = OFF")
+
+            # Lista de todas as tabelas na ordem inversa de dependência
+            tabelas = [
+                'candidatura',  # depende de vaga e usuario
+                'avaliacao',    # depende de candidatura
+                'vaga',         # depende de empresa e area
+                'mensagem',     # depende de usuario
+                'notificacao',  # depende de usuario
+                'tarefa',       # depende de usuario
+                'empresa',      # depende de endereco e usuario
+                'endereco',     # independente
+                'usuario',      # independente
+                'area',         # independente
+                'configuracao'  # independente
+            ]
+
+            # Verificar quais tabelas existem
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'usuario', 'configuracao')"
+                "SELECT name FROM sqlite_master WHERE type='table'"
             )
-            tabelas_existentes = [row[0] for row in cursor.fetchall()]
+            tabelas_existentes = {row[0] for row in cursor.fetchall()}
 
-            # Limpar apenas tabelas que existem (respeitando foreign keys)
-            if 'tarefa' in tabelas_existentes:
-                cursor.execute("DELETE FROM tarefa")
-            if 'usuario' in tabelas_existentes:
-                cursor.execute("DELETE FROM usuario")
-            if 'configuracao' in tabelas_existentes:
-                cursor.execute("DELETE FROM configuracao")
+            # Limpar apenas tabelas que existem
+            for tabela in tabelas:
+                if tabela in tabelas_existentes:
+                    try:
+                        cursor.execute(f"DELETE FROM {tabela}")
+                    except Exception:
+                        # Ignorar erros em tabelas que não existem
+                        pass
 
+            # Reabilitar foreign keys
+            cursor.execute("PRAGMA foreign_keys = ON")
             conn.commit()
 
     # Limpar antes do teste
@@ -125,7 +147,7 @@ def usuario_teste():
         "nome": "Usuario Teste",
         "email": "teste@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value  # Usa Enum Perfil
+        "perfil": Perfil.ESTUDANTE.value  # Usa Enum Perfil
     }
 
 
@@ -146,7 +168,7 @@ def criar_usuario(client):
     Fixture que retorna uma função para criar usuários
     Útil para criar múltiplos usuários em um teste
     """
-    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.CLIENTE.value):
+    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.ESTUDANTE.value):
         """Cadastra um usuário via endpoint de cadastro"""
         response = client.post("/cadastrar", data={
             "perfil": perfil,
@@ -385,13 +407,13 @@ def dois_usuarios(client, criar_usuario):
         "nome": "Usuario Um",
         "email": "usuario1@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value
+        "perfil": Perfil.ESTUDANTE.value
     }
     usuario2 = {
         "nome": "Usuario Dois",
         "email": "usuario2@example.com",
         "senha": "Senha@456",
-        "perfil": Perfil.CLIENTE.value
+        "perfil": Perfil.ESTUDANTE.value
     }
 
     # Criar ambos usuários

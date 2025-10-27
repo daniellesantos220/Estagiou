@@ -54,7 +54,7 @@ class TestCadastrarUsuario:
             "nome": "Novo Usuario Admin",
             "email": "novousuario@example.com",
             "senha": "Senha@123",
-            "perfil": Perfil.CLIENTE.value
+            "perfil": Perfil.ESTUDANTE.value
         }, follow_redirects=False)
 
         # Deve redirecionar para listagem
@@ -106,7 +106,7 @@ class TestCadastrarUsuario:
             "nome": "Outro Nome",
             "email": admin_teste["email"],  # Email já existe
             "senha": "Senha@123",
-            "perfil": Perfil.CLIENTE.value
+            "perfil": Perfil.ESTUDANTE.value
         }, follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
@@ -118,7 +118,7 @@ class TestCadastrarUsuario:
             "nome": "Usuario Teste",
             "email": "teste@example.com",
             "senha": "123",  # Senha fraca
-            "perfil": Perfil.CLIENTE.value
+            "perfil": Perfil.ESTUDANTE.value
         }, follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
@@ -198,7 +198,7 @@ class TestEditarUsuario:
         response = admin_autenticado.post(f"/admin/usuarios/editar/{usuario2.id}", data={
             "nome": "Usuario 2",
             "email": "usuario1@example.com",  # Email já existe
-            "perfil": Perfil.CLIENTE.value
+            "perfil": Perfil.ESTUDANTE.value
         }, follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
@@ -216,7 +216,7 @@ class TestEditarUsuario:
         admin_autenticado.post(f"/admin/usuarios/editar/{usuario_original.id}", data={
             "nome": "Nome Editado",
             "email": "teste@example.com",
-            "perfil": Perfil.CLIENTE.value
+            "perfil": Perfil.ESTUDANTE.value
         })
 
         # Verificar que senha não mudou
@@ -228,7 +228,7 @@ class TestEditarUsuario:
         response = admin_autenticado.post("/admin/usuarios/editar/99999", data={
             "nome": "Nome",
             "email": "email@example.com",
-            "perfil": Perfil.CLIENTE.value
+            "perfil": Perfil.ESTUDANTE.value
         }, follow_redirects=False)
 
         # Deve redirecionar

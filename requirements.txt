@@ -1,41 +1,3 @@
-<<<<<<< HEAD
-# Framework Web
-fastapi==0.115.0
-uvicorn[standard]==0.32.0
-
-# Templates
-jinja2==3.1.4
-
-# Validação
-pydantic==2.9.2
-pydantic[email]==2.9.2
-pydantic-settings==2.5.2
-
-# Segurança
-passlib[bcrypt]==1.7.4
-bcrypt>=3.2.0,<4.0.0  # Versão 3.x é totalmente compatível com passlib 1.7.4
-python-multipart==0.0.12
-
-# Processamento de Imagens
-Pillow>=10.0.0
-
-# Sessões
-itsdangerous==2.2.0
-
-# HTTP Client
-requests==2.32.3
-
-# Email Service (Resend.com)
-resend==2.16.0
-
-# Variáveis de ambiente
-python-dotenv==1.0.1
-
-# Testes
-pytest==7.4.0
-pytest-asyncio==0.21.0
-httpx==0.24.1
-=======
 # Framework Web
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
@@ -73,4 +35,3 @@ pytest==7.4.0
 pytest-asyncio==0.21.0
 httpx==0.24.1
 pytest-cov==7.0.0
->>>>>>> upstream/main

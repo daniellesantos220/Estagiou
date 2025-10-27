@@ -1,29 +1,3 @@
-<<<<<<< HEAD
-from typing import Optional
-from fastapi import APIRouter, Request
-from util.template_util import criar_templates
-from util.auth_decorator import requer_autenticacao
-
-router = APIRouter()
-templates_usuario = criar_templates("templates")
-
-
-@router.get("/usuario")
-@requer_autenticacao()
-async def dashboard(request: Request, usuario_logado: Optional[dict] = None):
-    """
-    Dashboard do usuário (área privada)
-    Requer autenticação
-    """
-    assert usuario_logado is not None
-    return templates_usuario.TemplateResponse(
-        "home.html",
-        {
-            "request": request,
-            "usuario": usuario_logado
-        }
-    )
-=======
 from typing import Optional
 from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
@@ -318,4 +292,3 @@ async def post_atualizar_foto(
         return RedirectResponse(
             "/usuario/perfil/visualizar", status_code=status.HTTP_303_SEE_OTHER
         )
->>>>>>> upstream/main

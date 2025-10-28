@@ -4,6 +4,7 @@ from .auth_dto import LoginDTO, CadastroDTO, EsqueciSenhaDTO, RedefinirSenhaDTO
 from .usuario_dto import CriarUsuarioDTO, AlterarUsuarioDTO
 from .tarefa_dto import CriarTarefaDTO, AlterarTarefaDTO
 from .perfil_dto import EditarPerfilDTO, AlterarSenhaDTO
+from .categoria_dto import CriarCategoriaDTO, AlterarCategoriaDTO
 
 __all__ = [
     "LoginDTO",
@@ -16,4 +17,6 @@ __all__ = [
     "AlterarTarefaDTO",
     "EditarPerfilDTO",
     "AlterarSenhaDTO",
+    "CriarCategoriaDTO",
+    "AlterarCategoriaDTO",
 ]

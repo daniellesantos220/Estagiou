@@ -23,13 +23,14 @@ from util.exceptions import FormValidationError
 
 # Repositórios
 from repo import usuario_repo, configuracao_repo, tarefa_repo, chamado_repo, chamado_interacao_repo, indices_repo
-from repo import chat_sala_repo, chat_participante_repo, chat_mensagem_repo
+from repo import chat_sala_repo, chat_participante_repo, chat_mensagem_repo, categoria_repo
 
 # Rotas
 from routes.auth_routes import router as auth_router
 from routes.tarefas_routes import router as tarefas_router
 from routes.chamados_routes import router as chamados_router
 from routes.admin_usuarios_routes import router as admin_usuarios_router
+from routes.admin_categorias_routes import router as admin_categorias_router
 from routes.admin_configuracoes_routes import router as admin_config_router
 from routes.admin_backups_routes import router as admin_backups_router
 from routes.admin_chamados_routes import router as admin_chamados_router
@@ -92,6 +93,9 @@ try:
     chat_mensagem_repo.criar_tabela()
     logger.info("Tabela 'chat_mensagem' criada/verificada")
 
+    categoria_repo.criar_tabela()
+    logger.info("Tabela 'categoria' criada/verificada")
+
     # Criar índices para otimização de performance
     indices_repo.criar_indices()
 
@@ -118,6 +122,9 @@ logger.info("Router de chamados incluído")
 
 app.include_router(admin_usuarios_router, tags=["Admin - Usuários"])
 logger.info("Router admin de usuários incluído")
+
+app.include_router(admin_categorias_router, tags=["Admin - Categorias"])
+logger.info("Router admin de categorias incluído")
 
 app.include_router(admin_config_router, tags=["Admin - Configurações"])
 logger.info("Router admin de configurações incluído")

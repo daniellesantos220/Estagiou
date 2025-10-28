@@ -81,11 +81,18 @@ def limpar_banco_dados():
             cursor = conn.cursor()
             # Verificar se tabelas existem antes de limpar
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'chamado', 'chamado_interacao', 'usuario', 'configuracao')"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'chamado', 'chamado_interacao', 'chat_mensagem', 'chat_participante', 'chat_sala', 'usuario', 'configuracao')"
             )
             tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
             # Limpar apenas tabelas que existem (respeitando foreign keys)
+            # Ordem: tabelas dependentes primeiro, depois tabelas base
+            if 'chat_mensagem' in tabelas_existentes:
+                cursor.execute("DELETE FROM chat_mensagem")
+            if 'chat_participante' in tabelas_existentes:
+                cursor.execute("DELETE FROM chat_participante")
+            if 'chat_sala' in tabelas_existentes:
+                cursor.execute("DELETE FROM chat_sala")
             if 'tarefa' in tabelas_existentes:
                 cursor.execute("DELETE FROM tarefa")
             # Limpar chamado_interacao antes de chamado (devido à FK)
@@ -93,6 +100,7 @@ def limpar_banco_dados():
                 cursor.execute("DELETE FROM chamado_interacao")
             if 'chamado' in tabelas_existentes:
                 cursor.execute("DELETE FROM chamado")
+            # Usuario por último, pois muitas tabelas referenciam
             if 'usuario' in tabelas_existentes:
                 cursor.execute("DELETE FROM usuario")
             if 'configuracao' in tabelas_existentes:
@@ -137,7 +145,7 @@ def usuario_teste():
         "nome": "Usuario Teste",
         "email": "teste@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value  # Usa Enum Perfil
+        "perfil": Perfil.ESTUDANTE.value  # Usa Enum Perfil
     }
 
 
@@ -158,7 +166,7 @@ def criar_usuario(client):
     Fixture que retorna uma função para criar usuários
     Útil para criar múltiplos usuários em um teste
     """
-    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.CLIENTE.value):
+    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.ESTUDANTE.value):
         """Cadastra um usuário via endpoint de cadastro"""
         response = client.post("/cadastrar", data={
             "perfil": perfil,
@@ -264,34 +272,34 @@ def criar_tarefa(cliente_autenticado):
 
 @pytest.fixture
 def vendedor_teste():
-    """Dados de um vendedor de teste"""
+    """Dados de um recrutador de teste"""
     return {
-        "nome": "Vendedor Teste",
-        "email": "vendedor@example.com",
-        "senha": "Vendedor@123",
-        "perfil": Perfil.VENDEDOR.value
+        "nome": "Recrutador Teste",
+        "email": "recrutador@example.com",
+        "senha": "Recrutador@123",
+        "perfil": Perfil.RECRUTADOR.value
     }
 
 
 @pytest.fixture
 def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
     """
-    Fixture que retorna um cliente autenticado como vendedor
+    Fixture que retorna um cliente autenticado como recrutador
     """
     # Importar para manipular diretamente o banco
     from repo import usuario_repo
     from model.usuario_model import Usuario
     from util.security import criar_hash_senha
 
-    # Criar vendedor diretamente no banco
-    vendedor = Usuario(
+    # Criar recrutador diretamente no banco
+    recrutador = Usuario(
         id=0,
         nome=vendedor_teste["nome"],
         email=vendedor_teste["email"],
         senha=criar_hash_senha(vendedor_teste["senha"]),
-        perfil=Perfil.VENDEDOR.value
+        perfil=Perfil.RECRUTADOR.value
     )
-    usuario_repo.inserir(vendedor)
+    usuario_repo.inserir(recrutador)
 
     # Fazer login
     fazer_login(vendedor_teste["email"], vendedor_teste["senha"])
@@ -397,13 +405,13 @@ def dois_usuarios(client, criar_usuario):
         "nome": "Usuario Um",
         "email": "usuario1@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.CLIENTE.value
+        "perfil": Perfil.ESTUDANTE.value
     }
     usuario2 = {
         "nome": "Usuario Dois",
         "email": "usuario2@example.com",
         "senha": "Senha@456",
-        "perfil": Perfil.CLIENTE.value
+        "perfil": Perfil.ESTUDANTE.value
     }
 
     # Criar ambos usuários

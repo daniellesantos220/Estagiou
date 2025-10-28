@@ -84,21 +84,21 @@ class TestCadastrarUsuario:
         assert usuario.perfil == Perfil.ADMIN.value
 
     def test_cadastrar_usuario_com_perfil_vendedor(self, admin_autenticado):
-        """Admin deve poder cadastrar vendedor"""
+        """Admin deve poder cadastrar recrutador"""
         response = admin_autenticado.post("/admin/usuarios/cadastrar", data={
-            "nome": "Novo Vendedor",
-            "email": "novovendedor@example.com",
-            "senha": "SenhaVendedor@123",
-            "perfil": Perfil.VENDEDOR.value
+            "nome": "Novo Recrutador",
+            "email": "novorecrutador@example.com",
+            "senha": "SenhaRecrutador@123",
+            "perfil": Perfil.RECRUTADOR.value
         }, follow_redirects=False)
 
         assert response.status_code == status.HTTP_303_SEE_OTHER
 
         # Verificar perfil
         from repo import usuario_repo
-        usuario = usuario_repo.obter_por_email("novovendedor@example.com")
+        usuario = usuario_repo.obter_por_email("novorecrutador@example.com")
         assert usuario is not None
-        assert usuario.perfil == Perfil.VENDEDOR.value
+        assert usuario.perfil == Perfil.RECRUTADOR.value
 
     def test_cadastrar_usuario_email_duplicado(self, admin_autenticado, admin_teste):
         """Deve rejeitar email já cadastrado"""
@@ -174,7 +174,7 @@ class TestEditarUsuario:
         response = admin_autenticado.post(f"/admin/usuarios/editar/{usuario.id}", data={
             "nome": "Usuario Editado",
             "email": "editado@example.com",
-            "perfil": Perfil.VENDEDOR.value
+            "perfil": Perfil.RECRUTADOR.value
         }, follow_redirects=False)
 
         assert response.status_code == status.HTTP_303_SEE_OTHER
@@ -183,7 +183,7 @@ class TestEditarUsuario:
         usuario_editado = usuario_repo.obter_por_id(usuario.id)
         assert usuario_editado.nome == "Usuario Editado"
         assert usuario_editado.email == "editado@example.com"
-        assert usuario_editado.perfil == Perfil.VENDEDOR.value
+        assert usuario_editado.perfil == Perfil.RECRUTADOR.value
 
     def test_editar_usuario_email_duplicado(self, admin_autenticado, criar_usuario):
         """Deve rejeitar email já usado por outro usuário"""

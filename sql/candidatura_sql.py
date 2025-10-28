@@ -31,7 +31,7 @@ EXCLUIR = "DELETE FROM candidatura WHERE id_candidatura = ?"
 OBTER_POR_ID = """
 SELECT c.*,
        v.titulo as vaga_titulo, v.descricao as vaga_descricao, v.salario as vaga_salario,
-       u.nome as candidato_nome, u.email as candidato_email, u.telefone as candidato_telefone
+       u.nome as candidato_nome, u.email as candidato_email
 FROM candidatura c
 LEFT JOIN vaga v ON c.id_vaga = v.id_vaga
 LEFT JOIN usuario u ON c.id_candidato = u.id
@@ -40,8 +40,7 @@ WHERE c.id_candidatura = ?
 
 OBTER_POR_VAGA = """
 SELECT c.*,
-       u.nome as candidato_nome, u.email as candidato_email,
-       u.telefone as candidato_telefone, u.curriculo_path
+       u.nome as candidato_nome, u.email as candidato_email
 FROM candidatura c
 LEFT JOIN usuario u ON c.id_candidato = u.id
 WHERE c.id_vaga = ?

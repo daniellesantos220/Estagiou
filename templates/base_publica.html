@@ -41,12 +41,6 @@
                         <a class="nav-link {{ 'active' if request.path == '/sobre' else '' }}"
                             href="/sobre">Sobre</a>
                     </li>
-                    {% if request.session.get('usuario_logado') %}
-                    <li class="nav-item">
-                        <a class="nav-link {{ 'active' if '/tarefas/' in request.path else '' }}"
-                            href="/tarefas/listar">Tarefas</a>
-                    </li>
-                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link {{ 'active' if '/exemplos' in request.path else '' }}"
                             href="/exemplos">Exemplos</a>

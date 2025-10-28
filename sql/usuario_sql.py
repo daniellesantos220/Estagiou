@@ -4,51 +4,28 @@ CREATE TABLE IF NOT EXISTS usuario (
     nome TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     senha TEXT NOT NULL,
-    perfil TEXT DEFAULT 'Estudante',
-
-    -- Novos campos do Estagiou
-    data_nascimento TEXT,
-    telefone TEXT,
-    numero_documento TEXT,
-    confirmado INTEGER DEFAULT 0,
-    curriculo_path TEXT,
-
-    -- Campos de recuperação de senha
+    perfil TEXT NOT NULL,
     token_redefinicao TEXT,
     data_token TIMESTAMP,
-    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_atualizacao TIMESTAMP
 )
 """
 
-# Atualizar statements INSERIR e ALTERAR para incluir novos campos
 INSERIR = """
-INSERT INTO usuario (nome, email, senha, perfil, data_nascimento, telefone, numero_documento)
-VALUES (?, ?, ?, ?, ?, ?, ?)
+INSERT INTO usuario (nome, email, senha, perfil)
+VALUES (?, ?, ?, ?)
 """
 
 ALTERAR = """
 UPDATE usuario
-SET nome = ?, email = ?, perfil = ?, data_nascimento = ?, telefone = ?, numero_documento = ?
-WHERE id = ?
-"""
-
-# Novo statement para atualizar caminho do currículo
-ATUALIZAR_CURRICULO = """
-UPDATE usuario
-SET curriculo_path = ?
-WHERE id = ?
-"""
-
-# Novo statement para confirmar e-mail
-CONFIRMAR_EMAIL = """
-UPDATE usuario
-SET confirmado = 1
+SET nome = ?, email = ?, perfil = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id = ?
 """
 
 ALTERAR_SENHA = """
 UPDATE usuario
-SET senha = ?
+SET senha = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id = ?
 """
 
@@ -68,7 +45,10 @@ SET token_redefinicao = ?, data_token = ?
 WHERE email = ?
 """
 
-OBTER_POR_TOKEN = "SELECT * FROM usuario WHERE token_redefinicao = ?"
+OBTER_POR_TOKEN = """
+SELECT * FROM usuario
+WHERE token_redefinicao = ?
+"""
 
 LIMPAR_TOKEN = """
 UPDATE usuario
@@ -76,4 +56,8 @@ SET token_redefinicao = NULL, data_token = NULL
 WHERE id = ?
 """
 
-OBTER_TODOS_POR_PERFIL = "SELECT * FROM usuario WHERE perfil = ? ORDER BY nome"
+OBTER_TODOS_POR_PERFIL = """
+SELECT * FROM usuario
+WHERE perfil = ?
+ORDER BY nome
+"""

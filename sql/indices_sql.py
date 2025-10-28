@@ -1,13 +1,3 @@
-"""
-Índices do banco de dados para otimização de performance
-
-SQLite automaticamente cria índices para:
-- PRIMARY KEY
-- UNIQUE constraints
-
-Estes índices adicionais otimizam queries frequentes.
-"""
-
 # Índices da tabela usuario
 CRIAR_INDICE_USUARIO_PERFIL = """
 CREATE INDEX IF NOT EXISTS idx_usuario_perfil

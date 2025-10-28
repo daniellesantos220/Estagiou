@@ -4,8 +4,9 @@ from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
 from dtos.perfil_dto import EditarPerfilDTO, AlterarSenhaDTO
-from repo import usuario_repo
+from repo import usuario_repo, chamado_repo, tarefa_repo
 from util.auth_decorator import requer_autenticacao
+from util.perfis import Perfil
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.security import criar_hash_senha, verificar_senha
@@ -26,13 +27,23 @@ async def dashboard(request: Request, usuario_logado: Optional[dict] = None):
     Requer autenticação
     """
     assert usuario_logado is not None
-    return templates_usuario.TemplateResponse(
-        "home.html",
-        {
-            "request": request,
-            "usuario": usuario_logado
-        }
-    )
+
+    # Preparar dados do contexto
+    context = {
+        "request": request,
+        "usuario": usuario_logado
+    }
+
+    # Adicionar contador de chamados conforme perfil
+    if usuario_logado["perfil"] == Perfil.ADMIN.value:
+        # Admin vê total de chamados pendentes no sistema
+        context["chamados_pendentes"] = chamado_repo.contar_pendentes()
+    else:
+        # Usuário comum vê seus próprios chamados em aberto e tarefas pendentes
+        context["chamados_abertos"] = chamado_repo.contar_abertos_por_usuario(usuario_logado["id"])
+        context["tarefas_pendentes"] = tarefa_repo.contar_pendentes_por_usuario(usuario_logado["id"])
+
+    return templates_usuario.TemplateResponse("home.html", context)
 
 
 @router.get("/usuario/perfil/visualizar")

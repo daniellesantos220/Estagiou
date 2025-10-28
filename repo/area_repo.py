@@ -78,3 +78,17 @@ def obter_quantidade() -> int:
         cursor.execute(OBTER_QUANTIDADE)
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
+
+
+def obter_quantidade_vagas_por_area(id_area: int) -> int:
+    """Retorna a quantidade de vagas associadas a uma área."""
+    import sqlite3
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(OBTER_QUANTIDADE_VAGAS_POR_AREA, (id_area,))
+            row = cursor.fetchone()
+            return row["quantidade"] if row else 0
+    except sqlite3.OperationalError:
+        # Tabela vaga não existe ainda
+        return 0

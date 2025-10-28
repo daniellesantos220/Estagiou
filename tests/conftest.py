@@ -77,41 +77,44 @@ def limpar_banco_dados():
 
     def _limpar_tabelas():
         """Limpa tabelas se elas existirem e reseta autoincrement"""
+        import sqlite3
         with get_connection() as conn:
             cursor = conn.cursor()
-            # Verificar se tabelas existem antes de limpar
-            cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'chamado', 'chamado_interacao', 'chat_mensagem', 'chat_participante', 'chat_sala', 'usuario', 'configuracao')"
-            )
-            tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
             # Limpar apenas tabelas que existem (respeitando foreign keys)
-            # Ordem: tabelas dependentes primeiro, depois tabelas base
-            if 'chat_mensagem' in tabelas_existentes:
-                cursor.execute("DELETE FROM chat_mensagem")
-            if 'chat_participante' in tabelas_existentes:
-                cursor.execute("DELETE FROM chat_participante")
-            if 'chat_sala' in tabelas_existentes:
-                cursor.execute("DELETE FROM chat_sala")
-            if 'tarefa' in tabelas_existentes:
-                cursor.execute("DELETE FROM tarefa")
-            # Limpar chamado_interacao antes de chamado (devido à FK)
-            if 'chamado_interacao' in tabelas_existentes:
-                cursor.execute("DELETE FROM chamado_interacao")
-            if 'chamado' in tabelas_existentes:
-                cursor.execute("DELETE FROM chamado")
-            # Usuario por último, pois muitas tabelas referenciam
-            if 'usuario' in tabelas_existentes:
-                cursor.execute("DELETE FROM usuario")
-            if 'configuracao' in tabelas_existentes:
-                cursor.execute("DELETE FROM configuracao")
+            # Ordem: tabelas mais dependentes primeiro, tabelas base por último
+            # Lista de tabelas na ordem correta de limpeza
+            ordem_limpeza = [
+                # Nível 1: Tabelas que dependem de múltiplas outras
+                'candidatura', 'avaliacao',
+                # Nível 2: Tabelas que dependem de usuario + outras
+                'vaga', 'mensagem', 'notificacao', 'endereco',
+                # Nível 3: Chat (com foreign keys)
+                'chat_mensagem', 'chat_participante', 'chat_sala',
+                # Nível 4: Tarefa e Chamados
+                'tarefa', 'chamado_interacao', 'chamado',
+                # Nível 5: Tabelas base (sem dependências ou poucas)
+                'area', 'empresa',
+                # Nível 6: Usuario (muitas tabelas dependem dele)
+                'usuario',
+                # Nível 7: Configuracao (independente)
+                'configuracao'
+            ]
+
+            # Tentar limpar cada tabela, ignorando se não existir
+            for tabela in ordem_limpeza:
+                try:
+                    cursor.execute(f"DELETE FROM {tabela}")
+                except sqlite3.OperationalError:
+                    # Tabela não existe, ignorar
+                    pass
 
             # Resetar autoincrement (limpar sqlite_sequence se existir)
-            cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence'"
-            )
-            if cursor.fetchone():
+            try:
                 cursor.execute("DELETE FROM sqlite_sequence")
+            except sqlite3.OperationalError:
+                # sqlite_sequence não existe, ignorar
+                pass
 
             conn.commit()
 

@@ -41,16 +41,6 @@ def obter_todos() -> list[Configuracao]:
         ]
 
 def atualizar(chave: str, valor: str) -> bool:
-    """
-    Atualiza o valor de uma configuração existente
-
-    Args:
-        chave: Chave da configuração
-        valor: Novo valor
-
-    Returns:
-        True se atualização foi bem-sucedida, False se configuração não existe
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(ATUALIZAR, (valor, chave))
@@ -58,29 +48,6 @@ def atualizar(chave: str, valor: str) -> bool:
 
 
 def inserir_ou_atualizar(chave: str, valor: str, descricao: str = "") -> bool:
-    """
-    Insere ou atualiza uma configuração (operação upsert)
-
-    Se a configuração já existe, atualiza o valor.
-    Se não existe, insere nova configuração.
-
-    Args:
-        chave: Chave da configuração
-        valor: Valor da configuração
-        descricao: Descrição da configuração (usado apenas em inserção)
-
-    Returns:
-        True se operação foi bem-sucedida, False caso contrário
-
-    Examples:
-        >>> # Primeira vez - insere
-        >>> inserir_ou_atualizar("theme", "darkly", "Tema visual")
-        True
-
-        >>> # Segunda vez - atualiza
-        >>> inserir_ou_atualizar("theme", "flatly", "Tema visual")
-        True
-    """
     try:
         # Verificar se configuração já existe
         config_existente = obter_por_chave(chave)
@@ -102,7 +69,6 @@ def inserir_ou_atualizar(chave: str, valor: str, descricao: str = "") -> bool:
         raise
 
 def inserir_padrao() -> None:
-    """Insere configurações padrão se não existirem"""
     configs_padrao = [
         ("nome_sistema", "Sistema Web", "Nome do sistema"),
         ("email_contato", "contato@sistema.com", "E-mail de contato"),

@@ -11,10 +11,10 @@ class Endereco:
     titulo: str
     logradouro: str
     numero: str
-    complemento: str
+    complemento: Optional[str]
     bairro: str
     cidade: str
     uf: str
     cep: str
-    
+
     usuario: Optional[Usuario] = None

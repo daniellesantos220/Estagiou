@@ -46,3 +46,8 @@ ORDER BY titulo
 OBTER_TODOS = "SELECT * FROM endereco ORDER BY cidade, bairro"
 
 OBTER_QUANTIDADE = "SELECT COUNT(*) as quantidade FROM endereco"
+
+OBTER_QUANTIDADE_POR_USUARIO = """
+SELECT COUNT(*) as quantidade FROM endereco
+WHERE id_usuario = ?
+"""

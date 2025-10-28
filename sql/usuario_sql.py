@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS usuario (
 
     -- Campos de recuperação de senha
     token_redefinicao TEXT,
-    data_token DATETIME,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+    data_token TIMESTAMP,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """
 

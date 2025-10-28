@@ -2,6 +2,7 @@
 Testes para o repositório de áreas (area_repo).
 Cobre operações CRUD, validações e integridade de dados.
 """
+
 import pytest
 from model.area_model import Area
 from repo import area_repo
@@ -24,7 +25,7 @@ class TestInserir:
         area = Area(
             id_area=0,
             nome="Tecnologia da Informação",
-            descricao="Área de TI e desenvolvimento de software"
+            descricao="Área de TI e desenvolvimento de software",
         )
 
         id_area = area_repo.inserir(area)
@@ -34,11 +35,7 @@ class TestInserir:
 
     def test_inserir_area_sem_descricao(self, limpar_banco_dados):
         """Deve inserir área sem descrição"""
-        area = Area(
-            id_area=0,
-            nome="Marketing",
-            descricao=""
-        )
+        area = Area(id_area=0, nome="Marketing", descricao="")
 
         id_area = area_repo.inserir(area)
 
@@ -50,7 +47,7 @@ class TestInserir:
         areas = [
             Area(id_area=0, nome="Saúde", descricao="Área da saúde"),
             Area(id_area=0, nome="Educação", descricao="Área educacional"),
-            Area(id_area=0, nome="Jurídico", descricao="Área jurídica")
+            Area(id_area=0, nome="Jurídico", descricao="Área jurídica"),
         ]
 
         ids = [area_repo.inserir(area) for area in areas]
@@ -72,7 +69,7 @@ class TestAlterar:
         area_alterada = Area(
             id_area=id_area,
             nome="Tecnologia da Informação",
-            descricao="Tecnologia e Inovação"
+            descricao="Tecnologia e Inovação",
         )
         resultado = area_repo.alterar(area_alterada)
 
@@ -144,7 +141,7 @@ class TestObterTodas:
         areas_inserir = [
             Area(id_area=0, nome="TI", descricao="Tech"),
             Area(id_area=0, nome="Saúde", descricao="Health"),
-            Area(id_area=0, nome="Educação", descricao="Education")
+            Area(id_area=0, nome="Educação", descricao="Education"),
         ]
 
         for area in areas_inserir:
@@ -225,12 +222,12 @@ class TestVerificarUso:
         area = Area(id_area=0, nome="Sem Vagas", descricao="")
         id_area = area_repo.inserir(area)
 
-        quantidade = area_repo.verificar_uso(id_area)
+        quantidade = area_repo.obter_quantidade_vagas_por_area(id_area)
         assert quantidade == 0
 
     def test_verificar_uso_area_inexistente(self, limpar_banco_dados):
         """Deve retornar 0 para área inexistente"""
-        quantidade = area_repo.verificar_uso(999)
+        quantidade = area_repo.obter_quantidade_vagas_por_area(999)
         assert quantidade == 0
 
 

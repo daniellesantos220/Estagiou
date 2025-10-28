@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS vaga (
     modalidade TEXT,
     cidade TEXT,
     uf TEXT,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_area) REFERENCES area(id_area),
     FOREIGN KEY (id_empresa) REFERENCES empresa(id_empresa),
     FOREIGN KEY (id_recrutador) REFERENCES usuario(id)
@@ -90,7 +90,6 @@ WHERE v.id_recrutador = ?
 ORDER BY v.data_cadastro DESC
 """
 
-# Busca avançada com filtros
 BUSCAR = """
 SELECT v.*,
        a.nome as area_nome,
@@ -112,6 +111,10 @@ OBTER_QUANTIDADE = "SELECT COUNT(*) as quantidade FROM vaga"
 
 OBTER_QUANTIDADE_POR_STATUS = """
 SELECT COUNT(*) as quantidade FROM vaga WHERE status_vaga = ?
+"""
+
+OBTER_QUANTIDADE_POR_AREA = """
+SELECT COUNT(*) as quantidade FROM vaga WHERE id_area = ?
 """
 
 OBTER_VAGAS_ABERTAS = """

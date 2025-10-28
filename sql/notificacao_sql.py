@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS notificacao (
     mensagem TEXT NOT NULL,
     lida INTEGER DEFAULT 0,
     link TEXT,
-    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id)
 )
 """

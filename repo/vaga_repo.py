@@ -4,22 +4,12 @@ from sql.vaga_sql import *
 from util.db_util import get_connection
 
 def criar_tabela() -> bool:
-    """Cria a tabela de vagas se não existir."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
         return True
 
 def inserir(vaga: Vaga) -> Optional[int]:
-    """
-    Insere uma nova vaga no banco de dados.
-
-    Args:
-        vaga: Objeto Vaga com os dados a inserir
-
-    Returns:
-        ID da vaga inserida ou None em caso de erro
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
@@ -41,15 +31,6 @@ def inserir(vaga: Vaga) -> Optional[int]:
         return cursor.lastrowid
 
 def alterar(vaga: Vaga) -> bool:
-    """
-    Atualiza uma vaga existente.
-
-    Args:
-        vaga: Objeto Vaga com os dados atualizados
-
-    Returns:
-        True se a atualização foi bem-sucedida, False caso contrário
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
@@ -69,46 +50,18 @@ def alterar(vaga: Vaga) -> bool:
         return cursor.rowcount > 0
 
 def alterar_status(id_vaga: int, status: str) -> bool:
-    """
-    Atualiza o status de uma vaga.
-
-    Args:
-        id_vaga: ID da vaga
-        status: Novo status (aberta, fechada, pausada, arquivada)
-
-    Returns:
-        True se a atualização foi bem-sucedida, False caso contrário
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR_STATUS, (status, id_vaga))
         return cursor.rowcount > 0
 
 def excluir(id_vaga: int) -> bool:
-    """
-    Exclui uma vaga do banco de dados.
-
-    Args:
-        id_vaga: ID da vaga a excluir
-
-    Returns:
-        True se a exclusão foi bem-sucedida, False caso contrário
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id_vaga,))
         return cursor.rowcount > 0
 
 def obter_por_id(id_vaga: int) -> Optional[Vaga]:
-    """
-    Busca uma vaga pelo ID com dados relacionados.
-
-    Args:
-        id_vaga: ID da vaga
-
-    Returns:
-        Objeto Vaga ou None se não encontrado
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_ID, (id_vaga,))
@@ -135,12 +88,6 @@ def obter_por_id(id_vaga: int) -> Optional[Vaga]:
         return None
 
 def obter_todas() -> list[Vaga]:
-    """
-    Retorna todas as vagas cadastradas.
-
-    Returns:
-        Lista de objetos Vaga
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_TODAS)
@@ -168,15 +115,6 @@ def obter_todas() -> list[Vaga]:
         ]
 
 def obter_por_empresa(id_empresa: int) -> list[Vaga]:
-    """
-    Retorna todas as vagas de uma empresa.
-
-    Args:
-        id_empresa: ID da empresa
-
-    Returns:
-        Lista de objetos Vaga
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_EMPRESA, (id_empresa,))
@@ -204,15 +142,6 @@ def obter_por_empresa(id_empresa: int) -> list[Vaga]:
         ]
 
 def obter_por_recrutador(id_recrutador: int) -> list[Vaga]:
-    """
-    Retorna todas as vagas criadas por um recrutador.
-
-    Args:
-        id_recrutador: ID do recrutador
-
-    Returns:
-        Lista de objetos Vaga
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_RECRUTADOR, (id_recrutador,))
@@ -248,21 +177,6 @@ def buscar(
     limit: int = 50,
     offset: int = 0
 ) -> list[Vaga]:
-    """
-    Busca vagas com filtros opcionais.
-
-    Args:
-        id_area: ID da área para filtrar (opcional)
-        cidade: Cidade para filtrar (opcional)
-        uf: Estado para filtrar (opcional)
-        modalidade: Modalidade para filtrar (opcional)
-        salario_min: Salário mínimo para filtrar (opcional)
-        limit: Número máximo de resultados
-        offset: Deslocamento para paginação
-
-    Returns:
-        Lista de objetos Vaga
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(BUSCAR, (
@@ -297,12 +211,6 @@ def buscar(
         ]
 
 def obter_quantidade() -> int:
-    """
-    Retorna a quantidade total de vagas cadastradas.
-
-    Returns:
-        Número de vagas
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE)
@@ -310,32 +218,20 @@ def obter_quantidade() -> int:
         return row["quantidade"] if row else 0
 
 def obter_quantidade_por_status(status: str) -> int:
-    """
-    Retorna a quantidade de vagas com determinado status.
-
-    Args:
-        status: Status das vagas
-
-    Returns:
-        Número de vagas com o status especificado
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_STATUS, (status,))
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
+    
+def obter_quantidade_por_area(id_area: int) -> int:
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_QUANTIDADE_POR_AREA, (id_area,))
+        row = cursor.fetchone()
+        return row["quantidade"] if row else 0
 
 def obter_vagas_abertas(limit: int = 50, offset: int = 0) -> list[Vaga]:
-    """
-    Retorna vagas com status 'aberta'.
-
-    Args:
-        limit: Número máximo de resultados
-        offset: Deslocamento para paginação
-
-    Returns:
-        Lista de objetos Vaga
-    """
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_VAGAS_ABERTAS, (limit, offset))
@@ -363,7 +259,6 @@ def obter_vagas_abertas(limit: int = 50, offset: int = 0) -> list[Vaga]:
         ]
 
 def obter_por_status(status: str) -> list[Vaga]:
-    """Busca vagas por status."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -374,7 +269,6 @@ def obter_por_status(status: str) -> list[Vaga]:
         return [Vaga(**dict(row)) for row in rows]
 
 def atualizar_status(id_vaga: int, novo_status: str) -> bool:
-    """Atualiza o status de uma vaga."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -384,7 +278,6 @@ def atualizar_status(id_vaga: int, novo_status: str) -> bool:
         return cursor.rowcount > 0
 
 def registrar_motivo_reprovacao(id_vaga: int, motivo: str) -> bool:
-    """Registra motivo de reprovação de uma vaga."""
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -394,7 +287,6 @@ def registrar_motivo_reprovacao(id_vaga: int, motivo: str) -> bool:
         return cursor.rowcount > 0
 
 def contar_candidaturas(id_vaga: int) -> int:
-    """Conta quantas candidaturas existem para uma vaga."""
     try:
         with get_connection() as conn:
             cursor = conn.cursor()

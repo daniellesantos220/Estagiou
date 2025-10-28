@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS candidatura (
     id_candidatura INTEGER PRIMARY KEY AUTOINCREMENT,
     id_vaga INTEGER NOT NULL,
     id_candidato INTEGER NOT NULL,
-    data_candidatura DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_candidatura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status TEXT DEFAULT 'pendente',
     FOREIGN KEY (id_vaga) REFERENCES vaga(id_vaga),
     FOREIGN KEY (id_candidato) REFERENCES usuario(id),

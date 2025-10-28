@@ -32,7 +32,7 @@ OBTER_POR_NOME = "SELECT * FROM area WHERE nome = ?"
 OBTER_QUANTIDADE = "SELECT COUNT(*) as quantidade FROM area"
 
 # Verifica se área está sendo usada em alguma vaga
-VERIFICAR_USO = """
+OBTER_QUANTIDADE_VAGAS_POR_AREA = """
 SELECT COUNT(*) as quantidade
 FROM vaga
 WHERE id_area = ?

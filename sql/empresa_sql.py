@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS empresa (
     nome TEXT NOT NULL,
     cnpj TEXT UNIQUE NOT NULL,
     descricao TEXT,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """
 
@@ -19,7 +20,7 @@ VALUES (?, ?, ?)
 
 ALTERAR = """
 UPDATE empresa
-SET nome = ?, cnpj = ?, descricao = ?
+SET nome = ?, cnpj = ?, descricao = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id_empresa = ?
 """
 

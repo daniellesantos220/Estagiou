@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS mensagem (
     assunto TEXT NOT NULL,
     conteudo TEXT NOT NULL,
     lida INTEGER DEFAULT 0,
-    data_envio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_remetente) REFERENCES usuario(id),
     FOREIGN KEY (id_destinatario) REFERENCES usuario(id)
 )

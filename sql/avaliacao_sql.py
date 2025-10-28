@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS avaliacao (
     id_estudante INTEGER NOT NULL,
     nota INTEGER NOT NULL CHECK(nota >= 1 AND nota <= 5),
     comentario TEXT,
-    data_avaliacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_avaliacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_empresa) REFERENCES empresa(id_empresa),
     FOREIGN KEY (id_estudante) REFERENCES usuario(id),
     UNIQUE(id_empresa, id_estudante)

@@ -99,7 +99,8 @@ Execute as seguintes fases de forma autônoma e sequencial:
 
 2. **Verificar resultado**
    - Se merge foi bem-sucedido: continuar para Fase 4
-   - Se houver **CONFLITOS**:
+   - Se houver conflitos em arquivos que estão originalmente no upstream, prevalece o que está no upstream SEMPRE. Apenas configurações de perfis de usuário podem ser mantidas, pois cada projeto tem seus próprios perfis de usuário. Não mude nada do que veio no upstream, porque a grande maioria é código de infraestrutura que deve ser mantido atualizado.
+   - Se houver **CONFLITOS** fora do upstream:
      ```
      ⚠️  CONFLITOS DETECTADOS!
 

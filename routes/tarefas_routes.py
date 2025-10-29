@@ -11,9 +11,18 @@ from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.logger_config import logger
 from util.exceptions import FormValidationError
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
 
 router = APIRouter(prefix="/tarefas")
 templates = criar_templates("templates/tarefas")
+
+# Rate limiter para operações de tarefas
+# 20 requisições/minuto permite uso normal mas previne abuso
+tarefas_limiter = RateLimiter(
+    max_tentativas=20,
+    janela_minutos=1,
+    nome="tarefas",
+)
 
 @router.get("/listar")
 @requer_autenticacao()
@@ -42,6 +51,12 @@ async def post_cadastrar(
 ):
     """Cadastra uma nova tarefa"""
     assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not tarefas_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento.")
+        return RedirectResponse("/tarefas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     # Armazena os dados do formulário para reexibição em caso de erro
     dados_formulario = {"titulo": titulo, "descricao": descricao}

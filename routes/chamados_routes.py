@@ -24,9 +24,18 @@ from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.logger_config import logger
 from util.exceptions import FormValidationError
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
 
 router = APIRouter(prefix="/chamados")
 templates = criar_templates("templates/chamados")
+
+# Rate limiter para operações de chamados
+# 50 requisições/minuto permite uso normal de suporte mas previne spam
+chamados_limiter = RateLimiter(
+    max_tentativas=50,
+    janela_minutos=1,
+    nome="chamados",
+)
 
 
 @router.get("/listar")
@@ -64,6 +73,12 @@ async def post_cadastrar(
 ):
     """Cadastra um novo chamado."""
     assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not chamados_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento.")
+        return RedirectResponse("/chamados/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     # Armazena os dados do formulário para reexibição em caso de erro
     dados_formulario = {
@@ -156,6 +171,12 @@ async def post_responder(
 ):
     """Permite que o usuário adicione uma resposta/mensagem ao seu próprio chamado."""
     assert usuario_logado is not None
+
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not chamados_limiter.verificar(ip):
+        informar_erro(request, "Muitas operações. Aguarde um momento.")
+        return RedirectResponse(f"/chamados/{id}/visualizar", status_code=status.HTTP_303_SEE_OTHER)
 
     chamado = chamado_repo.obter_por_id(id)
 

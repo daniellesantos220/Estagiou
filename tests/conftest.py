@@ -47,44 +47,35 @@ def limpar_rate_limiter():
     from routes.admin_usuarios_routes import admin_usuarios_limiter
     from routes.admin_backups_routes import admin_backups_limiter, backup_download_limiter
     from routes.admin_configuracoes_routes import admin_config_limiter
-    from routes.admin_categorias_routes import admin_categorias_limiter
     from routes.chamados_routes import chamado_criar_limiter, chamado_responder_limiter
     from routes.admin_chamados_routes import admin_chamado_responder_limiter
-    from routes.usuario_routes import upload_foto_limiter, alterar_senha_limiter, form_get_limiter
     from routes.tarefas_routes import tarefa_criar_limiter, tarefa_operacao_limiter
+    from routes.usuario_routes import upload_foto_limiter, alterar_senha_limiter, form_get_limiter
     from routes.chat_routes import chat_mensagem_limiter, chat_sala_limiter, busca_usuarios_limiter, chat_listagem_limiter
     from routes.public_routes import public_limiter
     from routes.examples_routes import examples_limiter
 
-    # Lista de todos os limiters do sistema
+    # Lista de todos os limiters
     limiters = [
-        # Auth
         login_limiter,
         cadastro_limiter,
         esqueci_senha_limiter,
-        # Admin
         admin_usuarios_limiter,
         admin_backups_limiter,
         backup_download_limiter,
         admin_config_limiter,
-        admin_categorias_limiter,
-        # Chamados (CRÍTICO - evita falhas nos testes)
         chamado_criar_limiter,
         chamado_responder_limiter,
         admin_chamado_responder_limiter,
-        # Usuário
+        tarefa_criar_limiter,
+        tarefa_operacao_limiter,
         upload_foto_limiter,
         alterar_senha_limiter,
         form_get_limiter,
-        # Tarefas
-        tarefa_criar_limiter,
-        tarefa_operacao_limiter,
-        # Chat
         chat_mensagem_limiter,
         chat_sala_limiter,
         busca_usuarios_limiter,
         chat_listagem_limiter,
-        # Public & Examples
         public_limiter,
         examples_limiter,
     ]
@@ -108,44 +99,33 @@ def limpar_banco_dados():
 
     def _limpar_tabelas():
         """Limpa tabelas se elas existirem e reseta autoincrement"""
-        import sqlite3
         with get_connection() as conn:
             cursor = conn.cursor()
+            # Verificar se tabelas existem antes de limpar
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('tarefa', 'chamado', 'chamado_interacao', 'usuario', 'configuracao')"
+            )
+            tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
             # Limpar apenas tabelas que existem (respeitando foreign keys)
-            # Ordem: tabelas mais dependentes primeiro, tabelas base por último
-            # Lista de tabelas na ordem correta de limpeza
-            ordem_limpeza = [
-                # Nível 1: Tabelas que dependem de múltiplas outras
-                'candidatura', 'avaliacao',
-                # Nível 2: Tabelas que dependem de usuario + outras
-                'vaga', 'mensagem', 'notificacao', 'endereco',
-                # Nível 3: Chat (com foreign keys)
-                'chat_mensagem', 'chat_participante', 'chat_sala',
-                # Nível 4: Tarefa e Chamados
-                'tarefa', 'chamado_interacao', 'chamado',
-                # Nível 5: Tabelas base (sem dependências ou poucas)
-                'area', 'empresa',
-                # Nível 6: Usuario (muitas tabelas dependem dele)
-                'usuario',
-                # Nível 7: Configuracao (independente)
-                'configuracao'
-            ]
-
-            # Tentar limpar cada tabela, ignorando se não existir
-            for tabela in ordem_limpeza:
-                try:
-                    cursor.execute(f"DELETE FROM {tabela}")
-                except sqlite3.OperationalError:
-                    # Tabela não existe, ignorar
-                    pass
+            if 'tarefa' in tabelas_existentes:
+                cursor.execute("DELETE FROM tarefa")
+            # Limpar chamado_interacao antes de chamado (devido à FK)
+            if 'chamado_interacao' in tabelas_existentes:
+                cursor.execute("DELETE FROM chamado_interacao")
+            if 'chamado' in tabelas_existentes:
+                cursor.execute("DELETE FROM chamado")
+            if 'usuario' in tabelas_existentes:
+                cursor.execute("DELETE FROM usuario")
+            if 'configuracao' in tabelas_existentes:
+                cursor.execute("DELETE FROM configuracao")
 
             # Resetar autoincrement (limpar sqlite_sequence se existir)
-            try:
+            cursor.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence'"
+            )
+            if cursor.fetchone():
                 cursor.execute("DELETE FROM sqlite_sequence")
-            except sqlite3.OperationalError:
-                # sqlite_sequence não existe, ignorar
-                pass
 
             conn.commit()
 
@@ -179,7 +159,7 @@ def usuario_teste():
         "nome": "Usuario Teste",
         "email": "teste@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.ESTUDANTE.value  # Usa Enum Perfil
+        "perfil": Perfil.CLIENTE.value  # Usa Enum Perfil
     }
 
 
@@ -200,7 +180,7 @@ def criar_usuario(client):
     Fixture que retorna uma função para criar usuários
     Útil para criar múltiplos usuários em um teste
     """
-    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.ESTUDANTE.value):
+    def _criar_usuario(nome: str, email: str, senha: str, perfil: str = Perfil.CLIENTE.value):
         """Cadastra um usuário via endpoint de cadastro"""
         response = client.post("/cadastrar", data={
             "perfil": perfil,
@@ -306,34 +286,34 @@ def criar_tarefa(cliente_autenticado):
 
 @pytest.fixture
 def vendedor_teste():
-    """Dados de um recrutador de teste"""
+    """Dados de um vendedor de teste"""
     return {
-        "nome": "Recrutador Teste",
-        "email": "recrutador@example.com",
-        "senha": "Recrutador@123",
-        "perfil": Perfil.RECRUTADOR.value
+        "nome": "Vendedor Teste",
+        "email": "vendedor@example.com",
+        "senha": "Vendedor@123",
+        "perfil": Perfil.VENDEDOR.value
     }
 
 
 @pytest.fixture
 def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
     """
-    Fixture que retorna um cliente autenticado como recrutador
+    Fixture que retorna um cliente autenticado como vendedor
     """
     # Importar para manipular diretamente o banco
     from repo import usuario_repo
     from model.usuario_model import Usuario
     from util.security import criar_hash_senha
 
-    # Criar recrutador diretamente no banco
-    recrutador = Usuario(
+    # Criar vendedor diretamente no banco
+    vendedor = Usuario(
         id=0,
         nome=vendedor_teste["nome"],
         email=vendedor_teste["email"],
         senha=criar_hash_senha(vendedor_teste["senha"]),
-        perfil=Perfil.RECRUTADOR.value
+        perfil=Perfil.VENDEDOR.value
     )
-    usuario_repo.inserir(recrutador)
+    usuario_repo.inserir(vendedor)
 
     # Fazer login
     fazer_login(vendedor_teste["email"], vendedor_teste["senha"])
@@ -439,13 +419,13 @@ def dois_usuarios(client, criar_usuario):
         "nome": "Usuario Um",
         "email": "usuario1@example.com",
         "senha": "Senha@123",
-        "perfil": Perfil.ESTUDANTE.value
+        "perfil": Perfil.CLIENTE.value
     }
     usuario2 = {
         "nome": "Usuario Dois",
         "email": "usuario2@example.com",
         "senha": "Senha@456",
-        "perfil": Perfil.ESTUDANTE.value
+        "perfil": Perfil.CLIENTE.value
     }
 
     # Criar ambos usuários

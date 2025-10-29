@@ -1,5 +1,25 @@
 """
 Rotas para o sistema de chat em tempo real.
+
+DECISÕES ARQUITETURAIS:
+-----------------------
+1. ID de Sala como String: Utiliza formato "menor_id_maior_id" (ex: "3_7")
+   para garantir unicidade determinística entre dois usuários, independente
+   da ordem. Isso evita salas duplicadas e elimina necessidade de queries
+   adicionais para verificação.
+
+2. Server-Sent Events (SSE): Mantém UMA conexão por usuário que recebe
+   mensagens de TODAS as suas salas, em vez de uma conexão por sala.
+   Mais eficiente e escalável.
+
+3. Rate Limiting: 30 requisições/minuto para prevenir spam e abuso do sistema
+   de mensagens em tempo real.
+
+4. Validação de Usuários: Valida existência de usuários antes de criar salas
+   para prevenir corrupção de dados e melhorar experiência do usuário.
+
+5. Exclusão de Admins da Busca: Administradores só podem ser contactados
+   via sistema de chamados, mantendo canal oficial de suporte.
 """
 import json
 import asyncio
@@ -16,8 +36,18 @@ from util.foto_util import obter_caminho_foto_usuario
 from util.datetime_util import agora
 from util.logger_config import logger
 from util.perfis import Perfil
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
+
+# Rate limiter para operações de chat
+# 30 requisições/minuto permite fluxo natural de conversa
+# mas previne spam e flood attacks
+chat_limiter = RateLimiter(
+    max_tentativas=30,
+    janela_minutos=1,
+    nome="chat",
+)
 
 
 @router.get("/stream")
@@ -91,6 +121,7 @@ async def criar_ou_obter_sala(
 
         # Criar ou obter sala
         sala = chat_sala_repo.criar_ou_obter_sala(usuario_logado["id"], dto.outro_usuario_id)
+        logger.info(f"Sala {sala.id} criada/obtida entre usuários {usuario_logado['id']} e {dto.outro_usuario_id}")
 
         # Adicionar participantes se sala foi recém-criada
         participante1 = chat_participante_repo.obter_por_sala_e_usuario(sala.id, usuario_logado["id"])
@@ -240,6 +271,14 @@ async def enviar_mensagem(
     """
     Envia uma mensagem em uma sala.
     """
+    # Rate limiting
+    ip = obter_identificador_cliente(request)
+    if not chat_limiter.verificar(ip):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Você está enviando mensagens muito rápido. Aguarde um momento."
+        )
+
     try:
         # Validar DTO
         dto = EnviarMensagemDTO(sala_id=sala_id, mensagem=mensagem)
@@ -264,6 +303,7 @@ async def enviar_mensagem(
 
         # Inserir mensagem
         nova_mensagem = chat_mensagem_repo.inserir(dto.sala_id, usuario_id, dto.mensagem)
+        logger.info(f"Mensagem {nova_mensagem.id} enviada na sala {dto.sala_id} por usuário {usuario_id}")
 
         # Atualizar última atividade da sala
         chat_sala_repo.atualizar_ultima_atividade(dto.sala_id)

@@ -1,3 +1,24 @@
+"""
+Rotas administrativas para gerenciamento de categorias.
+
+PADRÃO DE REFERÊNCIA PARA NOVOS CRUDs:
+--------------------------------------
+Este módulo implementa o padrão oficial para CRUDs da aplicação.
+Ao criar novos CRUDs, siga este padrão:
+
+1. Rate Limiting: Protege contra abuso (10 req/min para admin)
+2. Validação via DTOs: Separados para Criar e Alterar
+3. Verificação de Duplicatas: Antes de inserir
+4. Logging Completo: Para auditoria
+5. Flash Messages: Feedback claro ao usuário
+6. Preservação de Dados: Em caso de erro de validação
+7. HTTP 303: Para redirects pós-POST
+8. Autenticação: Com perfis específicos
+9. Context Manager: Para operações de banco
+10. Docstrings: Em todas as funções
+
+Consulte docs/PARECER.md para análise detalhada de conformidade.
+"""
 from typing import Optional
 from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
@@ -17,7 +38,9 @@ from util.rate_limiter import RateLimiter, obter_identificador_cliente
 router = APIRouter(prefix="/admin/categorias")
 templates = criar_templates("templates/admin/categorias")
 
-# Rate limiter para operações admin
+# Rate limiter para operações administrativas
+# 10 requisições/minuto é adequado para operações administrativas
+# previne abuso sem impactar uso normal
 admin_categorias_limiter = RateLimiter(
     max_tentativas=10,  # 10 operações
     janela_minutos=1,   # por minuto

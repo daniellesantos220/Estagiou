@@ -14,6 +14,7 @@ from sql.chat_sala_sql import (
 )
 from util.db_util import get_connection
 from util.datetime_util import agora
+from util.logger_config import logger
 
 
 def _row_to_sala(row: Row) -> ChatSala:
@@ -45,6 +46,11 @@ def gerar_sala_id(usuario1_id: int, usuario2_id: int) -> str:
     """
     Gera ID único e determinístico para sala entre dois usuários.
 
+    DECISÃO ARQUITETURAL: Usa string em vez de INTEGER para primary key
+    porque o ID é composto de dois IDs de usuários. O formato determinístico
+    garante que gerar_sala_id(3, 7) == gerar_sala_id(7, 3), prevenindo
+    salas duplicadas entre os mesmos usuários.
+
     Sempre retorna o mesmo ID independente da ordem dos usuários.
 
     Examples:
@@ -74,7 +80,22 @@ def criar_ou_obter_sala(usuario1_id: int, usuario2_id: int) -> ChatSala:
 
     Returns:
         Objeto ChatSala (nova ou existente)
+
+    Raises:
+        ValueError: Se algum dos usuários não existir
     """
+    # Validar se os usuários existem
+    from repo import usuario_repo
+    usuario1 = usuario_repo.obter_por_id(usuario1_id)
+    if not usuario1:
+        logger.error(f"Tentativa de criar sala com usuário inexistente: {usuario1_id}")
+        raise ValueError(f"Usuário {usuario1_id} não encontrado")
+
+    usuario2 = usuario_repo.obter_por_id(usuario2_id)
+    if not usuario2:
+        logger.error(f"Tentativa de criar sala com usuário inexistente: {usuario2_id}")
+        raise ValueError(f"Usuário {usuario2_id} não encontrado")
+
     sala_id = gerar_sala_id(usuario1_id, usuario2_id)
 
     # Verificar se sala já existe
@@ -88,6 +109,8 @@ def criar_ou_obter_sala(usuario1_id: int, usuario2_id: int) -> ChatSala:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (sala_id, agora_timestamp, agora_timestamp))
+
+    logger.info(f"Sala {sala_id} criada entre usuários {usuario1_id} e {usuario2_id}")
 
     # Retornar sala criada
     return ChatSala(

@@ -10,6 +10,7 @@ from typing import Optional
 from model.chamado_interacao_model import ChamadoInteracao, TipoInteracao
 from sql.chamado_interacao_sql import *
 from util.db_util import get_connection
+from util.logger_config import logger
 
 
 def _row_to_interacao(row) -> ChamadoInteracao:
@@ -63,7 +64,24 @@ def inserir(interacao: ChamadoInteracao) -> Optional[int]:
 
     Returns:
         ID da interação inserida ou None em caso de erro
+
+    Raises:
+        ValueError: Se chamado_id ou usuario_id não existirem
     """
+    # Validar se o chamado existe
+    from repo import chamado_repo
+    chamado = chamado_repo.obter_por_id(interacao.chamado_id)
+    if not chamado:
+        logger.error(f"Tentativa de criar interação para chamado inexistente: {interacao.chamado_id}")
+        raise ValueError(f"Chamado {interacao.chamado_id} não encontrado")
+
+    # Validar se o usuário existe
+    from repo import usuario_repo
+    usuario = usuario_repo.obter_por_id(interacao.usuario_id)
+    if not usuario:
+        logger.error(f"Tentativa de criar interação com usuário inexistente: {interacao.usuario_id}")
+        raise ValueError(f"Usuário {interacao.usuario_id} não encontrado")
+
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
@@ -73,7 +91,12 @@ def inserir(interacao: ChamadoInteracao) -> Optional[int]:
             interacao.tipo.value,
             interacao.status_resultante
         ))
-        return cursor.lastrowid
+        interacao_id = cursor.lastrowid
+        logger.info(
+            f"Interação {interacao_id} criada no chamado {interacao.chamado_id} "
+            f"por usuário {interacao.usuario_id}"
+        )
+        return interacao_id
 
 
 def obter_por_chamado(chamado_id: int) -> list[ChamadoInteracao]:

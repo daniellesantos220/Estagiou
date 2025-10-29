@@ -168,18 +168,18 @@ class TestEscalacaoPrivilegios:
             status.HTTP_403_FORBIDDEN
         ]
 
-    def test_vendedor_nao_pode_acessar_backups(self, vendedor_autenticado):
+    def test_vendedor_nao_pode_acessar_backups(self, recrutador_autenticado):
         """Vendedor não deve acessar área de backups (apenas admin)"""
-        response = vendedor_autenticado.get("/admin/backups/listar", follow_redirects=False)
+        response = recrutador_autenticado.get("/admin/backups/listar", follow_redirects=False)
 
         assert response.status_code in [
             status.HTTP_303_SEE_OTHER,
             status.HTTP_403_FORBIDDEN
         ]
 
-    def test_vendedor_nao_pode_criar_backup(self, vendedor_autenticado):
+    def test_vendedor_nao_pode_criar_backup(self, recrutador_autenticado):
         """Vendedor não deve poder criar backups"""
-        response = vendedor_autenticado.post("/admin/backups/criar", follow_redirects=False)
+        response = recrutador_autenticado.post("/admin/backups/criar", follow_redirects=False)
 
         assert response.status_code in [
             status.HTTP_303_SEE_OTHER,

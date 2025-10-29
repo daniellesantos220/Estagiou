@@ -206,12 +206,12 @@ class TestSegurancaConfiguracoes:
         response = client.get("/admin/auditoria", follow_redirects=False)
         assert response.status_code == status.HTTP_303_SEE_OTHER
 
-    def test_vendedor_nao_acessa_tema(self, vendedor_autenticado):
+    def test_vendedor_nao_acessa_tema(self, recrutador_autenticado):
         """Vendedor não deve acessar temas"""
-        response = vendedor_autenticado.get("/admin/tema", follow_redirects=False)
+        response = recrutador_autenticado.get("/admin/tema", follow_redirects=False)
         assert response.status_code in [status.HTTP_303_SEE_OTHER, status.HTTP_403_FORBIDDEN]
 
-    def test_vendedor_nao_acessa_auditoria(self, vendedor_autenticado):
+    def test_vendedor_nao_acessa_auditoria(self, recrutador_autenticado):
         """Vendedor não deve acessar auditoria"""
-        response = vendedor_autenticado.get("/admin/auditoria", follow_redirects=False)
+        response = recrutador_autenticado.get("/admin/auditoria", follow_redirects=False)
         assert response.status_code in [status.HTTP_303_SEE_OTHER, status.HTTP_403_FORBIDDEN]

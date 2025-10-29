@@ -1,25 +1,5 @@
 """
 Rotas para o sistema de chat em tempo real.
-
-DECISÕES ARQUITETURAIS:
------------------------
-1. ID de Sala como String: Utiliza formato "menor_id_maior_id" (ex: "3_7")
-   para garantir unicidade determinística entre dois usuários, independente
-   da ordem. Isso evita salas duplicadas e elimina necessidade de queries
-   adicionais para verificação.
-
-2. Server-Sent Events (SSE): Mantém UMA conexão por usuário que recebe
-   mensagens de TODAS as suas salas, em vez de uma conexão por sala.
-   Mais eficiente e escalável.
-
-3. Rate Limiting: 30 requisições/minuto para prevenir spam e abuso do sistema
-   de mensagens em tempo real.
-
-4. Validação de Usuários: Valida existência de usuários antes de criar salas
-   para prevenir corrupção de dados e melhorar experiência do usuário.
-
-5. Exclusão de Admins da Busca: Administradores só podem ser contactados
-   via sistema de chamados, mantendo canal oficial de suporte.
 """
 import json
 import asyncio
@@ -36,17 +16,41 @@ from util.foto_util import obter_caminho_foto_usuario
 from util.datetime_util import agora
 from util.logger_config import logger
 from util.perfis import Perfil
-from util.rate_limiter import RateLimiter, obter_identificador_cliente
+from util.config import (
+    RATE_LIMIT_CHAT_MESSAGE_MAX,
+    RATE_LIMIT_CHAT_MESSAGE_MINUTOS,
+    RATE_LIMIT_CHAT_SALA_MAX,
+    RATE_LIMIT_CHAT_SALA_MINUTOS,
+    RATE_LIMIT_BUSCA_USUARIOS_MAX,
+    RATE_LIMIT_BUSCA_USUARIOS_MINUTOS,
+    RATE_LIMIT_CHAT_LISTAGEM_MAX,
+    RATE_LIMIT_CHAT_LISTAGEM_MINUTOS,
+)
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
-# Rate limiter para operações de chat
-# 30 requisições/minuto permite fluxo natural de conversa
-# mas previne spam e flood attacks
-chat_limiter = RateLimiter(
-    max_tentativas=30,
-    janela_minutos=1,
-    nome="chat",
+# Rate limiters
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
+
+chat_mensagem_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_CHAT_MESSAGE_MAX,
+    janela_minutos=RATE_LIMIT_CHAT_MESSAGE_MINUTOS,
+    nome="chat_mensagem",
+)
+chat_sala_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_CHAT_SALA_MAX,
+    janela_minutos=RATE_LIMIT_CHAT_SALA_MINUTOS,
+    nome="chat_sala",
+)
+busca_usuarios_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_BUSCA_USUARIOS_MAX,
+    janela_minutos=RATE_LIMIT_BUSCA_USUARIOS_MINUTOS,
+    nome="busca_usuarios",
+)
+chat_listagem_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_CHAT_LISTAGEM_MAX,
+    janela_minutos=RATE_LIMIT_CHAT_LISTAGEM_MINUTOS,
+    nome="chat_listagem",
 )
 
 
@@ -100,6 +104,15 @@ async def criar_ou_obter_sala(
     """
     Cria ou obtém uma sala de chat entre o usuário logado e outro usuário.
     """
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not chat_sala_limiter.verificar(ip):
+        logger.warning(f"Rate limit excedido para criação de sala de chat - IP: {ip}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Muitas tentativas de criação de salas. Aguarde {RATE_LIMIT_CHAT_SALA_MINUTOS} minuto(s)."
+        )
+
     try:
         # Validar DTO
         dto = CriarSalaDTO(outro_usuario_id=outro_usuario_id)
@@ -121,7 +134,6 @@ async def criar_ou_obter_sala(
 
         # Criar ou obter sala
         sala = chat_sala_repo.criar_ou_obter_sala(usuario_logado["id"], dto.outro_usuario_id)
-        logger.info(f"Sala {sala.id} criada/obtida entre usuários {usuario_logado['id']} e {dto.outro_usuario_id}")
 
         # Adicionar participantes se sala foi recém-criada
         participante1 = chat_participante_repo.obter_por_sala_e_usuario(sala.id, usuario_logado["id"])
@@ -155,6 +167,15 @@ async def listar_conversas(
     """
     Lista conversas do usuário (salas com última mensagem e contador de não lidas).
     """
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not chat_listagem_limiter.verificar(ip):
+        logger.warning(f"Rate limit excedido para listagem de conversas - IP: {ip}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Muitas requisições de listagem. Aguarde {RATE_LIMIT_CHAT_LISTAGEM_MINUTOS} minuto(s)."
+        )
+
     usuario_id = usuario_logado["id"]
 
     # Obter todas as participações do usuário
@@ -229,6 +250,15 @@ async def listar_mensagens(
     """
     Lista mensagens de uma sala específica com paginação.
     """
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not chat_listagem_limiter.verificar(ip):
+        logger.warning(f"Rate limit excedido para listagem de mensagens - IP: {ip}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Muitas requisições de listagem. Aguarde {RATE_LIMIT_CHAT_LISTAGEM_MINUTOS} minuto(s)."
+        )
+
     usuario_id = usuario_logado["id"]
 
     # Verificar se usuário participa da sala
@@ -271,12 +301,13 @@ async def enviar_mensagem(
     """
     Envia uma mensagem em uma sala.
     """
-    # Rate limiting
+    # Rate limiting por IP
     ip = obter_identificador_cliente(request)
-    if not chat_limiter.verificar(ip):
+    if not chat_mensagem_limiter.verificar(ip):
+        logger.warning(f"Rate limit excedido para envio de mensagem no chat - IP: {ip}")
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Você está enviando mensagens muito rápido. Aguarde um momento."
+            detail=f"Muitas mensagens enviadas. Aguarde {RATE_LIMIT_CHAT_MESSAGE_MINUTOS} minuto(s)."
         )
 
     try:
@@ -303,7 +334,6 @@ async def enviar_mensagem(
 
         # Inserir mensagem
         nova_mensagem = chat_mensagem_repo.inserir(dto.sala_id, usuario_id, dto.mensagem)
-        logger.info(f"Mensagem {nova_mensagem.id} enviada na sala {dto.sala_id} por usuário {usuario_id}")
 
         # Atualizar última atividade da sala
         chat_sala_repo.atualizar_ultima_atividade(dto.sala_id)
@@ -392,6 +422,15 @@ async def buscar_usuarios(
     Exclui o próprio usuário e administradores dos resultados.
     Administradores só podem ser contactados via sistema de chamados.
     """
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not busca_usuarios_limiter.verificar(ip):
+        logger.warning(f"Rate limit excedido para busca de usuários - IP: {ip}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Muitas buscas. Aguarde {RATE_LIMIT_BUSCA_USUARIOS_MINUTOS} minuto(s)."
+        )
+
     if len(q) < 2:
         return JSONResponse(
             status_code=status.HTTP_200_OK,

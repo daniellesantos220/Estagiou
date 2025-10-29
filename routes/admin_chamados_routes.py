@@ -25,18 +25,21 @@ from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.logger_config import logger
 from util.exceptions import FormValidationError
-from util.rate_limiter import RateLimiter, obter_identificador_cliente
+from util.config import (
+    RATE_LIMIT_ADMIN_CHAMADO_RESPONDER_MAX,
+    RATE_LIMIT_ADMIN_CHAMADO_RESPONDER_MINUTOS,
+)
 
 router = APIRouter(prefix="/admin/chamados")
 templates = criar_templates("templates/admin/chamados")
 
-# Rate limiter para operações administrativas de chamados
-# 10 requisições/minuto previne abuso em operações sensíveis
-# como fechar, reabrir e responder chamados
-admin_chamados_limiter = RateLimiter(
-    max_tentativas=10,
-    janela_minutos=1,
-    nome="admin_chamados",
+# Rate limiters
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
+
+admin_chamado_responder_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_ADMIN_CHAMADO_RESPONDER_MAX,
+    janela_minutos=RATE_LIMIT_ADMIN_CHAMADO_RESPONDER_MINUTOS,
+    nome="admin_chamado_responder",
 )
 
 
@@ -88,11 +91,15 @@ async def post_responder(
     """Salva resposta do administrador ao chamado e atualiza status."""
     assert usuario_logado is not None
 
-    # Rate limiting
+    # Rate limiting por IP
     ip = obter_identificador_cliente(request)
-    if not admin_chamados_limiter.verificar(ip):
-        informar_erro(request, "Muitas operações. Aguarde um momento.")
-        return RedirectResponse("/admin/chamados/listar", status_code=status.HTTP_303_SEE_OTHER)
+    if not admin_chamado_responder_limiter.verificar(ip):
+        informar_erro(
+            request,
+            f"Muitas tentativas de resposta. Aguarde {RATE_LIMIT_ADMIN_CHAMADO_RESPONDER_MINUTOS} minuto(s).",
+        )
+        logger.warning(f"Rate limit excedido para admin responder chamado - IP: {ip}")
+        return RedirectResponse(f"/admin/chamados/{id}/responder", status_code=status.HTTP_303_SEE_OTHER)
 
     chamado = chamado_repo.obter_por_id(id)
     if not chamado:
@@ -160,12 +167,6 @@ async def fechar(request: Request, id: int, usuario_logado: Optional[dict] = Non
     """Fecha um chamado alterando apenas o status, sem adicionar mensagem."""
     assert usuario_logado is not None
 
-    # Rate limiting
-    ip = obter_identificador_cliente(request)
-    if not admin_chamados_limiter.verificar(ip):
-        informar_erro(request, "Muitas operações. Aguarde um momento.")
-        return RedirectResponse("/admin/chamados/listar", status_code=status.HTTP_303_SEE_OTHER)
-
     chamado = chamado_repo.obter_por_id(id)
     if not chamado:
         informar_erro(request, "Chamado não encontrado")
@@ -191,12 +192,6 @@ async def fechar(request: Request, id: int, usuario_logado: Optional[dict] = Non
 async def reabrir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Reabre um chamado fechado, alterando status para 'Em Análise'."""
     assert usuario_logado is not None
-
-    # Rate limiting
-    ip = obter_identificador_cliente(request)
-    if not admin_chamados_limiter.verificar(ip):
-        informar_erro(request, "Muitas operações. Aguarde um momento.")
-        return RedirectResponse("/admin/chamados/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     chamado = chamado_repo.obter_por_id(id)
     if not chamado:

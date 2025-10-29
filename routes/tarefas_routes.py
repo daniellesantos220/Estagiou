@@ -11,17 +11,28 @@ from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
 from util.logger_config import logger
 from util.exceptions import FormValidationError
-from util.rate_limiter import RateLimiter, obter_identificador_cliente
+from util.config import (
+    RATE_LIMIT_TAREFA_CRIAR_MAX,
+    RATE_LIMIT_TAREFA_CRIAR_MINUTOS,
+    RATE_LIMIT_TAREFA_OPERACAO_MAX,
+    RATE_LIMIT_TAREFA_OPERACAO_MINUTOS,
+)
 
 router = APIRouter(prefix="/tarefas")
 templates = criar_templates("templates/tarefas")
 
-# Rate limiter para operações de tarefas
-# 20 requisições/minuto permite uso normal mas previne abuso
-tarefas_limiter = RateLimiter(
-    max_tentativas=20,
-    janela_minutos=1,
-    nome="tarefas",
+# Rate limiters
+from util.rate_limiter import RateLimiter, obter_identificador_cliente
+
+tarefa_criar_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_TAREFA_CRIAR_MAX,
+    janela_minutos=RATE_LIMIT_TAREFA_CRIAR_MINUTOS,
+    nome="tarefa_criar",
+)
+tarefa_operacao_limiter = RateLimiter(
+    max_tentativas=RATE_LIMIT_TAREFA_OPERACAO_MAX,
+    janela_minutos=RATE_LIMIT_TAREFA_OPERACAO_MINUTOS,
+    nome="tarefa_operacao",
 )
 
 @router.get("/listar")
@@ -52,11 +63,23 @@ async def post_cadastrar(
     """Cadastra uma nova tarefa"""
     assert usuario_logado is not None
 
-    # Rate limiting
+    # Rate limiting por IP
     ip = obter_identificador_cliente(request)
-    if not tarefas_limiter.verificar(ip):
-        informar_erro(request, "Muitas operações. Aguarde um momento.")
-        return RedirectResponse("/tarefas/listar", status_code=status.HTTP_303_SEE_OTHER)
+    if not tarefa_criar_limiter.verificar(ip):
+        informar_erro(
+            request,
+            f"Muitas tentativas de criação de tarefas. Aguarde {RATE_LIMIT_TAREFA_CRIAR_MINUTOS} minuto(s).",
+        )
+        logger.warning(f"Rate limit excedido para criação de tarefas - IP: {ip}")
+        return templates.TemplateResponse(
+            "tarefas/cadastrar.html",
+            {
+                "request": request,
+                "erros": {
+                    "geral": f"Muitas tentativas de criação de tarefas. Aguarde {RATE_LIMIT_TAREFA_CRIAR_MINUTOS} minuto(s)."
+                },
+            },
+        )
 
     # Armazena os dados do formulário para reexibição em caso de erro
     dados_formulario = {"titulo": titulo, "descricao": descricao}
@@ -93,6 +116,17 @@ async def post_cadastrar(
 async def concluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Marca tarefa como concluída"""
     assert usuario_logado is not None
+
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not tarefa_operacao_limiter.verificar(ip):
+        informar_erro(
+            request,
+            f"Muitas operações em tarefas. Aguarde {RATE_LIMIT_TAREFA_OPERACAO_MINUTOS} minuto(s).",
+        )
+        logger.warning(f"Rate limit excedido para operações em tarefas - IP: {ip}")
+        return RedirectResponse("/tarefas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
     tarefa = tarefa_repo.obter_por_id(id)
 
     # Verificar se tarefa existe e pertence ao usuário
@@ -111,6 +145,17 @@ async def concluir(request: Request, id: int, usuario_logado: Optional[dict] = N
 async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict] = None):
     """Exclui tarefa"""
     assert usuario_logado is not None
+
+    # Rate limiting por IP
+    ip = obter_identificador_cliente(request)
+    if not tarefa_operacao_limiter.verificar(ip):
+        informar_erro(
+            request,
+            f"Muitas operações em tarefas. Aguarde {RATE_LIMIT_TAREFA_OPERACAO_MINUTOS} minuto(s).",
+        )
+        logger.warning(f"Rate limit excedido para operações em tarefas - IP: {ip}")
+        return RedirectResponse("/tarefas/listar", status_code=status.HTTP_303_SEE_OTHER)
+
     tarefa = tarefa_repo.obter_por_id(id)
 
     # Verificar se tarefa existe e pertence ao usuário

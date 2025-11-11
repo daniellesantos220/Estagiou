@@ -119,8 +119,7 @@ def limpar_banco_dados():
                 'empresa',
                 'area',
                 'usuario',
-                'configuracao',
-                'categoria'
+                'configuracao'
             ]
 
             # Verificar quais tabelas existem

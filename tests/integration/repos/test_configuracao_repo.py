@@ -12,6 +12,7 @@ from unittest.mock import patch, MagicMock
 
 from model.configuracao_model import Configuracao
 from repo import configuracao_repo
+from util.db_util import obter_conexao
 
 
 class TestRowToConfiguracao:
@@ -60,7 +61,7 @@ class TestCriarTabela:
     def test_criar_tabela_sucesso(self, configuracao_db):
         """Deve criar tabela de configurações"""
         # Tabela já foi criada pela fixture, verificar estrutura
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='configuracao'")
             tabela = cursor.fetchone()
@@ -84,7 +85,7 @@ class TestObterPorChave:
     def test_obter_configuracao_existente(self, configuracao_db):
         """Deve retornar configuração existente"""
         # Inserir configuração de teste
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 "INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
@@ -118,7 +119,7 @@ class TestObterTodos:
     def test_obter_todas_configuracoes(self, configuracao_db):
         """Deve retornar todas as configurações"""
         # Inserir configurações de teste
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("chave_a", "valor_a"))
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("chave_b", "valor_b"))
@@ -134,7 +135,7 @@ class TestObterTodos:
 
     def test_obter_todos_retorna_objetos_configuracao(self, configuracao_db):
         """Deve retornar lista de objetos Configuracao"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("config", "val", "desc"))
@@ -149,7 +150,7 @@ class TestObterPorCategoria:
 
     def test_agrupar_por_categoria_na_descricao(self, configuracao_db):
         """Deve agrupar configurações pela categoria na descrição"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("config_a", "val_a", "[Rate Limit] Configuração A"))
@@ -167,7 +168,7 @@ class TestObterPorCategoria:
 
     def test_configuracao_sem_categoria_vai_para_outras(self, configuracao_db):
         """Configurações sem categoria ficam em 'Outras'"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("config_sem_cat", "valor", "Descrição sem categoria"))
@@ -181,7 +182,7 @@ class TestObterPorCategoria:
 
     def test_categoria_outras_vem_por_ultimo(self, configuracao_db):
         """A categoria 'Outras' deve aparecer por último"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("config_z", "val", "[Zebra] Categoria Z"))
@@ -202,7 +203,7 @@ class TestObterMultiplas:
 
     def test_obter_todas_chaves_existentes(self, configuracao_db):
         """Deve retornar todas as configurações solicitadas"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("chave_1", "valor_1"))
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("chave_2", "valor_2"))
@@ -216,7 +217,7 @@ class TestObterMultiplas:
 
     def test_obter_chave_inexistente_retorna_none(self, configuracao_db):
         """Deve retornar None para chaves inexistentes"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("existe", "valor"))
 
@@ -237,7 +238,7 @@ class TestAtualizar:
 
     def test_atualizar_configuracao_existente(self, configuracao_db):
         """Deve atualizar valor de configuração existente"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("chave_update", "antigo"))
 
@@ -255,7 +256,7 @@ class TestAtualizar:
 
     def test_atualizar_mantem_outros_campos(self, configuracao_db):
         """Atualização deve manter outros campos intactos"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("chave_desc", "antigo", "Descrição original"))
@@ -272,7 +273,7 @@ class TestAtualizarMultiplas:
 
     def test_atualizar_todas_configuracoes(self, configuracao_db):
         """Deve atualizar todas as configurações em lote"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("batch_1", "antigo_1"))
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("batch_2", "antigo_2"))
@@ -292,7 +293,7 @@ class TestAtualizarMultiplas:
 
     def test_atualizar_algumas_inexistentes(self, configuracao_db):
         """Deve retornar chaves não encontradas"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("existe_1", "antigo"))
 
@@ -317,7 +318,7 @@ class TestAtualizarMultiplas:
     def test_atualizar_multiplas_e_atomica(self, configuracao_db):
         """Atualização múltipla deve ser atômica (transação única)"""
         # Este teste verifica que todas as atualizações são feitas em uma transação
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("atomic_1", "antigo"))
             cursor.execute("INSERT INTO configuracao (chave, valor) VALUES (?, ?)", ("atomic_2", "antigo"))
@@ -352,7 +353,7 @@ class TestInserirOuAtualizar:
 
     def test_atualizar_configuracao_existente(self, configuracao_db):
         """Deve atualizar quando configuração já existe"""
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("existe_upsert", "antigo", "Desc antiga"))
@@ -398,7 +399,7 @@ class TestInserirPadrao:
     def test_nao_sobrescrever_existentes(self, configuracao_db):
         """Não deve sobrescrever configurações que já existem"""
         # Inserir com valor customizado
-        with configuracao_repo.obter_conexao() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO configuracao (chave, valor, descricao) VALUES (?, ?, ?)",
                            ("nome_sistema", "Meu Sistema Customizado", "Custom"))
@@ -529,7 +530,7 @@ def configuracao_db(tmp_path):
     db_path = tmp_path / "test_config.db"
 
     # Patch para usar o banco de teste
-    with patch.object(configuracao_repo, 'obter_conexao') as mock_obter:
+    with patch('util.db_util.obter_conexao') as mock_obter:
         # Criar conexão real para banco de teste
         def criar_conexao_teste():
             conn = sqlite3.connect(str(db_path))

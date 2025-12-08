@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS curtida (
     data_curtida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id_usuario, id_vaga),
     FOREIGN KEY (id_usuario) REFERENCES usuario(id),
-    FOREIGN KEY (id_vaga) REFERENCES vaga(id)
+    FOREIGN KEY (id_vaga) REFERENCES vaga(id_vaga)
 )
 """
 

@@ -34,4 +34,6 @@ class Perfil(EnumEntidade):
     ADMIN = "Administrador"
     CLIENTE = "Cliente"
     VENDEDOR = "Vendedor"
+    ESTUDANTE = "Estudante"
+    RECRUTADOR = "Recrutador"
     # FIM DOS PERFIS ############################################

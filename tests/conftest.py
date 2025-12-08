@@ -23,11 +23,27 @@ os.environ['LOG_LEVEL'] = 'ERROR'
 # ============================================================
 # Agora sim, importar o resto (db_util já lerá o valor correto)
 # ============================================================
+import asyncio
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
 from fastapi import status
 from typing import Optional
 from util.perfis import Perfil
+
+
+@pytest.fixture(scope="session")
+def event_loop():
+    """
+    Cria um event loop de escopo de sessão para testes async.
+
+    Isso evita conflitos entre o event loop do TestClient e os testes
+    marcados com @pytest.mark.asyncio quando executados em sequência.
+    """
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -36,8 +52,29 @@ def setup_test_database():
     Garante que o banco de teste está configurado e limpa ao final.
 
     O banco já foi configurado no nível de módulo (acima), esta fixture
-    apenas gerencia o cleanup ao final da sessão.
+    cria as tabelas necessárias e gerencia o cleanup ao final da sessão.
     """
+    # Criar todas as tabelas necessárias para os testes
+    from repo import (
+        usuario_repo, configuracao_repo, chamado_repo,
+        area_repo, empresa_repo, vaga_repo, candidatura_repo,
+        endereco_repo, avaliacao_repo, curtida_repo
+    )
+
+    # Tabelas do upstream
+    usuario_repo.criar_tabela()
+    configuracao_repo.criar_tabela()
+    chamado_repo.criar_tabela()
+
+    # Tabelas específicas do projeto Estagiou
+    area_repo.criar_tabela()
+    empresa_repo.criar_tabela()
+    vaga_repo.criar_tabela()
+    candidatura_repo.criar_tabela()
+    endereco_repo.criar_tabela()
+    avaliacao_repo.criar_tabela()
+    curtida_repo.criar_tabela()
+
     yield _TEST_DB_PATH
 
     # Limpar: remover arquivo de banco após todos os testes
@@ -132,7 +169,7 @@ def limpar_chat_manager():
 
 
 @pytest.fixture(scope="function", autouse=True)
-def limpar_banco_dados():
+def limpar_banco_dados(setup_test_database):
     """Limpa todas as tabelas do banco antes de cada teste para evitar interferência"""
     # Importar após configuração do banco de dados
     from util.db_util import obter_conexao
@@ -141,30 +178,58 @@ def limpar_banco_dados():
         """Limpa tabelas se elas existirem e reseta autoincrement"""
         with obter_conexao() as conn:
             cursor = conn.cursor()
-            # Verificar se tabelas existem antes de limpar
+
+            # Lista de todas as tabelas do projeto (ordem de exclusão respeitando FKs)
+            # Tabelas filhas primeiro, depois tabelas pai
+            todas_tabelas = [
+                # Tabelas de chat
+                'chat_mensagem',
+                'chat_participante',
+                'chat_sala',
+                # Tabelas específicas do projeto Estagiou
+                'avaliacao',
+                'curtida',
+                'candidatura',
+                'vaga',
+                'endereco',
+                'empresa',
+                'area',
+                # Tabelas do upstream
+                'chamado_interacao',
+                'chamado',
+                'usuario',
+                'configuracao'
+            ]
+
+            # Verificar quais tabelas existem
             cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' "
-                "AND name IN ('chamado', 'chamado_interacao', 'usuario', 'configuracao')"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
             )
             tabelas_existentes = [row[0] for row in cursor.fetchall()]
 
-            # Limpar apenas tabelas que existem (respeitando foreign keys)
-            # Limpar chamado_interacao antes de chamado (devido à FK)
-            if 'chamado_interacao' in tabelas_existentes:
-                cursor.execute("DELETE FROM chamado_interacao")
-            if 'chamado' in tabelas_existentes:
-                cursor.execute("DELETE FROM chamado")
-            if 'usuario' in tabelas_existentes:
-                cursor.execute("DELETE FROM usuario")
-            if 'configuracao' in tabelas_existentes:
-                cursor.execute("DELETE FROM configuracao")
+            # Desabilitar temporariamente as foreign keys para facilitar a limpeza
+            cursor.execute("PRAGMA foreign_keys = OFF")
+
+            # Limpar apenas tabelas que existem (na ordem correta para respeitar FKs)
+            for tabela in todas_tabelas:
+                if tabela in tabelas_existentes:
+                    try:
+                        cursor.execute(f"DELETE FROM {tabela}")
+                    except Exception:
+                        pass  # Ignora erros se a tabela não existe mais
 
             # Resetar autoincrement (limpar sqlite_sequence se existir)
-            cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence'"
-            )
-            if cursor.fetchone():
-                cursor.execute("DELETE FROM sqlite_sequence")
+            try:
+                cursor.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='sqlite_sequence'"
+                )
+                if cursor.fetchone():
+                    cursor.execute("DELETE FROM sqlite_sequence")
+            except Exception:
+                pass
+
+            # Reabilitar foreign keys
+            cursor.execute("PRAGMA foreign_keys = ON")
 
             conn.commit()
 
@@ -309,6 +374,17 @@ def vendedor_teste():
 
 
 @pytest.fixture
+def recrutador_teste():
+    """Dados de um recrutador de teste"""
+    return {
+        "nome": "Recrutador Teste",
+        "email": "recrutador@example.com",
+        "senha": "Recrutador@123",
+        "perfil": Perfil.RECRUTADOR.value
+    }
+
+
+@pytest.fixture
 def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
     """
     Fixture que retorna um cliente autenticado como vendedor
@@ -330,6 +406,33 @@ def vendedor_autenticado(client, criar_usuario, fazer_login, vendedor_teste):
 
     # Fazer login
     fazer_login(vendedor_teste["email"], vendedor_teste["senha"])
+
+    # Retornar cliente autenticado
+    return client
+
+
+@pytest.fixture
+def recrutador_autenticado(client, criar_usuario, fazer_login, recrutador_teste):
+    """
+    Fixture que retorna um cliente autenticado como recrutador
+    """
+    # Importar para manipular diretamente o banco
+    from repo import usuario_repo
+    from model.usuario_model import Usuario
+    from util.security import criar_hash_senha
+
+    # Criar recrutador diretamente no banco
+    recrutador = Usuario(
+        id=0,
+        nome=recrutador_teste["nome"],
+        email=recrutador_teste["email"],
+        senha=criar_hash_senha(recrutador_teste["senha"]),
+        perfil=Perfil.RECRUTADOR.value
+    )
+    usuario_repo.inserir(recrutador)
+
+    # Fazer login
+    fazer_login(recrutador_teste["email"], recrutador_teste["senha"])
 
     # Retornar cliente autenticado
     return client

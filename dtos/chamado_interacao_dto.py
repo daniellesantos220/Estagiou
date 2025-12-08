@@ -1,30 +1,14 @@
-from pydantic import BaseModel, field_validator
-from dtos.validators import validar_string_obrigatoria, validar_id_positivo
+from pydantic import BaseModel, Field, field_validator
+from dtos.validators import validar_string_obrigatoria
 
 
 class CriarInteracaoDTO(BaseModel):
-    """DTO para criar uma nova interação em um chamado."""
-    mensagem: str
+    """DTO para criação de interação/resposta em chamado."""
+
+    mensagem: str = Field(..., description="Texto da mensagem/resposta")
 
     _validar_mensagem = field_validator("mensagem")(
         validar_string_obrigatoria(
-            nome_campo="Mensagem",
-            tamanho_minimo=10,
-            tamanho_maximo=2000
-        )
-    )
-
-
-class AlterarInteracaoDTO(BaseModel):
-    """DTO para alterar uma interação existente."""
-    id: int
-    mensagem: str
-
-    _validar_id = field_validator("id")(validar_id_positivo("ID"))
-    _validar_mensagem = field_validator("mensagem")(
-        validar_string_obrigatoria(
-            nome_campo="Mensagem",
-            tamanho_minimo=10,
-            tamanho_maximo=2000
+            nome_campo="Mensagem", tamanho_minimo=10, tamanho_maximo=2000
         )
     )

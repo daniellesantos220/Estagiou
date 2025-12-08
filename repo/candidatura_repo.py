@@ -1,11 +1,11 @@
 from typing import Optional
 from model.candidatura_model import Candidatura
 from sql.candidatura_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao
 
 def criar_tabela() -> bool:
     """Cria a tabela de candidaturas se não existir."""
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
         return True
@@ -20,7 +20,7 @@ def inserir(candidatura: Candidatura) -> Optional[int]:
     Returns:
         ID da candidatura inserida ou None em caso de erro
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
             candidatura.id_vaga,
@@ -39,7 +39,7 @@ def alterar_status(id_candidatura: int, status: str) -> bool:
     Returns:
         True se a atualização foi bem-sucedida, False caso contrário
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR_STATUS, (status, id_candidatura))
         return cursor.rowcount > 0
@@ -54,7 +54,7 @@ def excluir(id_candidatura: int) -> bool:
     Returns:
         True se a exclusão foi bem-sucedida, False caso contrário
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id_candidatura,))
         return cursor.rowcount > 0
@@ -69,7 +69,7 @@ def obter_por_id(id_candidatura: int) -> Optional[Candidatura]:
     Returns:
         Objeto Candidatura ou None se não encontrado
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_ID, (id_candidatura,))
         row = cursor.fetchone()
@@ -93,7 +93,7 @@ def obter_por_vaga(id_vaga: int) -> list[Candidatura]:
     Returns:
         Lista de objetos Candidatura
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_VAGA, (id_vaga,))
         rows = cursor.fetchall()
@@ -118,7 +118,7 @@ def obter_por_candidato(id_candidato: int) -> list[Candidatura]:
     Returns:
         Lista de objetos Candidatura
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_CANDIDATO, (id_candidato,))
         rows = cursor.fetchall()
@@ -144,7 +144,7 @@ def verificar_candidatura_existente(id_vaga: int, id_candidato: int) -> bool:
     Returns:
         True se já existe candidatura, False caso contrário
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(VERIFICAR_CANDIDATURA_EXISTENTE, (id_vaga, id_candidato))
         return cursor.fetchone() is not None
@@ -159,7 +159,7 @@ def obter_quantidade_por_vaga(id_vaga: int) -> int:
     Returns:
         Número de candidaturas
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_VAGA, (id_vaga,))
         row = cursor.fetchone()
@@ -175,7 +175,7 @@ def obter_quantidade_por_candidato(id_candidato: int) -> int:
     Returns:
         Número de candidaturas
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_CANDIDATO, (id_candidato,))
         row = cursor.fetchone()
@@ -191,7 +191,7 @@ def obter_quantidade_por_status(status: str) -> int:
     Returns:
         Número de candidaturas com o status especificado
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_STATUS, (status,))
         row = cursor.fetchone()
@@ -208,7 +208,7 @@ def buscar_por_status_e_vaga(id_vaga: int, status: str) -> list[Candidatura]:
     Returns:
         Lista de objetos Candidatura
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(BUSCAR_POR_STATUS_E_VAGA, (id_vaga, status))
         rows = cursor.fetchall()
@@ -230,7 +230,7 @@ def obter_quantidade() -> int:
     Returns:
         Número de candidaturas
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE)
         row = cursor.fetchone()
@@ -246,7 +246,7 @@ def obter_por_status(status: str) -> list[Candidatura]:
     Returns:
         Lista de objetos Candidatura
     """
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_STATUS, (status,))
         rows = cursor.fetchall()

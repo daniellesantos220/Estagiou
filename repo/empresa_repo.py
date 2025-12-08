@@ -1,16 +1,16 @@
 from typing import Optional
 from model.empresa_model import Empresa
 from sql.empresa_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao
 
 def criar_tabela() -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
         return True
 
 def inserir(empresa: Empresa) -> Optional[int]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
             empresa.nome,
@@ -20,7 +20,7 @@ def inserir(empresa: Empresa) -> Optional[int]:
         return cursor.lastrowid
 
 def alterar(empresa: Empresa) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
             empresa.nome,
@@ -31,13 +31,13 @@ def alterar(empresa: Empresa) -> bool:
         return cursor.rowcount > 0
 
 def excluir(id_empresa: int) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id_empresa,))
         return cursor.rowcount > 0
 
 def obter_por_id(id_empresa: int) -> Optional[Empresa]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_ID, (id_empresa,))
         row = cursor.fetchone()
@@ -53,7 +53,7 @@ def obter_por_id(id_empresa: int) -> Optional[Empresa]:
         return None
 
 def obter_todas() -> list[Empresa]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_TODAS)
         rows = cursor.fetchall()
@@ -70,7 +70,7 @@ def obter_todas() -> list[Empresa]:
         ]
 
 def obter_por_cnpj(cnpj: str) -> Optional[Empresa]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_CNPJ, (cnpj,))
         row = cursor.fetchone()
@@ -86,14 +86,14 @@ def obter_por_cnpj(cnpj: str) -> Optional[Empresa]:
         return None
 
 def obter_quantidade() -> int:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE)
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
 
 def buscar(nome: Optional[str] = None, limit: int = 50, offset: int = 0) -> list[Empresa]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(BUSCAR, (nome, nome, limit, offset))
         rows = cursor.fetchall()

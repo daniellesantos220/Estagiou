@@ -1,16 +1,16 @@
 from typing import Optional
 from model.vaga_model import Vaga
 from sql.vaga_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao
 
 def criar_tabela() -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
         return True
 
 def inserir(vaga: Vaga) -> Optional[int]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
             vaga.id_area,
@@ -31,7 +31,7 @@ def inserir(vaga: Vaga) -> Optional[int]:
         return cursor.lastrowid
 
 def alterar(vaga: Vaga) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
             vaga.id_area,
@@ -50,19 +50,19 @@ def alterar(vaga: Vaga) -> bool:
         return cursor.rowcount > 0
 
 def alterar_status(id_vaga: int, status: str) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR_STATUS, (status, id_vaga))
         return cursor.rowcount > 0
 
 def excluir(id_vaga: int) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id_vaga,))
         return cursor.rowcount > 0
 
 def obter_por_id(id_vaga: int) -> Optional[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_ID, (id_vaga,))
         row = cursor.fetchone()
@@ -88,7 +88,7 @@ def obter_por_id(id_vaga: int) -> Optional[Vaga]:
         return None
 
 def obter_todas() -> list[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_TODAS)
         rows = cursor.fetchall()
@@ -115,7 +115,7 @@ def obter_todas() -> list[Vaga]:
         ]
 
 def obter_por_empresa(id_empresa: int) -> list[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_EMPRESA, (id_empresa,))
         rows = cursor.fetchall()
@@ -142,7 +142,7 @@ def obter_por_empresa(id_empresa: int) -> list[Vaga]:
         ]
 
 def obter_por_recrutador(id_recrutador: int) -> list[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_RECRUTADOR, (id_recrutador,))
         rows = cursor.fetchall()
@@ -177,7 +177,7 @@ def buscar(
     limit: int = 50,
     offset: int = 0
 ) -> list[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(BUSCAR, (
             id_area, id_area,
@@ -211,28 +211,28 @@ def buscar(
         ]
 
 def obter_quantidade() -> int:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE)
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
 
 def obter_quantidade_por_status(status: str) -> int:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_STATUS, (status,))
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
     
 def obter_quantidade_por_area(id_area: int) -> int:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_AREA, (id_area,))
         row = cursor.fetchone()
         return row["quantidade"] if row else 0
 
 def obter_vagas_abertas(limit: int = 50, offset: int = 0) -> list[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_VAGAS_ABERTAS, (limit, offset))
         rows = cursor.fetchall()
@@ -259,7 +259,7 @@ def obter_vagas_abertas(limit: int = 50, offset: int = 0) -> list[Vaga]:
         ]
 
 def obter_por_status(status: str) -> list[Vaga]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(
             "SELECT * FROM vaga WHERE status = ? ORDER BY data_cadastro DESC",
@@ -269,7 +269,7 @@ def obter_por_status(status: str) -> list[Vaga]:
         return [Vaga(**dict(row)) for row in rows]
 
 def atualizar_status(id_vaga: int, novo_status: str) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(
             "UPDATE vaga SET status = ? WHERE id_vaga = ?",
@@ -278,7 +278,7 @@ def atualizar_status(id_vaga: int, novo_status: str) -> bool:
         return cursor.rowcount > 0
 
 def registrar_motivo_reprovacao(id_vaga: int, motivo: str) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(
             "UPDATE vaga SET motivo_reprovacao = ? WHERE id_vaga = ?",
@@ -288,7 +288,7 @@ def registrar_motivo_reprovacao(id_vaga: int, motivo: str) -> bool:
 
 def contar_candidaturas(id_vaga: int) -> int:
     try:
-        with get_connection() as conn:
+        with obter_conexao() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT COUNT(*) as quantidade FROM candidatura WHERE id_vaga = ?",

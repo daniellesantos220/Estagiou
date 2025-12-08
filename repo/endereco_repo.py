@@ -1,16 +1,16 @@
 from typing import Optional
 from model.endereco_model import Endereco
 from sql.endereco_sql import *
-from util.db_util import get_connection
+from util.db_util import obter_conexao
 
 def criar_tabela() -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(CRIAR_TABELA)
         return True
 
 def inserir(endereco: Endereco) -> Optional[int]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
             endereco.id_usuario,
@@ -26,7 +26,7 @@ def inserir(endereco: Endereco) -> Optional[int]:
         return cursor.lastrowid
 
 def alterar(endereco: Endereco) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
             endereco.titulo,
@@ -42,13 +42,13 @@ def alterar(endereco: Endereco) -> bool:
         return cursor.rowcount > 0
 
 def excluir(id_endereco: int) -> bool:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(EXCLUIR, (id_endereco,))
         return cursor.rowcount > 0
 
 def obter_por_id(id_endereco: int) -> Optional[Endereco]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_ID, (id_endereco,))
         row = cursor.fetchone()
@@ -68,7 +68,7 @@ def obter_por_id(id_endereco: int) -> Optional[Endereco]:
         return None
 
 def obter_por_usuario(id_usuario: int) -> list[Endereco]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_POR_USUARIO, (id_usuario,))
         rows = cursor.fetchall()
@@ -89,7 +89,7 @@ def obter_por_usuario(id_usuario: int) -> list[Endereco]:
         ]
 
 def obter_todos() -> list[Endereco]:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_TODOS)
         rows = cursor.fetchall()
@@ -110,7 +110,7 @@ def obter_todos() -> list[Endereco]:
         ]
 
 def obter_quantidade() -> int:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE)
         row = cursor.fetchone()
@@ -118,7 +118,7 @@ def obter_quantidade() -> int:
     
 
 def obter_quantidade_por_usuario(id_usuario: int) -> int:
-    with get_connection() as conn:
+    with obter_conexao() as conn:
         cursor = conn.cursor()
         cursor.execute(OBTER_QUANTIDADE_POR_USUARIO, (id_usuario,))
         row = cursor.fetchone()

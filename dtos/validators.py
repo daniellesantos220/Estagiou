@@ -382,6 +382,93 @@ def validar_telefone_br(formatar: bool = False) -> Callable[[Any, Any], Any]:
     return validator
 
 
+def validar_telefone_br_opcional(formatar: bool = False) -> Callable[[Any, Any], Any]:
+    """
+    Valida telefone brasileiro opcional (permite vazio/None).
+
+    Formatos aceitos:
+    - Celular: (11) 91234-5678 ou 11912345678
+    - Fixo: (11) 1234-5678 ou 1112345678
+
+    Args:
+        formatar: Se deve retornar telefone formatado
+
+    Returns:
+        Função validadora para uso com field_validator
+    """
+
+    def validator(cls: Any, v: Any) -> Any:
+        # Permite valor vazio ou None
+        if v is None:
+            return None
+        if isinstance(v, str) and not v.strip():
+            return ""
+
+        # Remove caracteres não numéricos
+        telefone = re.sub(r"\D", "", v.strip())
+
+        # Se não tem dígitos, retorna vazio
+        if not telefone:
+            return ""
+
+        # Valida comprimento (10 dígitos para fixo, 11 para celular)
+        if len(telefone) not in [10, 11]:
+            raise ValueError("Telefone deve ter 10 ou 11 dígitos.")
+
+        # Valida DDD
+        ddd = int(telefone[:2])
+        if ddd < 11 or ddd > 99:
+            raise ValueError("DDD inválido.")
+
+        # Valida celular (deve começar com 9)
+        if len(telefone) == 11 and telefone[2] != "9":
+            raise ValueError("Número de celular deve começar com 9.")
+
+        if formatar:
+            if len(telefone) == 11:  # Celular
+                return f"({telefone[:2]}) {telefone[2:7]}-{telefone[7:]}"
+            else:  # Fixo
+                return f"({telefone[:2]}) {telefone[2:6]}-{telefone[6:]}"
+
+        return telefone
+
+    return validator
+
+
+def validar_cpf_simples(formatar: bool = False) -> Callable[[Any, Any], Any]:
+    """
+    Valida CPF brasileiro apenas pelo formato (11 dígitos).
+    NÃO valida dígitos verificadores.
+
+    Args:
+        formatar: Se deve retornar CPF formatado (XXX.XXX.XXX-XX)
+
+    Returns:
+        Função validadora para uso com field_validator
+    """
+
+    def validator(cls: Any, v: Any) -> Any:
+        if not v or not v.strip():
+            raise ValueError("CPF é obrigatório.")
+
+        # Remove caracteres não numéricos
+        cpf = re.sub(r"\D", "", v.strip())
+
+        if len(cpf) != 11:
+            raise ValueError("CPF deve conter 11 dígitos.")
+
+        # Verifica se todos os dígitos são iguais (ainda inválido)
+        if cpf == cpf[0] * 11:
+            raise ValueError("CPF inválido.")
+
+        if formatar:
+            return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
+
+        return cpf
+
+    return validator
+
+
 def validar_cep(formatar: bool = True) -> Callable[[Any, Any], Any]:
     """
     Valida CEP brasileiro.

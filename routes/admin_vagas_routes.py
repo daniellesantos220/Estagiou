@@ -78,7 +78,7 @@ async def post_aprovar(request: Request, id: int, usuario_logado: Optional[dict]
     sucesso = vaga_repo.atualizar_status(id, "aberta")
 
     if sucesso:
-        logger.info(f"Vaga {id} ('{vaga.titulo}') aprovada por admin {usuario_logado['id']}")
+        logger.info(f"Vaga {id} ('{vaga.titulo}') aprovada por admin {usuario_logado.id}")
         informar_sucesso(request, "Vaga aprovada com sucesso! Agora ela está visível publicamente.")
     else:
         logger.error(f"Erro ao aprovar vaga {id}")
@@ -102,7 +102,7 @@ async def post_suspender(request: Request, id: int, usuario_logado: Optional[dic
     sucesso = vaga_repo.atualizar_status(id, "suspensa")
 
     if sucesso:
-        logger.info(f"Vaga {id} ('{vaga.titulo}') suspensa por admin {usuario_logado['id']}")
+        logger.info(f"Vaga {id} ('{vaga.titulo}') suspensa por admin {usuario_logado.id}")
         informar_sucesso(request, "Vaga suspensa com sucesso!")
     else:
         logger.error(f"Erro ao suspender vaga {id}")
@@ -131,12 +131,12 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
             f"Considere suspender a vaga ao invés de excluí-la."
         )
         logger.warning(
-            f"Admin {usuario_logado['id']} tentou excluir vaga {id} com {quantidade_candidaturas} candidatura(s)"
+            f"Admin {usuario_logado.id} tentou excluir vaga {id} com {quantidade_candidaturas} candidatura(s)"
         )
         return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_303_SEE_OTHER)
 
     vaga_repo.excluir(id)
-    logger.info(f"Vaga {id} ('{vaga.titulo}') excluída por admin {usuario_logado['id']}")
+    logger.info(f"Vaga {id} ('{vaga.titulo}') excluída por admin {usuario_logado.id}")
     informar_sucesso(request, "Vaga excluída com sucesso!")
 
     return RedirectResponse("/admin/vagas/listar", status_code=status.HTTP_303_SEE_OTHER)

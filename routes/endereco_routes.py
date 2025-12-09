@@ -100,7 +100,7 @@ async def get_endereco(request: Request, usuario_logado: Optional[dict] = None):
     assert usuario_logado is not None
 
     # Buscar endereço do usuário (apenas 1 por regra de negócio)
-    enderecos = endereco_repo.obter_por_usuario(usuario_logado["id"])
+    enderecos = endereco_repo.obter_por_usuario(usuario_logado.id)
     endereco = enderecos[0] if enderecos else None
 
     dados = {}
@@ -161,14 +161,14 @@ async def post_endereco(
         )
 
         # Buscar endereço existente do usuário
-        enderecos = endereco_repo.obter_por_usuario(usuario_logado["id"])
+        enderecos = endereco_repo.obter_por_usuario(usuario_logado.id)
         endereco_existente = enderecos[0] if enderecos else None
 
         if endereco_existente:
             # Atualizar endereço existente
             endereco_atualizado = Endereco(
                 id_endereco=endereco_existente.id_endereco,
-                id_usuario=usuario_logado["id"],
+                id_usuario=usuario_logado.id,
                 titulo="Principal",
                 logradouro=dto.logradouro,
                 numero=dto.numero,
@@ -179,13 +179,13 @@ async def post_endereco(
                 cep=dto.cep,
             )
             endereco_repo.alterar(endereco_atualizado)
-            logger.info(f"Endereço {endereco_existente.id_endereco} atualizado pelo usuário {usuario_logado['id']}")
+            logger.info(f"Endereço {endereco_existente.id_endereco} atualizado pelo usuário {usuario_logado.id}")
             informar_sucesso(request, "Endereço atualizado com sucesso!")
         else:
             # Criar novo endereço
             novo_endereco = Endereco(
                 id_endereco=0,
-                id_usuario=usuario_logado["id"],
+                id_usuario=usuario_logado.id,
                 titulo="Principal",
                 logradouro=dto.logradouro,
                 numero=dto.numero,
@@ -196,7 +196,7 @@ async def post_endereco(
                 cep=dto.cep,
             )
             id_novo = endereco_repo.inserir(novo_endereco)
-            logger.info(f"Endereço {id_novo} criado para o usuário {usuario_logado['id']}")
+            logger.info(f"Endereço {id_novo} criado para o usuário {usuario_logado.id}")
             informar_sucesso(request, "Endereço cadastrado com sucesso!")
 
         return RedirectResponse(
@@ -205,7 +205,7 @@ async def post_endereco(
 
     except ValidationError as e:
         # Buscar endereço para reexibir no template
-        enderecos = endereco_repo.obter_por_usuario(usuario_logado["id"])
+        enderecos = endereco_repo.obter_por_usuario(usuario_logado.id)
         endereco_existente = enderecos[0] if enderecos else None
 
         raise ErroValidacaoFormulario(

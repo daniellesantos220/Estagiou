@@ -30,7 +30,7 @@ async def minhas_candidaturas(request: Request, usuario_logado: Optional[dict] =
     """Lista candidaturas do estudante logado"""
     assert usuario_logado is not None
 
-    candidaturas = candidatura_repo.obter_por_candidato_com_vaga(usuario_logado["id"])
+    candidaturas = candidatura_repo.obter_por_candidato_com_vaga(usuario_logado.id)
 
     return templates.TemplateResponse(
         "candidaturas/minhas.html",
@@ -56,7 +56,7 @@ async def candidatar(request: Request, id_vaga: int, usuario_logado: Optional[di
         return RedirectResponse(f"/vagas/{id_vaga}", status_code=status.HTTP_303_SEE_OTHER)
 
     # Verificar se já existe candidatura
-    ja_candidatou = candidatura_repo.verificar_candidatura_existente(id_vaga, usuario_logado["id"])
+    ja_candidatou = candidatura_repo.verificar_candidatura_existente(id_vaga, usuario_logado.id)
     if ja_candidatou:
         informar_erro(request, "Você já se candidatou a esta vaga")
         return RedirectResponse(f"/vagas/{id_vaga}", status_code=status.HTTP_303_SEE_OTHER)
@@ -65,13 +65,13 @@ async def candidatar(request: Request, id_vaga: int, usuario_logado: Optional[di
     candidatura = Candidatura(
         id_candidatura=0,
         id_vaga=id_vaga,
-        id_candidato=usuario_logado["id"],
+        id_candidato=usuario_logado.id,
         status="pendente"
     )
 
     try:
         id_candidatura = candidatura_repo.inserir(candidatura)
-        logger.info(f"Candidatura {id_candidatura} criada: estudante {usuario_logado['id']} -> vaga {id_vaga}")
+        logger.info(f"Candidatura {id_candidatura} criada: estudante {usuario_logado.id} -> vaga {id_vaga}")
         informar_sucesso(request, f"Candidatura realizada com sucesso! Boa sorte!")
     except Exception as e:
         logger.error(f"Erro ao criar candidatura: {e}")
@@ -93,7 +93,7 @@ async def cancelar_candidatura(request: Request, id_candidatura: int, usuario_lo
         return RedirectResponse("/candidaturas/minhas", status_code=status.HTTP_303_SEE_OTHER)
 
     # Verificar se a candidatura pertence ao estudante
-    if candidatura.id_candidato != usuario_logado["id"]:
+    if candidatura.id_candidato != usuario_logado.id:
         informar_erro(request, "Você não tem permissão para cancelar esta candidatura")
         return RedirectResponse("/candidaturas/minhas", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -106,7 +106,7 @@ async def cancelar_candidatura(request: Request, id_candidatura: int, usuario_lo
     sucesso = candidatura_repo.alterar_status(id_candidatura, "cancelado")
 
     if sucesso:
-        logger.info(f"Candidatura {id_candidatura} cancelada pelo estudante {usuario_logado['id']}")
+        logger.info(f"Candidatura {id_candidatura} cancelada pelo estudante {usuario_logado.id}")
         informar_sucesso(request, "Candidatura cancelada com sucesso!")
     else:
         informar_erro(request, "Erro ao cancelar candidatura")

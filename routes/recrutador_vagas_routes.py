@@ -33,7 +33,7 @@ async def listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista vagas do recrutador logado"""
     assert usuario_logado is not None
 
-    vagas = vaga_repo.obter_por_recrutador(usuario_logado["id"])
+    vagas = vaga_repo.obter_por_recrutador(usuario_logado.id)
 
     # Enriquecer vagas com dados de área e quantidade de candidaturas
     vagas_enriquecidas = []
@@ -103,7 +103,7 @@ async def post_cadastrar(
         # Validar com DTO
         dto = CriarVagaDTO(
             id_area=id_area,
-            id_recrutador=usuario_logado["id"],
+            id_recrutador=usuario_logado.id,
             titulo=titulo,
             descricao=descricao,
             numero_vagas=numero_vagas,
@@ -145,7 +145,7 @@ async def post_cadastrar(
         )
         id_nova_vaga = vaga_repo.inserir(vaga)
 
-        logger.info(f"Vaga '{dto.titulo}' (ID: {id_nova_vaga}) cadastrada por recrutador {usuario_logado['id']}")
+        logger.info(f"Vaga '{dto.titulo}' (ID: {id_nova_vaga}) cadastrada por recrutador {usuario_logado.id}")
         informar_sucesso(request, "Vaga cadastrada com sucesso!")
 
         return RedirectResponse(
@@ -177,7 +177,7 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
         )
 
     # Verificar se a vaga pertence ao recrutador
-    if vaga.id_recrutador != usuario_logado["id"]:
+    if vaga.id_recrutador != usuario_logado.id:
         informar_erro(request, "Você não tem permissão para editar esta vaga")
         return RedirectResponse(
             "/recrutador/vagas/listar", status_code=status.HTTP_303_SEE_OTHER
@@ -236,7 +236,7 @@ async def post_editar(
         )
 
     # Verificar se a vaga pertence ao recrutador
-    if vaga_atual.id_recrutador != usuario_logado["id"]:
+    if vaga_atual.id_recrutador != usuario_logado.id:
         informar_erro(request, "Você não tem permissão para editar esta vaga")
         return RedirectResponse(
             "/recrutador/vagas/listar", status_code=status.HTTP_303_SEE_OTHER
@@ -303,7 +303,7 @@ async def post_editar(
         )
         vaga_repo.alterar(vaga_atualizada)
 
-        logger.info(f"Vaga {id} ('{dto.titulo}') alterada por recrutador {usuario_logado['id']}")
+        logger.info(f"Vaga {id} ('{dto.titulo}') alterada por recrutador {usuario_logado.id}")
         informar_sucesso(request, "Vaga alterada com sucesso!")
 
         return RedirectResponse(
@@ -340,7 +340,7 @@ async def post_alterar_status(
         )
 
     # Verificar se a vaga pertence ao recrutador
-    if vaga.id_recrutador != usuario_logado["id"]:
+    if vaga.id_recrutador != usuario_logado.id:
         informar_erro(request, "Você não tem permissão para alterar esta vaga")
         return RedirectResponse(
             "/recrutador/vagas/listar", status_code=status.HTTP_303_SEE_OTHER
@@ -357,7 +357,7 @@ async def post_alterar_status(
 
     if sucesso:
         status_texto = "aberta" if novo_status == "aberta" else "fechada"
-        logger.info(f"Vaga {id} ('{vaga.titulo}') {status_texto} por recrutador {usuario_logado['id']}")
+        logger.info(f"Vaga {id} ('{vaga.titulo}') {status_texto} por recrutador {usuario_logado.id}")
         informar_sucesso(request, f"Vaga {status_texto} com sucesso!")
     else:
         informar_erro(request, "Erro ao alterar status da vaga")
@@ -382,7 +382,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         )
 
     # Verificar se a vaga pertence ao recrutador
-    if vaga.id_recrutador != usuario_logado["id"]:
+    if vaga.id_recrutador != usuario_logado.id:
         informar_erro(request, "Você não tem permissão para excluir esta vaga")
         return RedirectResponse(
             "/recrutador/vagas/listar", status_code=status.HTTP_303_SEE_OTHER
@@ -401,7 +401,7 @@ async def post_excluir(request: Request, id: int, usuario_logado: Optional[dict]
         )
 
     vaga_repo.excluir(id)
-    logger.info(f"Vaga {id} ('{vaga.titulo}') excluída por recrutador {usuario_logado['id']}")
+    logger.info(f"Vaga {id} ('{vaga.titulo}') excluída por recrutador {usuario_logado.id}")
     informar_sucesso(request, "Vaga excluída com sucesso!")
 
     return RedirectResponse(
@@ -424,7 +424,7 @@ async def listar_candidatos(request: Request, id: int, usuario_logado: Optional[
         )
 
     # Verificar se a vaga pertence ao recrutador
-    if vaga.id_recrutador != usuario_logado["id"]:
+    if vaga.id_recrutador != usuario_logado.id:
         informar_erro(request, "Você não tem permissão para ver candidatos desta vaga")
         return RedirectResponse(
             "/recrutador/vagas/listar", status_code=status.HTTP_303_SEE_OTHER

@@ -84,7 +84,7 @@ async def post_cadastrar(
         area = Area(id_area=0, nome=dto.nome, descricao=dto.descricao)
         area_repo.inserir(area)
 
-        logger.info(f"Área '{dto.nome}' cadastrada por admin {usuario_logado['id']}")
+        logger.info(f"Área '{dto.nome}' cadastrada por admin {usuario_logado.id}")
         informar_sucesso(request, "Área cadastrada com sucesso!")
 
         return RedirectResponse(
@@ -163,7 +163,7 @@ async def post_editar(
         area_repo.alterar(area_atualizada)
 
         logger.info(
-            f"Área {id} ('{dto.nome}') alterada por admin {usuario_logado['id']}"
+            f"Área {id} ('{dto.nome}') alterada por admin {usuario_logado.id}"
         )
         informar_sucesso(request, "Área alterada com sucesso!")
 
@@ -204,14 +204,14 @@ async def post_excluir(
             f"Não é possível excluir esta área pois existem {quantidade_vagas} vaga(s) vinculada(s) a ela",
         )
         logger.warning(
-            f"Admin {usuario_logado['id']} tentou excluir área {id} com {quantidade_vagas} vaga(s) vinculada(s)"
+            f"Admin {usuario_logado.id} tentou excluir área {id} com {quantidade_vagas} vaga(s) vinculada(s)"
         )
         return RedirectResponse(
             "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
         )
 
     area_repo.excluir(id)
-    logger.info(f"Área {id} ('{area.nome}') excluída por admin {usuario_logado['id']}")
+    logger.info(f"Área {id} ('{area.nome}') excluída por admin {usuario_logado.id}")
     informar_sucesso(request, "Área excluída com sucesso!")
 
     return RedirectResponse(

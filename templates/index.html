@@ -1,30 +1,71 @@
 {% extends "base_publica.html" %}
 
-{% block titulo %}Bem-vindo!{% endblock %}
+{% block titulo %}Encontre seu Estágio{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <div class="mb-5">
-    <div class="bg-primary text-white rounded-4 shadow-lg p-5 pb-3">
+    <div class="bg-primary text-white rounded-4 shadow-lg p-5">
         <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">
-                    Bem-vindo ao {{ APP_NAME }}
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-3">
+                    Encontre o estágio ideal para sua carreira
                 </h1>
                 <p class="lead mb-4">
-                    Uma plataforma completa e moderna para gerenciar suas atividades de forma simples e eficiente.
+                    Conectamos estudantes a empresas que buscam novos talentos.
+                    Candidate-se às melhores vagas de estágio da região.
                 </p>
                 <div class="d-flex gap-3 flex-column flex-sm-row">
-                    <a href="/cadastrar" class="btn btn-light btn-lg">
-                        <i class="bi bi-person-plus"></i> Criar Conta
+                    <a href="/vagas" class="btn btn-light btn-lg">
+                        <i class="bi bi-search"></i> Buscar Vagas
                     </a>
-                    <a href="/login" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-box-arrow-in-right"></i> Entrar
+                    <a href="/cadastrar" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-person-plus"></i> Criar Conta
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6 text-center mt-4 mt-lg-0">
-                <i class="bi bi-laptop fs-hero opacity-25"></i>
+            <div class="col-lg-5 text-center mt-4 mt-lg-0 d-none d-lg-block">
+                <i class="bi bi-mortarboard display-1 opacity-50"></i>
+                <i class="bi bi-arrow-right display-4 opacity-50 mx-3"></i>
+                <i class="bi bi-building display-1 opacity-50"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Como Funciona -->
+<div class="mb-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Como Funciona</h2>
+        <p class="text-muted">Em poucos passos você encontra sua oportunidade</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fs-4 fw-bold">1</span>
+                </div>
+                <h5>Crie seu Perfil</h5>
+                <p class="text-muted">Cadastre-se como estudante e preencha suas informações acadêmicas e profissionais.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fs-4 fw-bold">2</span>
+                </div>
+                <h5>Encontre Vagas</h5>
+                <p class="text-muted">Busque vagas por área de atuação, localização e modalidade de trabalho.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <span class="fs-4 fw-bold">3</span>
+                </div>
+                <h5>Candidate-se</h5>
+                <p class="text-muted">Envie sua candidatura com um clique e acompanhe o status pelo sistema.</p>
             </div>
         </div>
     </div>
@@ -32,8 +73,8 @@
 
 <!-- Vagas de Estágio Section -->
 <div class="mb-5" id="vagas">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold"><i class="bi bi-briefcase"></i> Vagas de Estágio</h2>
+    <div class="text-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-briefcase"></i> Vagas em Destaque</h2>
         <p class="text-muted">Confira as últimas oportunidades disponíveis</p>
     </div>
 
@@ -93,116 +134,86 @@
     {% endif %}
 </div>
 
-<!-- Recursos Section -->
-<div class="mb-5" id="recursos">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">Recursos Principais</h2>
-        <p class="text-muted">Tudo que você precisa em um só lugar</p>
-    </div>
-
+<!-- Seção para Estudantes e Empresas -->
+<div class="mb-5">
     <div class="row g-4">
-        <!-- Recurso 1 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <!-- Para Estudantes -->
+        <div class="col-md-6">
+            <div class="card h-100 border-primary">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-shield-check text-primary display-3"></i>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-mortarboard text-primary display-5 me-3"></i>
+                        <h4 class="mb-0">Para Estudantes</h4>
                     </div>
-                    <h5 class="card-title">Segurança</h5>
-                    <p class="card-text text-muted">
-                        Sistema seguro com autenticação robusta e criptografia de dados
-                    </p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Acesso a diversas vagas de estágio</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Candidatura simplificada</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Acompanhamento das suas candidaturas</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Perfil profissional completo</li>
+                    </ul>
+                    <a href="/cadastrar" class="btn btn-primary">
+                        <i class="bi bi-person-plus"></i> Cadastrar como Estudante
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Recurso 2 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
+        <!-- Para Empresas -->
+        <div class="col-md-6">
+            <div class="card h-100 border-success">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-person-circle text-info display-3"></i>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-building text-success display-5 me-3"></i>
+                        <h4 class="mb-0">Para Empresas</h4>
                     </div>
-                    <h5 class="card-title">Perfil Personalizável</h5>
-                    <p class="card-text text-muted">
-                        Personalize seu perfil com foto e informações pessoais
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recurso 4 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
-                <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-speedometer2 text-warning display-3"></i>
-                    </div>
-                    <h5 class="card-title">Rápido e Responsivo</h5>
-                    <p class="card-text text-muted">
-                        Interface moderna que funciona em qualquer dispositivo
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recurso 5 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
-                <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-bell text-danger display-3"></i>
-                    </div>
-                    <h5 class="card-title">Notificações</h5>
-                    <p class="card-text text-muted">
-                        Receba alertas e notificações sobre suas atividades
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recurso 6 -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm shadow-hover text-center">
-                <div class="card-body p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-gear text-secondary display-3"></i>
-                    </div>
-                    <h5 class="card-title">Configurável</h5>
-                    <p class="card-text text-muted">
-                        Ajuste o sistema de acordo com suas preferências
-                    </p>
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Publique vagas de estágio</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Receba candidaturas qualificadas</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Gerencie seus processos seletivos</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Encontre talentos da região</li>
+                    </ul>
+                    <a href="/cadastrar" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Cadastrar como Recrutador
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- CTA Section -->
+<!-- Estatísticas (números fictícios para demonstração) -->
 <div class="mb-5">
-    <div class="card bg-primary text-white shadow-lg shadow-hover">
-        <div class="card-body text-center p-5">
-            <h2 class="fw-bold mb-4">Pronto para começar?</h2>
-            <p class="lead mb-4">
-                Crie sua conta gratuitamente e comece a usar agora mesmo!
-            </p>
-            <div class="d-flex justify-content-center gap-3 flex-column flex-sm-row">
-                <a href="/cadastrar" class="btn btn-light btn-lg">
-                    <i class="bi bi-person-plus"></i> Criar Conta Grátis
-                </a>
-                <a href="/login" class="btn btn-outline-light btn-lg">
-                    <i class="bi bi-box-arrow-in-right"></i> Já tenho conta
-                </a>
+    <div class="bg-light rounded-4 p-5">
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <i class="bi bi-briefcase text-primary display-5"></i>
+                <h3 class="fw-bold mt-2 mb-0">{{ total_vagas if total_vagas is defined else '50+' }}</h3>
+                <p class="text-muted mb-0">Vagas Disponíveis</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <i class="bi bi-building text-success display-5"></i>
+                <h3 class="fw-bold mt-2 mb-0">{{ total_empresas if total_empresas is defined else '20+' }}</h3>
+                <p class="text-muted mb-0">Empresas Parceiras</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <i class="bi bi-people text-info display-5"></i>
+                <h3 class="fw-bold mt-2 mb-0">{{ total_estudantes if total_estudantes is defined else '100+' }}</h3>
+                <p class="text-muted mb-0">Estudantes Cadastrados</p>
+            </div>
+            <div class="col-6 col-md-3">
+                <i class="bi bi-hand-thumbs-up text-warning display-5"></i>
+                <h3 class="fw-bold mt-2 mb-0">{{ total_contratados if total_contratados is defined else '30+' }}</h3>
+                <p class="text-muted mb-0">Contratações</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- FAQ Section (Opcional) -->
+<!-- FAQ Section -->
 <div class="mb-5">
-    <div class="text-center mb-5">
+    <div class="text-center mb-4">
         <h2 class="fw-bold">Perguntas Frequentes</h2>
-        <p class="text-muted">Tire suas dúvidas sobre o sistema</p>
+        <p class="text-muted">Tire suas dúvidas sobre estágios</p>
     </div>
 
     <div class="row">
@@ -212,13 +223,13 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            Como criar uma conta?
+                            Quem pode se candidatar às vagas?
                         </button>
                     </h2>
                     <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Basta clicar em "Criar Conta" no menu superior, preencher seus dados e confirmar.
-                            O processo é rápido e gratuito!
+                            Estudantes matriculados em instituições de ensino superior ou técnico podem se cadastrar
+                            e se candidatar às vagas de estágio. Basta criar uma conta como estudante e manter seu perfil atualizado.
                         </div>
                     </div>
                 </div>
@@ -226,15 +237,15 @@
                 <!-- FAQ 2 -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#faq2">
-                            O sistema é seguro?
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            Como funciona o processo de candidatura?
                         </button>
                     </h2>
                     <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Sim! Utilizamos criptografia de ponta e as melhores práticas de segurança para
-                            proteger seus dados. Suas senhas são armazenadas de forma segura e nunca são expostas.
+                            Após criar sua conta e completar seu perfil, você pode buscar vagas por área ou palavra-chave.
+                            Ao encontrar uma vaga interessante, basta clicar em "Quero Me Candidatar". A empresa receberá
+                            sua candidatura e entrará em contato caso seu perfil seja selecionado.
                         </div>
                     </div>
                 </div>
@@ -242,15 +253,15 @@
                 <!-- FAQ 3 -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#faq3">
-                            Posso alterar meus dados depois?
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            Sou recrutador. Como cadastro uma vaga?
                         </button>
                     </h2>
                     <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Claro! Você pode atualizar seus dados pessoais, foto de perfil e senha a qualquer
-                            momento através da seção "Meu Perfil" no seu dashboard.
+                            Crie uma conta como recrutador e acesse a seção "Minhas Vagas". Lá você pode cadastrar novas vagas
+                            informando título, descrição, requisitos, benefícios, salário e outras informações. As vagas ficam
+                            disponíveis para os estudantes assim que publicadas.
                         </div>
                     </div>
                 </div>
@@ -258,18 +269,52 @@
                 <!-- FAQ 4 -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#faq4">
-                            Esqueci minha senha, o que fazer?
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            A plataforma é gratuita?
                         </button>
                     </h2>
                     <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                         <div class="accordion-body">
-                            Na tela de login, clique em "Esqueci minha senha" e siga as instruções.
-                            Você receberá um e-mail com um link para redefinir sua senha.
+                            Sim! O cadastro e uso da plataforma é totalmente gratuito tanto para estudantes quanto para
+                            recrutadores. Nosso objetivo é conectar talentos a oportunidades de forma simples e acessível.
                         </div>
                     </div>
                 </div>
+
+                <!-- FAQ 5 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                            Posso cancelar minha candidatura?
+                        </button>
+                    </h2>
+                    <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sim. Na seção "Minhas Candidaturas" você pode visualizar todas as vagas às quais se candidatou
+                            e cancelar a candidatura a qualquer momento, caso mude de ideia.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Final -->
+<div class="mb-5">
+    <div class="card bg-primary text-white shadow-lg">
+        <div class="card-body text-center p-5">
+            <h2 class="fw-bold mb-3">Comece sua jornada profissional hoje!</h2>
+            <p class="lead mb-4">
+                Milhares de estudantes já encontraram seu estágio ideal através da nossa plataforma.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-column flex-sm-row">
+                <a href="/vagas" class="btn btn-light btn-lg">
+                    <i class="bi bi-search"></i> Explorar Vagas
+                </a>
+                <a href="/cadastrar" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-person-plus"></i> Criar Conta Grátis
+                </a>
             </div>
         </div>
     </div>

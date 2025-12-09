@@ -457,10 +457,6 @@ def validar_cpf_simples(formatar: bool = False) -> Callable[[Any, Any], Any]:
         if len(cpf) != 11:
             raise ValueError("CPF deve conter 11 dígitos.")
 
-        # Verifica se todos os dígitos são iguais (ainda inválido)
-        if cpf == cpf[0] * 11:
-            raise ValueError("CPF inválido.")
-
         if formatar:
             return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
 

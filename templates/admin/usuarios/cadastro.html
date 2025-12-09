@@ -32,9 +32,28 @@
                             {{ field(name='nome', label='Nome Completo', type='text', required=true) }}
                         </div>
 
-                        <div class="col-12 mb-3">
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='data_nascimento', label='Data de Nascimento', type='date', required=true) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='numero_documento', label='CPF', type='text', required=true,
+                            attributes={'maxlength': 14, 'placeholder': '000.000.000-00', 'data-mask': 'cpf'}) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='telefone', label='Telefone', type='tel', required=true,
+                            attributes={'maxlength': 15, 'placeholder': '(00) 00000-0000', 'data-mask': 'phone'}) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
                             {{ field(name='email', label='Email', type='email', required=true) }}
-                        </div>                        
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='confirmado', label='Usuário Confirmado', type='checkbox',
+                            help_text='Marque para ativar o usuário imediatamente') }}
+                        </div>
 
                         <div class="col-md-6 mb-3 mb-md-0">
                             {{ field(name='senha', label='Senha', type='password', required=true,

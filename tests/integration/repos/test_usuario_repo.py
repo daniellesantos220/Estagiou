@@ -7,6 +7,7 @@ Testa as operações CRUD e funções auxiliares do usuario_repo.
 import pytest
 from datetime import timedelta
 
+from datetime import date
 from repo import usuario_repo
 from model.usuario_model import Usuario
 from util.security import criar_hash_senha
@@ -25,6 +26,10 @@ class TestUsuarioRepoInserir:
             email="inserir@example.com",
             senha=criar_hash_senha("Senha@123"),
             perfil=Perfil.ESTUDANTE.value,
+            data_nascimento=date(2000, 5, 15),
+            numero_documento="52998224725",
+            telefone="11912345678",
+            confirmado=False,
         )
 
         usuario_id = usuario_repo.inserir(usuario)
@@ -63,6 +68,29 @@ class TestUsuarioRepoInserir:
         assert usuario_id is not None
         usuario_salvo = usuario_repo.obter_por_id(usuario_id)
         assert usuario_salvo.perfil == Perfil.ADMIN.value
+
+    def test_inserir_usuario_com_novos_campos(self):
+        """Deve inserir usuário com todos os novos campos."""
+        usuario = Usuario(
+            id=0,
+            nome="Teste Novos Campos",
+            email="novos_campos@example.com",
+            senha=criar_hash_senha("Senha@123"),
+            perfil=Perfil.ESTUDANTE.value,
+            data_nascimento=date(1995, 8, 20),
+            numero_documento="52998224725",
+            telefone="11987654321",
+            confirmado=True,
+        )
+
+        usuario_id = usuario_repo.inserir(usuario)
+
+        assert usuario_id is not None
+        usuario_salvo = usuario_repo.obter_por_id(usuario_id)
+        assert usuario_salvo.data_nascimento == date(1995, 8, 20)
+        assert usuario_salvo.numero_documento == "52998224725"
+        assert usuario_salvo.telefone == "11987654321"
+        assert usuario_salvo.confirmado is True
 
 
 class TestUsuarioRepoObterPorId:

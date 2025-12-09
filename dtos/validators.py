@@ -760,6 +760,51 @@ def validar_data(
     return validator
 
 
+def validar_data_nascimento(
+    idade_minima: int = 14,
+    idade_maxima: int = 120,
+) -> Callable[[Any, Any], Any]:
+    """
+    Valida data de nascimento com verificação de idade.
+
+    Args:
+        idade_minima: Idade mínima permitida (padrão: 14 para estágio)
+        idade_maxima: Idade máxima permitida (padrão: 120)
+
+    Returns:
+        Função validadora para uso com field_validator
+        Retorna string da data validada no formato YYYY-MM-DD
+    """
+
+    def validator(cls: Any, v: Any) -> Any:
+        if not v or not v.strip():
+            raise ValueError("Data de nascimento é obrigatória.")
+
+        try:
+            data_nasc = datetime.strptime(v.strip(), "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Data de nascimento inválida. Use o formato: AAAA-MM-DD.")
+
+        hoje = datetime.now()
+
+        if data_nasc > hoje:
+            raise ValueError("Data de nascimento não pode ser no futuro.")
+
+        idade = hoje.year - data_nasc.year - (
+            (hoje.month, hoje.day) < (data_nasc.month, data_nasc.day)
+        )
+
+        if idade < idade_minima:
+            raise ValueError(f"Idade mínima é {idade_minima} anos.")
+
+        if idade > idade_maxima:
+            raise ValueError("Data de nascimento inválida.")
+
+        return v.strip()
+
+    return validator
+
+
 def validar_url(requer_protocolo: bool = True) -> Callable[[Any, Any], Any]:
     """
     Valida URL.

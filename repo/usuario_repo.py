@@ -38,6 +38,10 @@ def _row_to_usuario(row: sqlite3.Row) -> Usuario:
         email=row["email"],
         senha=row["senha"],
         perfil=row["perfil"],
+        data_nascimento=row["data_nascimento"] if "data_nascimento" in row.keys() else None,
+        numero_documento=row["numero_documento"] if "numero_documento" in row.keys() else None,
+        telefone=row["telefone"] if "telefone" in row.keys() else None,
+        confirmado=bool(row["confirmado"]) if "confirmado" in row.keys() else False,
         token_redefinicao=row["token_redefinicao"] if "token_redefinicao" in row.keys() else None,
         data_token=row["data_token"] if "data_token" in row.keys() else None,
         data_cadastro=row["data_cadastro"] if "data_cadastro" in row.keys() else None,
@@ -57,9 +61,13 @@ def inserir(usuario: Usuario) -> Optional[int]:
         cursor = conn.cursor()
         cursor.execute(INSERIR, (
             usuario.nome,
+            usuario.data_nascimento,
             usuario.email,
+            usuario.numero_documento,
+            usuario.telefone,
             usuario.senha,
-            usuario.perfil
+            usuario.perfil,
+            1 if usuario.confirmado else 0
         ))
         usuario_id = cursor.lastrowid
 
@@ -75,8 +83,12 @@ def alterar(usuario: Usuario) -> bool:
         cursor = conn.cursor()
         cursor.execute(ALTERAR, (
             usuario.nome,
+            usuario.data_nascimento,
             usuario.email,
+            usuario.numero_documento,
+            usuario.telefone,
             usuario.perfil,
+            1 if usuario.confirmado else 0,
             usuario.id
         ))
         return cursor.rowcount > 0

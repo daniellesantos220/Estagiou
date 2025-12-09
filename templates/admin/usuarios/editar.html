@@ -33,9 +33,32 @@
                             value=dados.nome) }}
                         </div>
 
-                        <div class="col-12 mb-3">
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='data_nascimento', label='Data de Nascimento', type='date', required=true,
+                            value=dados.data_nascimento) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='numero_documento', label='CPF', type='text', required=true,
+                            value=dados.numero_documento,
+                            attributes={'maxlength': 14, 'placeholder': '000.000.000-00', 'data-mask': 'cpf'}) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='telefone', label='Telefone', type='tel', required=true,
+                            value=dados.telefone,
+                            attributes={'maxlength': 15, 'placeholder': '(00) 00000-0000', 'data-mask': 'phone'}) }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
                             {{ field(name='email', label='Email', type='email', required=true,
                             value=dados.email) }}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='confirmado', label='Usuário Confirmado', type='checkbox',
+                            checked=dados.confirmado,
+                            help_text='Marque para ativar o usuário') }}
                         </div>
 
                         <div class="col-12">

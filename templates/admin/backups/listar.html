@@ -23,6 +23,7 @@
                             <tr>
                                 <th scope="col">Nome do Arquivo</th>
                                 <th scope="col">Tamanho</th>
+                                <th scope="col">Tipo</th>
                                 <th scope="col">Data de Criação</th>
                                 <th scope="col" class="text-center">Ações</th>
                             </tr>
@@ -32,30 +33,37 @@
                             <tr>
                                 <td>
                                     <i class="bi bi-file-earmark-zip"></i>
-                                    {{ backup.nome }}
+                                    {{ backup.nome_arquivo }}
                                 </td>
-                                <td>{{ backup.tamanho }}</td>
-                                <td>{{ backup.data_criacao }}</td>
+                                <td>{{ backup.tamanho_formatado }}</td>
+                                <td>
+                                    {% if backup.tipo == "automático" %}
+                                    <span class="badge bg-secondary">Automático</span>
+                                    {% else %}
+                                    <span class="badge bg-primary">Manual</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ backup.data_criacao.strftime('%d/%m/%Y %H:%M:%S') }}</td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="/admin/backups/download/{{ backup.nome }}"
+                                        <a href="/admin/backups/download/{{ backup.nome_arquivo }}"
                                             class="btn btn-outline-primary"
                                             title="Download"
-                                            aria-label="Download backup {{ backup.nome }}">
+                                            aria-label="Download backup {{ backup.nome_arquivo }}">
                                             <i class="bi bi-download"></i>
                                         </a>
                                         <button type="button"
                                             class="btn btn-outline-warning"
                                             title="Restaurar"
-                                            onclick="restaurarBackup('{{ backup.nome }}')"
-                                            aria-label="Restaurar backup {{ backup.nome }}">
+                                            onclick="restaurarBackup('{{ backup.nome_arquivo }}')"
+                                            aria-label="Restaurar backup {{ backup.nome_arquivo }}">
                                             <i class="bi bi-arrow-clockwise"></i>
                                         </button>
                                         <button type="button"
                                             class="btn btn-outline-danger"
                                             title="Excluir"
-                                            onclick="excluirBackup('{{ backup.nome }}')"
-                                            aria-label="Excluir backup {{ backup.nome }}">
+                                            onclick="excluirBackup('{{ backup.nome_arquivo }}')"
+                                            aria-label="Excluir backup {{ backup.nome_arquivo }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>

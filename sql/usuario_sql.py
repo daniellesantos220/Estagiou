@@ -2,9 +2,13 @@ CRIAR_TABELA = """
 CREATE TABLE IF NOT EXISTS usuario (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
+    data_nascimento DATE,
     email TEXT UNIQUE NOT NULL,
+    numero_documento TEXT,
+    telefone TEXT,
     senha TEXT NOT NULL,
     perfil TEXT NOT NULL,
+    confirmado INTEGER DEFAULT 0,
     token_redefinicao TEXT,
     data_token TIMESTAMP,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -13,13 +17,14 @@ CREATE TABLE IF NOT EXISTS usuario (
 """
 
 INSERIR = """
-INSERT INTO usuario (nome, email, senha, perfil)
-VALUES (?, ?, ?, ?)
+INSERT INTO usuario (nome, data_nascimento, email, numero_documento, telefone, senha, perfil, confirmado)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 ALTERAR = """
 UPDATE usuario
-SET nome = ?, email = ?, perfil = ?, data_atualizacao = CURRENT_TIMESTAMP
+SET nome = ?, data_nascimento = ?, email = ?, numero_documento = ?, telefone = ?,
+    perfil = ?, confirmado = ?, data_atualizacao = CURRENT_TIMESTAMP
 WHERE id = ?
 """
 
@@ -63,8 +68,8 @@ ORDER BY nome
 """
 
 BUSCAR_POR_TERMO = """
-SELECT id, nome, email, senha, perfil,
-       token_redefinicao, data_token,
+SELECT id, nome, data_nascimento, email, numero_documento, telefone, senha, perfil,
+       confirmado, token_redefinicao, data_token,
        data_cadastro[timestamp], data_atualizacao[timestamp]
 FROM usuario
 WHERE (LOWER(nome) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?))

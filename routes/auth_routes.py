@@ -232,7 +232,10 @@ async def post_cadastrar(
     request: Request,
     perfil: str = Form(),
     nome: str = Form(),
+    data_nascimento: str = Form(),
     email: str = Form(),
+    numero_documento: str = Form(),
+    telefone: str = Form(),
     senha: str = Form(),
     confirmar_senha: str = Form(),
 ):
@@ -249,13 +252,23 @@ async def post_cadastrar(
             return RedirectResponse("/cadastrar", status_code=status.HTTP_303_SEE_OTHER)
 
         # Armazena os dados do formulário para reexibição em caso de erro
-        dados_formulario = {"perfil": perfil, "nome": nome, "email": email}
+        dados_formulario = {
+            "perfil": perfil,
+            "nome": nome,
+            "data_nascimento": data_nascimento,
+            "email": email,
+            "numero_documento": numero_documento,
+            "telefone": telefone,
+        }
 
         # Validar dados com DTO
         dto = CadastroDTO(
             perfil=perfil,
             nome=nome,
+            data_nascimento=data_nascimento,
             email=email,
+            numero_documento=numero_documento,
+            telefone=telefone,
             senha=senha,
             confirmar_senha=confirmar_senha,
         )
@@ -272,9 +285,13 @@ async def post_cadastrar(
         usuario = Usuario(
             id=0,
             nome=dto.nome,
+            data_nascimento=dto.data_nascimento,
             email=dto.email,
+            numero_documento=dto.numero_documento,
+            telefone=dto.telefone,
             senha=criar_hash_senha(dto.senha),
             perfil=dto.perfil,
+            confirmado=False,
         )
 
         # Inserir no banco

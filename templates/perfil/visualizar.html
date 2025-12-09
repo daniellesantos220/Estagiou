@@ -18,6 +18,29 @@
                 <p class="text-muted mb-3">
                     <i class="bi bi-envelope"></i> {{ usuario.email }}
                 </p>
+                <div class="row justify-content-center mb-3">
+                    {% if usuario.data_nascimento %}
+                    <div class="col-auto">
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-calendar-heart"></i> {{ usuario.data_nascimento|data_br }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    {% if usuario.numero_documento %}
+                    <div class="col-auto">
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-person-vcard"></i> {{ usuario.numero_documento }}
+                        </p>
+                    </div>
+                    {% endif %}
+                    {% if usuario.telefone %}
+                    <div class="col-auto">
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-telephone"></i> {{ usuario.telefone }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
                 <p class="mb-3">
                     <span
                         class="badge bg-{% if usuario.perfil == 'Administrador' %}danger{% else %}info{% endif %} px-3 py-2">

@@ -5,15 +5,24 @@ from dtos.validators import (
     validar_nome_pessoa,
     validar_string_obrigatoria,
     validar_senhas_coincidem,
+    validar_data_nascimento,
+    validar_cpf,
+    validar_telefone_br,
 )
 
 
 class EditarPerfilDTO(BaseModel):
     nome: str = Field(..., description="Nome completo do usuário")
+    data_nascimento: str = Field(..., description="Data de nascimento")
     email: str = Field(..., description="E-mail do usuário")
+    numero_documento: str = Field(..., description="CPF do usuário")
+    telefone: str = Field(..., description="Telefone do usuário")
 
     _validar_nome = field_validator("nome")(validar_nome_pessoa(min_palavras=2))
+    _validar_data_nascimento = field_validator("data_nascimento")(validar_data_nascimento())
     _validar_email = field_validator("email")(validar_email())
+    _validar_cpf = field_validator("numero_documento")(validar_cpf())
+    _validar_telefone = field_validator("telefone")(validar_telefone_br())
 
 
 class AlterarSenhaDTO(BaseModel):

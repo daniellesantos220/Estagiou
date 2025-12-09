@@ -160,7 +160,10 @@ async def get_editar_perfil(
 async def post_editar_perfil(
     request: Request,
     nome: str = Form(),
+    data_nascimento: str = Form(),
     email: str = Form(),
+    numero_documento: str = Form(),
+    telefone: str = Form(),
     usuario_logado: Optional[UsuarioLogado] = None,
 ):
     """Processar edição de dados do perfil"""
@@ -178,10 +181,22 @@ async def post_editar_perfil(
         return usuario
 
     # Armazenar dados do formulário para reexibição em caso de erro
-    dados_formulario: dict = {"nome": nome, "email": email}
+    dados_formulario: dict = {
+        "nome": nome,
+        "data_nascimento": data_nascimento,
+        "email": email,
+        "numero_documento": numero_documento,
+        "telefone": telefone,
+    }
     try:
         # Validar com DTO
-        dto = EditarPerfilDTO(nome=nome, email=email)
+        dto = EditarPerfilDTO(
+            nome=nome,
+            data_nascimento=data_nascimento,
+            email=email,
+            numero_documento=numero_documento,
+            telefone=telefone,
+        )
 
         # Verificar se o e-mail já está em uso por outro usuário
         disponivel, mensagem_erro = verificar_email_disponivel(
@@ -201,7 +216,10 @@ async def post_editar_perfil(
 
         # Atualizar dados
         usuario.nome = dto.nome
+        usuario.data_nascimento = dto.data_nascimento
         usuario.email = dto.email
+        usuario.numero_documento = dto.numero_documento
+        usuario.telefone = dto.telefone
 
         # Salvar no banco
         if usuario_repo.alterar(usuario):

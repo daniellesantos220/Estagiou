@@ -29,6 +29,7 @@ from dtos.validators import (
     validar_extensao_arquivo,
     validar_tamanho_arquivo,
     validar_data,
+    validar_data_nascimento,
     validar_url,
     validar_tipo,
 )
@@ -1043,6 +1044,90 @@ class TestValidarData:
         with pytest.raises(ValueError) as exc_info:
             Modelo(data="2025-01-01")
         assert "anterior" in str(exc_info.value).lower()
+
+
+class TestValidarDataNascimento:
+    """Testes para validar_data_nascimento"""
+
+    def test_data_nascimento_valida(self):
+        """Data de nascimento válida deve passar"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento())
+
+        modelo = Modelo(data_nascimento="2000-05-15")
+        assert modelo.data_nascimento == "2000-05-15"
+
+    def test_data_nascimento_vazia_falha(self):
+        """Data de nascimento vazia deve falhar"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento())
+
+        with pytest.raises(ValueError) as exc_info:
+            Modelo(data_nascimento="")
+        assert "obrigatória" in str(exc_info.value).lower()
+
+    def test_data_nascimento_formato_invalido_falha(self):
+        """Data com formato inválido deve falhar"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento())
+
+        with pytest.raises(ValueError) as exc_info:
+            Modelo(data_nascimento="15/05/2000")
+        assert "formato" in str(exc_info.value).lower()
+
+    def test_data_nascimento_idade_minima_falha(self):
+        """Pessoa menor que idade mínima deve falhar"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento(idade_minima=18))
+
+        # Data de alguém com 10 anos
+        from datetime import datetime, timedelta
+        data_10_anos = (datetime.now() - timedelta(days=10*365)).strftime("%Y-%m-%d")
+
+        with pytest.raises(ValueError) as exc_info:
+            Modelo(data_nascimento=data_10_anos)
+        assert "mínima" in str(exc_info.value).lower()
+
+    def test_data_nascimento_idade_minima_14_padrao(self):
+        """Idade mínima padrão é 14 anos (estágio)"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento())
+
+        # Data de alguém com 13 anos
+        from datetime import datetime, timedelta
+        data_13_anos = (datetime.now() - timedelta(days=13*365)).strftime("%Y-%m-%d")
+
+        with pytest.raises(ValueError) as exc_info:
+            Modelo(data_nascimento=data_13_anos)
+        assert "14 anos" in str(exc_info.value).lower()
+
+    def test_data_nascimento_futura_falha(self):
+        """Data de nascimento no futuro deve falhar"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento())
+
+        from datetime import datetime, timedelta
+        data_futura = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%d")
+
+        with pytest.raises(ValueError) as exc_info:
+            Modelo(data_nascimento=data_futura)
+        assert "futuro" in str(exc_info.value).lower()
+
+    def test_data_nascimento_muito_antiga_falha(self):
+        """Data de nascimento muito antiga deve falhar"""
+        class Modelo(BaseModel):
+            data_nascimento: str
+            _validar = field_validator('data_nascimento')(validar_data_nascimento(idade_maxima=120))
+
+        with pytest.raises(ValueError) as exc_info:
+            Modelo(data_nascimento="1800-01-01")
+        assert "inválida" in str(exc_info.value).lower()
 
 
 class TestValidarUrl:

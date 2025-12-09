@@ -22,8 +22,8 @@
 
                             <div class="col-12 mb-3">
                                 {{ field(name='perfil', type='radio', radio_style='buttons', required=true,
-                                options={'Cliente': 'Cliente', 'Vendedor': 'Vendedor'},
-                                radio_icons={'Cliente': 'bi-cart3', 'Vendedor': 'bi-shop'}) }}
+                                options={'Estudante': 'Estudante', 'Recrutador': 'Recrutador'},
+                                radio_icons={'Estudante': 'bi-cart3', 'Recrutador': 'bi-shop'}) }}
                             </div>
 
                             <div class="col-12 mb-3">
@@ -44,10 +44,11 @@
                             <div class="col-12 col-lg-6 mb-1">
                                 {{ field(name='confirmar_senha', label='Confirmar Senha', type='password',
                                 required=true,
-                                append_icon='bi-eye', append_button_onclick="alternarVisibilidadeSenha('confirmar_senha')",
+                                append_icon='bi-eye',
+                                append_button_onclick="alternarVisibilidadeSenha('confirmar_senha')",
                                 attributes={'minlength': 8}) }}
                             </div>
-                            
+
                             <div class="col-12 mb-0">
                                 {% set show_special = true %}
                                 {% include 'components/indicador_senha.html' %}

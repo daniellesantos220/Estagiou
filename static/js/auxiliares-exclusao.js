@@ -159,7 +159,7 @@ function excluirUsuario(id, nome, email, perfil, urlBase = '/admin/usuarios') {
     let corBadge = 'info';
     if (perfil === 'Administrador') {
         corBadge = 'danger';
-    } else if (perfil === 'Vendedor') {
+    } else if (perfil === 'Recrutador') {
         corBadge = 'warning text-dark';
     }
 

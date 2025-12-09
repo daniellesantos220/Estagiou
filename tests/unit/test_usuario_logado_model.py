@@ -21,21 +21,18 @@ class TestUsuarioLogadoInstanciacao:
             id=1,
             nome="João Silva",
             email="joao@teste.com",
-            perfil=Perfil.CLIENTE.value
+            perfil=Perfil.ESTUDANTE.value,
         )
 
         assert usuario.id == 1
         assert usuario.nome == "João Silva"
         assert usuario.email == "joao@teste.com"
-        assert usuario.perfil == "Cliente"
+        assert usuario.perfil == "Estudante"
 
     def test_usuario_logado_imutavel(self):
         """UsuarioLogado deve ser imutável (frozen=True)"""
         usuario = UsuarioLogado(
-            id=1,
-            nome="João",
-            email="joao@teste.com",
-            perfil=Perfil.CLIENTE.value
+            id=1, nome="João", email="joao@teste.com", perfil=Perfil.ESTUDANTE.value
         )
 
         with pytest.raises(AttributeError):
@@ -48,109 +45,100 @@ class TestIsAdmin:
     def test_admin_retorna_true(self):
         """Admin deve retornar True"""
         admin = UsuarioLogado(
-            id=1,
-            nome="Admin",
-            email="admin@teste.com",
-            perfil=Perfil.ADMIN.value
+            id=1, nome="Admin", email="admin@teste.com", perfil=Perfil.ADMIN.value
         )
 
         assert admin.is_admin() is True
 
-    def test_cliente_retorna_false(self):
-        """Cliente não deve ser admin"""
-        cliente = UsuarioLogado(
+    def test_estudante_retorna_false(self):
+        """Estudante não deve ser admin"""
+        estudante = UsuarioLogado(
             id=1,
-            nome="Cliente",
-            email="cliente@teste.com",
-            perfil=Perfil.CLIENTE.value
+            nome="Estudante",
+            email="estudante@teste.com",
+            perfil=Perfil.ESTUDANTE.value,
         )
 
-        assert cliente.is_admin() is False
+        assert estudante.is_admin() is False
 
-    def test_vendedor_retorna_false(self):
-        """Vendedor não deve ser admin"""
-        vendedor = UsuarioLogado(
+    def test_recrutador_retorna_false(self):
+        """Recrutador não deve ser admin"""
+        recrutador = UsuarioLogado(
             id=1,
-            nome="Vendedor",
-            email="vendedor@teste.com",
-            perfil=Perfil.VENDEDOR.value
+            nome="Recrutador",
+            email="recrutador@teste.com",
+            perfil=Perfil.RECRUTADOR.value,
         )
 
-        assert vendedor.is_admin() is False
+        assert recrutador.is_admin() is False
 
 
-class TestIsCliente:
-    """Testes para o método is_cliente()"""
+class TestIsEstudante:
+    """Testes para o método is_estudante()"""
 
-    def test_cliente_retorna_true(self):
-        """Cliente deve retornar True"""
-        cliente = UsuarioLogado(
+    def test_estudante_retorna_true(self):
+        """Estudante deve retornar True"""
+        estudante = UsuarioLogado(
             id=1,
-            nome="Cliente",
-            email="cliente@teste.com",
-            perfil=Perfil.CLIENTE.value
+            nome="Estudante",
+            email="estudante@teste.com",
+            perfil=Perfil.ESTUDANTE.value,
         )
 
-        assert cliente.is_cliente() is True
+        assert estudante.is_estudante() is True
 
     def test_admin_retorna_false(self):
-        """Admin não deve ser cliente"""
+        """Admin não deve ser estudante"""
         admin = UsuarioLogado(
-            id=1,
-            nome="Admin",
-            email="admin@teste.com",
-            perfil=Perfil.ADMIN.value
+            id=1, nome="Admin", email="admin@teste.com", perfil=Perfil.ADMIN.value
         )
 
-        assert admin.is_cliente() is False
+        assert admin.is_estudante() is False
 
-    def test_vendedor_retorna_false(self):
-        """Vendedor não deve ser cliente"""
-        vendedor = UsuarioLogado(
+    def test_recrutador_retorna_false(self):
+        """Recrutador não deve ser estudante"""
+        recrutador = UsuarioLogado(
             id=1,
-            nome="Vendedor",
-            email="vendedor@teste.com",
-            perfil=Perfil.VENDEDOR.value
+            nome="Recrutador",
+            email="recrutador@teste.com",
+            perfil=Perfil.RECRUTADOR.value,
         )
 
-        assert vendedor.is_cliente() is False
+        assert recrutador.is_estudante() is False
 
 
-class TestIsVendedor:
-    """Testes para o método is_vendedor()"""
+class TestIsRecrutador:
+    """Testes para o método is_recrutador()"""
 
-    def test_vendedor_retorna_true(self):
-        """Vendedor deve retornar True"""
-        vendedor = UsuarioLogado(
+    def test_recrutador_retorna_true(self):
+        """Recrutador deve retornar True"""
+        recrutador = UsuarioLogado(
             id=1,
-            nome="Vendedor",
-            email="vendedor@teste.com",
-            perfil=Perfil.VENDEDOR.value
+            nome="Recrutador",
+            email="recrutador@teste.com",
+            perfil=Perfil.RECRUTADOR.value,
         )
 
-        assert vendedor.is_vendedor() is True
+        assert recrutador.is_recrutador() is True
 
     def test_admin_retorna_false(self):
-        """Admin não deve ser vendedor"""
+        """Admin não deve ser recrutador"""
         admin = UsuarioLogado(
-            id=1,
-            nome="Admin",
-            email="admin@teste.com",
-            perfil=Perfil.ADMIN.value
+            id=1, nome="Admin", email="admin@teste.com", perfil=Perfil.ADMIN.value
         )
 
-        assert admin.is_vendedor() is False
+        assert admin.is_recrutador() is False
 
-    def test_cliente_retorna_false(self):
-        """Cliente não deve ser vendedor"""
-        cliente = UsuarioLogado(
+    def test_estudante_retorna_false(self):
+        """Estudante não deve ser recrutador"""
+        estudante = UsuarioLogado(
             id=1,
-            nome="Cliente",
-            email="cliente@teste.com",
-            perfil=Perfil.CLIENTE.value
+            nome="Estudante",
+            email="estudante@teste.com",
+            perfil=Perfil.ESTUDANTE.value,
         )
 
-        assert cliente.is_vendedor() is False
+        assert estudante.is_recrutador() is False
 
 
 class TestTemPerfil:
@@ -159,54 +147,49 @@ class TestTemPerfil:
     def test_tem_perfil_unico(self):
         """Deve retornar True quando tem o perfil"""
         admin = UsuarioLogado(
-            id=1,
-            nome="Admin",
-            email="admin@teste.com",
-            perfil=Perfil.ADMIN.value
+            id=1, nome="Admin", email="admin@teste.com", perfil=Perfil.ADMIN.value
         )
 
         assert admin.tem_perfil(Perfil.ADMIN.value) is True
 
     def test_nao_tem_perfil(self):
         """Deve retornar False quando não tem o perfil"""
-        cliente = UsuarioLogado(
+        estudante = UsuarioLogado(
             id=1,
-            nome="Cliente",
-            email="cliente@teste.com",
-            perfil=Perfil.CLIENTE.value
+            nome="Estudante",
+            email="estudante@teste.com",
+            perfil=Perfil.ESTUDANTE.value,
         )
 
-        assert cliente.tem_perfil(Perfil.ADMIN.value) is False
+        assert estudante.tem_perfil(Perfil.ADMIN.value) is False
 
     def test_tem_perfil_multiplos(self):
         """Deve retornar True quando tem um dos perfis"""
-        vendedor = UsuarioLogado(
+        recrutador = UsuarioLogado(
             id=1,
-            nome="Vendedor",
-            email="vendedor@teste.com",
-            perfil=Perfil.VENDEDOR.value
+            nome="Recrutador",
+            email="recrutador@teste.com",
+            perfil=Perfil.RECRUTADOR.value,
         )
 
-        # Vendedor está na lista
-        assert vendedor.tem_perfil(
-            Perfil.ADMIN.value,
-            Perfil.VENDEDOR.value
-        ) is True
+        # Recrutador está na lista
+        assert (
+            recrutador.tem_perfil(Perfil.ADMIN.value, Perfil.RECRUTADOR.value) is True
+        )
 
     def test_nao_tem_nenhum_perfil(self):
         """Deve retornar False quando não tem nenhum dos perfis"""
-        cliente = UsuarioLogado(
+        estudante = UsuarioLogado(
             id=1,
-            nome="Cliente",
-            email="cliente@teste.com",
-            perfil=Perfil.CLIENTE.value
+            nome="Estudante",
+            email="estudante@teste.com",
+            perfil=Perfil.ESTUDANTE.value,
         )
 
-        # Cliente não é admin nem vendedor
-        assert cliente.tem_perfil(
-            Perfil.ADMIN.value,
-            Perfil.VENDEDOR.value
-        ) is False
+        # Estudante não é admin nem recrutador
+        assert (
+            estudante.tem_perfil(Perfil.ADMIN.value, Perfil.RECRUTADOR.value) is False
+        )
 
 
 class TestToDict:
@@ -215,10 +198,7 @@ class TestToDict:
     def test_converte_para_dict(self):
         """Deve converter para dicionário"""
         usuario = UsuarioLogado(
-            id=42,
-            nome="Teste",
-            email="teste@email.com",
-            perfil="Cliente"
+            id=42, nome="Teste", email="teste@email.com", perfil="Estudante"
         )
 
         resultado = usuario.to_dict()
@@ -227,7 +207,7 @@ class TestToDict:
             "id": 42,
             "nome": "Teste",
             "email": "teste@email.com",
-            "perfil": "Cliente"
+            "perfil": "Estudante",
         }
 
 
@@ -240,7 +220,7 @@ class TestFromDict:
             "id": 1,
             "nome": "João",
             "email": "joao@email.com",
-            "perfil": "Cliente"
+            "perfil": "Estudante",
         }
 
         usuario = UsuarioLogado.from_dict(dados)
@@ -249,7 +229,7 @@ class TestFromDict:
         assert usuario.id == 1
         assert usuario.nome == "João"
         assert usuario.email == "joao@email.com"
-        assert usuario.perfil == "Cliente"
+        assert usuario.perfil == "Estudante"
 
     def test_retorna_none_para_none(self):
         """Deve retornar None quando data é None"""
@@ -275,7 +255,7 @@ class TestFromDict:
         dados_incompletos = {
             "id": 1,
             "nome": "João",
-            "email": "joao@email.com"
+            "email": "joao@email.com",
             # falta perfil
         }
 
@@ -295,11 +275,11 @@ class TestFromUsuario:
         usuario_mock.id = 123
         usuario_mock.nome = "Maria"
         usuario_mock.email = "maria@email.com"
-        usuario_mock.perfil = "Vendedor"
+        usuario_mock.perfil = "Recrutador"
 
         usuario_logado = UsuarioLogado.from_usuario(usuario_mock)
 
         assert usuario_logado.id == 123
         assert usuario_logado.nome == "Maria"
         assert usuario_logado.email == "maria@email.com"
-        assert usuario_logado.perfil == "Vendedor"
+        assert usuario_logado.perfil == "Recrutador"

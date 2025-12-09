@@ -2,6 +2,7 @@
 Testes para o repositório de candidaturas (candidatura_repo).
 Cobre operações CRUD, validações e integridade de dados.
 """
+
 import pytest
 from model.candidatura_model import Candidatura
 from model.vaga_model import Vaga
@@ -24,8 +25,10 @@ def area_candidatura_teste():
 def empresa_candidatura_teste():
     """Cria uma empresa de teste para candidaturas"""
     empresa = Empresa(
-        id_empresa=0, nome="Tech Corp Candidatura",
-        cnpj="12.345.678/0001-90", descricao=""
+        id_empresa=0,
+        nome="Tech Corp Candidatura",
+        cnpj="12.345.678/0001-90",
+        descricao="",
     )
     return empresa_repo.inserir(empresa)
 
@@ -34,10 +37,11 @@ def empresa_candidatura_teste():
 def recrutador_candidatura_teste():
     """Cria um recrutador de teste para candidaturas"""
     usuario = Usuario(
-        id=0, nome="Recrutador Candidatura",
+        id=0,
+        nome="Recrutador Candidatura",
         email="rec_candidatura@test.com",
         senha=criar_hash_senha("senha"),
-        perfil=Perfil.RECRUTADOR.value
+        perfil=Perfil.RECRUTADOR.value,
     )
     return usuario_repo.inserir(usuario)
 
@@ -46,22 +50,31 @@ def recrutador_candidatura_teste():
 def candidato_candidatura_teste():
     """Cria um candidato de teste"""
     usuario = Usuario(
-        id=0, nome="Candidato Teste",
+        id=0,
+        nome="Candidato Teste",
         email="candidato_candidatura@test.com",
         senha=criar_hash_senha("senha"),
-        perfil=Perfil.CLIENTE.value
+        perfil=Perfil.ESTUDANTE.value,
     )
     return usuario_repo.inserir(usuario)
 
 
 @pytest.fixture
-def vaga_candidatura_teste(area_candidatura_teste, empresa_candidatura_teste, recrutador_candidatura_teste):
+def vaga_candidatura_teste(
+    area_candidatura_teste, empresa_candidatura_teste, recrutador_candidatura_teste
+):
     """Cria uma vaga de teste para candidaturas"""
     vaga = Vaga(
-        id_vaga=0, id_area=area_candidatura_teste, id_empresa=empresa_candidatura_teste,
-        id_recrutador=recrutador_candidatura_teste, status_vaga="aberta",
-        titulo="Vaga Candidatura Teste", descricao="Descrição teste",
-        numero_vagas=1, salario=3000.0, data_cadastro=""
+        id_vaga=0,
+        id_area=area_candidatura_teste,
+        id_empresa=empresa_candidatura_teste,
+        id_recrutador=recrutador_candidatura_teste,
+        status_vaga="aberta",
+        titulo="Vaga Candidatura Teste",
+        descricao="Descrição teste",
+        numero_vagas=1,
+        salario=3000.0,
+        data_cadastro="",
     )
     return vaga_repo.inserir(vaga)
 
@@ -78,14 +91,16 @@ class TestCriarTabela:
 class TestInserir:
     """Testes para inserção de candidaturas"""
 
-    def test_inserir_candidatura(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_inserir_candidatura(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve inserir candidatura com sucesso"""
         candidatura = Candidatura(
             id_candidatura=0,
             id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
             data_candidatura="",
-            status="pendente"
+            status="pendente",
         )
 
         id_candidatura = candidatura_repo.inserir(candidatura)
@@ -99,10 +114,11 @@ class TestInserir:
         candidatos = []
         for i in range(3):
             usuario = Usuario(
-                id=0, nome=f"Candidato Multi {i}",
+                id=0,
+                nome=f"Candidato Multi {i}",
                 email=f"cand_multi{i}@test.com",
                 senha=criar_hash_senha("senha"),
-                perfil=Perfil.CLIENTE.value
+                perfil=Perfil.ESTUDANTE.value,
             )
             candidatos.append(usuario_repo.inserir(usuario))
 
@@ -114,7 +130,7 @@ class TestInserir:
                 id_vaga=vaga_candidatura_teste,
                 id_candidato=id_candidato,
                 data_candidatura="",
-                status="pendente"
+                status="pendente",
             )
             ids.append(candidatura_repo.inserir(candidatura))
 
@@ -122,18 +138,27 @@ class TestInserir:
         assert all(id_c > 0 for id_c in ids)
 
     def test_inserir_candidato_multiplas_vagas(
-        self, area_candidatura_teste, empresa_candidatura_teste,
-        recrutador_candidatura_teste, candidato_candidatura_teste
+        self,
+        area_candidatura_teste,
+        empresa_candidatura_teste,
+        recrutador_candidatura_teste,
+        candidato_candidatura_teste,
     ):
         """Deve permitir candidato se candidatar a múltiplas vagas"""
         # Criar 2 vagas
         vagas = []
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_candidatura_teste, id_empresa=empresa_candidatura_teste,
-                id_recrutador=recrutador_candidatura_teste, status_vaga="aberta",
-                titulo=f"Vaga Multi {i}", descricao="", numero_vagas=1,
-                salario=0.0, data_cadastro=""
+                id_vaga=0,
+                id_area=area_candidatura_teste,
+                id_empresa=empresa_candidatura_teste,
+                id_recrutador=recrutador_candidatura_teste,
+                status_vaga="aberta",
+                titulo=f"Vaga Multi {i}",
+                descricao="",
+                numero_vagas=1,
+                salario=0.0,
+                data_cadastro="",
             )
             vagas.append(vaga_repo.inserir(vaga))
 
@@ -145,7 +170,7 @@ class TestInserir:
                 id_vaga=id_vaga,
                 id_candidato=candidato_candidatura_teste,
                 data_candidatura="",
-                status="pendente"
+                status="pendente",
             )
             ids.append(candidatura_repo.inserir(candidatura))
 
@@ -156,12 +181,16 @@ class TestInserir:
 class TestAlterarStatus:
     """Testes para alteração de status de candidatura"""
 
-    def test_alterar_status_para_em_analise(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_alterar_status_para_em_analise(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve alterar status para em_analise"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -172,12 +201,16 @@ class TestAlterarStatus:
         candidatura_obtida = candidatura_repo.obter_por_id(id_candidatura)
         assert candidatura_obtida.status == "em_analise"
 
-    def test_alterar_status_para_aprovado(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_alterar_status_para_aprovado(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve alterar status para aprovado"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -188,12 +221,16 @@ class TestAlterarStatus:
         candidatura_obtida = candidatura_repo.obter_por_id(id_candidatura)
         assert candidatura_obtida.status == "aprovado"
 
-    def test_alterar_status_para_rejeitado(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_alterar_status_para_rejeitado(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve alterar status para rejeitado"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="em_analise"
+            data_candidatura="",
+            status="em_analise",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -204,12 +241,16 @@ class TestAlterarStatus:
         candidatura_obtida = candidatura_repo.obter_por_id(id_candidatura)
         assert candidatura_obtida.status == "rejeitado"
 
-    def test_alterar_status_para_cancelado(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_alterar_status_para_cancelado(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve alterar status para cancelado"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -229,12 +270,16 @@ class TestAlterarStatus:
 class TestExcluir:
     """Testes para exclusão de candidaturas"""
 
-    def test_excluir_candidatura_existente(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_excluir_candidatura_existente(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve excluir candidatura existente"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -252,12 +297,16 @@ class TestExcluir:
 class TestObterPorId:
     """Testes para busca de candidatura por ID"""
 
-    def test_obter_candidatura_existente(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_obter_candidatura_existente(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve obter candidatura por ID"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -269,12 +318,16 @@ class TestObterPorId:
         assert candidatura_obtida.id_candidato == candidato_candidatura_teste
         assert candidatura_obtida.status == "pendente"
 
-    def test_obter_candidatura_com_data(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_obter_candidatura_com_data(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve obter candidatura com data de cadastro"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -301,17 +354,20 @@ class TestObterPorVaga:
         # Criar 3 candidatos
         for i in range(3):
             usuario = Usuario(
-                id=0, nome=f"Candidato Vaga {i}",
+                id=0,
+                nome=f"Candidato Vaga {i}",
                 email=f"cand_vaga{i}@test.com",
                 senha=criar_hash_senha("senha"),
-                perfil=Perfil.CLIENTE.value
+                perfil=Perfil.ESTUDANTE.value,
             )
             id_candidato = usuario_repo.inserir(usuario)
 
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
                 id_candidato=id_candidato,
-                data_candidatura="", status="pendente"
+                data_candidatura="",
+                status="pendente",
             )
             candidatura_repo.inserir(candidatura)
 
@@ -331,24 +387,35 @@ class TestObterPorCandidato:
         assert candidaturas == []
 
     def test_obter_por_candidato_com_candidaturas(
-        self, area_candidatura_teste, empresa_candidatura_teste,
-        recrutador_candidatura_teste, candidato_candidatura_teste
+        self,
+        area_candidatura_teste,
+        empresa_candidatura_teste,
+        recrutador_candidatura_teste,
+        candidato_candidatura_teste,
     ):
         """Deve retornar todas as candidaturas de um candidato"""
         # Criar 2 vagas
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_candidatura_teste, id_empresa=empresa_candidatura_teste,
-                id_recrutador=recrutador_candidatura_teste, status_vaga="aberta",
-                titulo=f"Vaga Candidato {i}", descricao="", numero_vagas=1,
-                salario=0.0, data_cadastro=""
+                id_vaga=0,
+                id_area=area_candidatura_teste,
+                id_empresa=empresa_candidatura_teste,
+                id_recrutador=recrutador_candidatura_teste,
+                status_vaga="aberta",
+                titulo=f"Vaga Candidato {i}",
+                descricao="",
+                numero_vagas=1,
+                salario=0.0,
+                data_cadastro="",
             )
             id_vaga = vaga_repo.inserir(vaga)
 
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=id_vaga,
+                id_candidatura=0,
+                id_vaga=id_vaga,
                 id_candidato=candidato_candidatura_teste,
-                data_candidatura="", status="pendente"
+                data_candidatura="",
+                status="pendente",
             )
             candidatura_repo.inserir(candidatura)
 
@@ -369,17 +436,20 @@ class TestObterPorStatus:
 
         for i, status in enumerate(status_list):
             usuario = Usuario(
-                id=0, nome=f"Candidato Status {i}",
+                id=0,
+                nome=f"Candidato Status {i}",
                 email=f"cand_status{i}@test.com",
                 senha=criar_hash_senha("senha"),
-                perfil=Perfil.CLIENTE.value
+                perfil=Perfil.ESTUDANTE.value,
             )
             id_candidato = usuario_repo.inserir(usuario)
 
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
                 id_candidato=id_candidato,
-                data_candidatura="", status="pendente"
+                data_candidatura="",
+                status="pendente",
             )
             id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -408,17 +478,20 @@ class TestObterQuantidade:
         """Deve contar corretamente após inserções"""
         for i in range(4):
             usuario = Usuario(
-                id=0, nome=f"Candidato Qtd {i}",
+                id=0,
+                nome=f"Candidato Qtd {i}",
                 email=f"cand_qtd{i}@test.com",
                 senha=criar_hash_senha("senha"),
-                perfil=Perfil.CLIENTE.value
+                perfil=Perfil.ESTUDANTE.value,
             )
             id_candidato = usuario_repo.inserir(usuario)
 
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
                 id_candidato=id_candidato,
-                data_candidatura="", status="pendente"
+                data_candidatura="",
+                status="pendente",
             )
             candidatura_repo.inserir(candidatura)
 
@@ -429,46 +502,64 @@ class TestObterQuantidade:
 class TestVerificarCandidatura:
     """Testes para verificação de candidatura existente"""
 
-    def test_verificar_candidatura_existente(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_verificar_candidatura_existente(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve retornar True se candidatura existe"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         candidatura_repo.inserir(candidatura)
 
-        existe = candidatura_repo.verificar_candidatura(vaga_candidatura_teste, candidato_candidatura_teste)
+        existe = candidatura_repo.verificar_candidatura(
+            vaga_candidatura_teste, candidato_candidatura_teste
+        )
 
         assert existe is True
 
-    def test_verificar_candidatura_inexistente(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_verificar_candidatura_inexistente(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve retornar False se candidatura não existe"""
-        existe = candidatura_repo.verificar_candidatura(vaga_candidatura_teste, candidato_candidatura_teste)
+        existe = candidatura_repo.verificar_candidatura(
+            vaga_candidatura_teste, candidato_candidatura_teste
+        )
         assert existe is False
 
 
 class TestIntegridadeDados:
     """Testes de integridade e validação de dados"""
 
-    def test_status_default_pendente(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_status_default_pendente(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Status padrão deve ser 'pendente'"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
         candidatura_obtida = candidatura_repo.obter_por_id(id_candidatura)
         assert candidatura_obtida.status == "pendente"
 
-    def test_data_candidatura_automatica(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_data_candidatura_automatica(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Data de candidatura deve ser gerada automaticamente"""
         candidatura = Candidatura(
-            id_candidatura=0, id_vaga=vaga_candidatura_teste,
+            id_candidatura=0,
+            id_vaga=vaga_candidatura_teste,
             id_candidato=candidato_candidatura_teste,
-            data_candidatura="", status="pendente"
+            data_candidatura="",
+            status="pendente",
         )
         id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -476,15 +567,25 @@ class TestIntegridadeDados:
         assert candidatura_obtida.data_candidatura is not None
         assert candidatura_obtida.data_candidatura != ""
 
-    def test_todos_status_validos(self, vaga_candidatura_teste, candidato_candidatura_teste):
+    def test_todos_status_validos(
+        self, vaga_candidatura_teste, candidato_candidatura_teste
+    ):
         """Deve aceitar todos os status válidos"""
-        status_validos = ["pendente", "em_analise", "aprovado", "rejeitado", "cancelado"]
+        status_validos = [
+            "pendente",
+            "em_analise",
+            "aprovado",
+            "rejeitado",
+            "cancelado",
+        ]
 
         for status in status_validos:
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
                 id_candidato=candidato_candidatura_teste,
-                data_candidatura="", status="pendente"
+                data_candidatura="",
+                status="pendente",
             )
             id_candidatura = candidatura_repo.inserir(candidatura)
 
@@ -506,13 +607,19 @@ class TestObterQuantidadePorVaga:
         """Deve contar candidaturas de uma vaga específica"""
         for i in range(3):
             usuario = Usuario(
-                id=0, nome=f"Cand Por Vaga {i}", email=f"c_vaga{i}@test.com",
-                senha=criar_hash_senha("senha"), perfil=Perfil.CLIENTE.value
+                id=0,
+                nome=f"Cand Por Vaga {i}",
+                email=f"c_vaga{i}@test.com",
+                senha=criar_hash_senha("senha"),
+                perfil=Perfil.ESTUDANTE.value,
             )
             id_candidato = usuario_repo.inserir(usuario)
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
-                id_candidato=id_candidato, data_candidatura="", status="pendente"
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
+                id_candidato=id_candidato,
+                data_candidatura="",
+                status="pendente",
             )
             candidatura_repo.inserir(candidatura)
 
@@ -524,26 +631,41 @@ class TestObterQuantidadePorCandidato:
     """Testes para contagem de candidaturas por candidato"""
 
     def test_obter_quantidade_por_candidato(
-        self, area_candidatura_teste, empresa_candidatura_teste,
-        recrutador_candidatura_teste, candidato_candidatura_teste
+        self,
+        area_candidatura_teste,
+        empresa_candidatura_teste,
+        recrutador_candidatura_teste,
+        candidato_candidatura_teste,
     ):
         """Deve contar candidaturas de um candidato específico"""
         # Criar múltiplas vagas e candidatar o mesmo candidato
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_candidatura_teste, id_empresa=empresa_candidatura_teste,
-                id_recrutador=recrutador_candidatura_teste, status_vaga="aberta",
-                titulo=f"Vaga Por Cand {i}", descricao="", numero_vagas=1, salario=0.0, data_cadastro=""
+                id_vaga=0,
+                id_area=area_candidatura_teste,
+                id_empresa=empresa_candidatura_teste,
+                id_recrutador=recrutador_candidatura_teste,
+                status_vaga="aberta",
+                titulo=f"Vaga Por Cand {i}",
+                descricao="",
+                numero_vagas=1,
+                salario=0.0,
+                data_cadastro="",
             )
             id_vaga = vaga_repo.inserir(vaga)
 
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=id_vaga,
-                id_candidato=candidato_candidatura_teste, data_candidatura="", status="pendente"
+                id_candidatura=0,
+                id_vaga=id_vaga,
+                id_candidato=candidato_candidatura_teste,
+                data_candidatura="",
+                status="pendente",
             )
             candidatura_repo.inserir(candidatura)
 
-        quantidade = candidatura_repo.obter_quantidade_por_candidato(candidato_candidatura_teste)
+        quantidade = candidatura_repo.obter_quantidade_por_candidato(
+            candidato_candidatura_teste
+        )
         assert quantidade == 2
 
 
@@ -554,13 +676,19 @@ class TestObterQuantidadePorStatus:
         """Deve contar candidaturas por status"""
         for i in range(3):
             usuario = Usuario(
-                id=0, nome=f"Cand Status Qtd {i}", email=f"c_status_qtd{i}@test.com",
-                senha=criar_hash_senha("senha"), perfil=Perfil.CLIENTE.value
+                id=0,
+                nome=f"Cand Status Qtd {i}",
+                email=f"c_status_qtd{i}@test.com",
+                senha=criar_hash_senha("senha"),
+                perfil=Perfil.ESTUDANTE.value,
             )
             id_candidato = usuario_repo.inserir(usuario)
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
-                id_candidato=id_candidato, data_candidatura="", status="pendente"
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
+                id_candidato=id_candidato,
+                data_candidatura="",
+                status="pendente",
             )
             id_cand = candidatura_repo.inserir(candidatura)
 
@@ -582,13 +710,19 @@ class TestBuscarPorStatusEVaga:
         """Deve filtrar candidaturas por vaga e status"""
         for i in range(3):
             usuario = Usuario(
-                id=0, nome=f"Cand Busca {i}", email=f"c_busca{i}@test.com",
-                senha=criar_hash_senha("senha"), perfil=Perfil.CLIENTE.value
+                id=0,
+                nome=f"Cand Busca {i}",
+                email=f"c_busca{i}@test.com",
+                senha=criar_hash_senha("senha"),
+                perfil=Perfil.ESTUDANTE.value,
             )
             id_candidato = usuario_repo.inserir(usuario)
             candidatura = Candidatura(
-                id_candidatura=0, id_vaga=vaga_candidatura_teste,
-                id_candidato=id_candidato, data_candidatura="", status="pendente"
+                id_candidatura=0,
+                id_vaga=vaga_candidatura_teste,
+                id_candidato=id_candidato,
+                data_candidatura="",
+                status="pendente",
             )
             id_cand = candidatura_repo.inserir(candidatura)
 
@@ -596,8 +730,12 @@ class TestBuscarPorStatusEVaga:
             if i < 2:
                 candidatura_repo.alterar_status(id_cand, "aprovado")
 
-        candidaturas_aprovadas = candidatura_repo.buscar_por_status_e_vaga(vaga_candidatura_teste, "aprovado")
-        candidaturas_pendentes = candidatura_repo.buscar_por_status_e_vaga(vaga_candidatura_teste, "pendente")
+        candidaturas_aprovadas = candidatura_repo.buscar_por_status_e_vaga(
+            vaga_candidatura_teste, "aprovado"
+        )
+        candidaturas_pendentes = candidatura_repo.buscar_por_status_e_vaga(
+            vaga_candidatura_teste, "pendente"
+        )
 
         assert len(candidaturas_aprovadas) == 2
         assert len(candidaturas_pendentes) == 1

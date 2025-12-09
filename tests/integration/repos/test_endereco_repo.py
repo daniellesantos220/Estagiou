@@ -2,6 +2,7 @@
 Testes para o repositório de endereços (endereco_repo).
 Cobre operações CRUD, validações e integridade de dados.
 """
+
 import pytest
 from model.endereco_model import Endereco
 from model.usuario_model import Usuario
@@ -18,7 +19,7 @@ def usuario_endereco_teste():
         nome="Usuario Endereco Teste",
         email="usuario_endereco@test.com",
         senha=criar_hash_senha("senha123"),
-        perfil=Perfil.CLIENTE.value
+        perfil=Perfil.ESTUDANTE.value,
     )
     return usuario_repo.inserir(usuario)
 
@@ -47,7 +48,7 @@ class TestInserir:
             cidade="São Paulo",
             uf="SP",
             cep="01234-567",
-            complemento="Apto 45"
+            complemento="Apto 45",
         )
 
         id_endereco = endereco_repo.inserir(endereco)
@@ -67,7 +68,7 @@ class TestInserir:
             cidade="Rio de Janeiro",
             uf="RJ",
             cep="20000-000",
-            complemento=None
+            complemento=None,
         )
 
         id_endereco = endereco_repo.inserir(endereco)
@@ -79,15 +80,27 @@ class TestInserir:
         """Deve inserir múltiplos endereços para o mesmo usuário"""
         enderecos = [
             Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo="Casa", logradouro="Rua A", numero="1",
-                bairro="B", cidade="C", uf="SP", cep="11111-111"
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo="Casa",
+                logradouro="Rua A",
+                numero="1",
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep="11111-111",
             ),
             Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo="Trabalho", logradouro="Rua B", numero="2",
-                bairro="B", cidade="C", uf="SP", cep="22222-222"
-            )
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo="Trabalho",
+                logradouro="Rua B",
+                numero="2",
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep="22222-222",
+            ),
         ]
 
         ids = [endereco_repo.inserir(end) for end in enderecos]
@@ -102,19 +115,29 @@ class TestAlterar:
     def test_alterar_endereco_existente(self, usuario_endereco_teste):
         """Deve alterar endereço existente"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="Casa", logradouro="Rua Original",
-            numero="100", bairro="Bairro Original",
-            cidade="Cidade Original", uf="SP", cep="00000-000"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="Casa",
+            logradouro="Rua Original",
+            numero="100",
+            bairro="Bairro Original",
+            cidade="Cidade Original",
+            uf="SP",
+            cep="00000-000",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
         endereco_alterado = Endereco(
-            id_endereco=id_endereco, id_usuario=usuario_endereco_teste,
-            titulo="Casa Nova", logradouro="Rua Alterada",
-            numero="200", bairro="Bairro Novo",
-            cidade="Cidade Nova", uf="RJ", cep="11111-111",
-            complemento="Novo complemento"
+            id_endereco=id_endereco,
+            id_usuario=usuario_endereco_teste,
+            titulo="Casa Nova",
+            logradouro="Rua Alterada",
+            numero="200",
+            bairro="Bairro Novo",
+            cidade="Cidade Nova",
+            uf="RJ",
+            cep="11111-111",
+            complemento="Novo complemento",
         )
         resultado = endereco_repo.alterar(endereco_alterado)
 
@@ -129,9 +152,15 @@ class TestAlterar:
     def test_alterar_endereco_inexistente(self, usuario_endereco_teste):
         """Deve retornar False ao alterar endereço inexistente"""
         endereco = Endereco(
-            id_endereco=999, id_usuario=usuario_endereco_teste,
-            titulo="Inexistente", logradouro="", numero="",
-            bairro="", cidade="", uf="", cep=""
+            id_endereco=999,
+            id_usuario=usuario_endereco_teste,
+            titulo="Inexistente",
+            logradouro="",
+            numero="",
+            bairro="",
+            cidade="",
+            uf="",
+            cep="",
         )
         resultado = endereco_repo.alterar(endereco)
 
@@ -144,9 +173,15 @@ class TestExcluir:
     def test_excluir_endereco_existente(self, usuario_endereco_teste):
         """Deve excluir endereço existente"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="Temporário", logradouro="Rua Temp",
-            numero="999", bairro="B", cidade="C", uf="SP", cep="99999-999"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="Temporário",
+            logradouro="Rua Temp",
+            numero="999",
+            bairro="B",
+            cidade="C",
+            uf="SP",
+            cep="99999-999",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -167,10 +202,16 @@ class TestObterPorId:
     def test_obter_endereco_existente(self, usuario_endereco_teste):
         """Deve obter endereço por ID"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="Meu Endereço", logradouro="Rua Teste",
-            numero="123", bairro="Centro", cidade="São Paulo",
-            uf="SP", cep="12345-678", complemento="Apto 10"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="Meu Endereço",
+            logradouro="Rua Teste",
+            numero="123",
+            bairro="Centro",
+            cidade="São Paulo",
+            uf="SP",
+            cep="12345-678",
+            complemento="Apto 10",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -201,32 +242,49 @@ class TestObterPorUsuario:
         """Deve retornar todos os endereços do usuário"""
         # Criar segundo usuário
         usuario2 = Usuario(
-            id=0, nome="Usuario 2", email="user2_endereco@test.com",
-            senha=criar_hash_senha("senha"), perfil=Perfil.CLIENTE.value
+            id=0,
+            nome="Usuario 2",
+            email="user2_endereco@test.com",
+            senha=criar_hash_senha("senha"),
+            perfil=Perfil.ESTUDANTE.value,
         )
         id_usuario2 = usuario_repo.inserir(usuario2)
 
         # Inserir 2 endereços para usuario_endereco_teste
         for i in range(2):
             endereco = Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo=f"End {i}", logradouro=f"Rua {i}",
-                numero=str(i), bairro="B", cidade="C", uf="SP", cep=f"{i}0000-000"
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo=f"End {i}",
+                logradouro=f"Rua {i}",
+                numero=str(i),
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep=f"{i}0000-000",
             )
             endereco_repo.inserir(endereco)
 
         # Inserir 1 endereço para usuario2
         endereco = Endereco(
-            id_endereco=0, id_usuario=id_usuario2,
-            titulo="Outro", logradouro="Outra Rua",
-            numero="99", bairro="B", cidade="C", uf="RJ", cep="99999-999"
+            id_endereco=0,
+            id_usuario=id_usuario2,
+            titulo="Outro",
+            logradouro="Outra Rua",
+            numero="99",
+            bairro="B",
+            cidade="C",
+            uf="RJ",
+            cep="99999-999",
         )
         endereco_repo.inserir(endereco)
 
         enderecos_usuario1 = endereco_repo.obter_por_usuario(usuario_endereco_teste)
 
         assert len(enderecos_usuario1) == 2
-        assert all(end.id_usuario == usuario_endereco_teste for end in enderecos_usuario1)
+        assert all(
+            end.id_usuario == usuario_endereco_teste for end in enderecos_usuario1
+        )
 
 
 class TestObterQuantidade:
@@ -241,9 +299,15 @@ class TestObterQuantidade:
         """Deve contar corretamente após inserções"""
         for i in range(3):
             endereco = Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo=f"End {i}", logradouro="Rua",
-                numero=str(i), bairro="B", cidade="C", uf="SP", cep=f"{i}0000-000"
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo=f"End {i}",
+                logradouro="Rua",
+                numero=str(i),
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep=f"{i}0000-000",
             )
             endereco_repo.inserir(endereco)
 
@@ -255,9 +319,15 @@ class TestObterQuantidade:
         ids = []
         for i in range(3):
             endereco = Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo=f"End {i}", logradouro="Rua",
-                numero=str(i), bairro="B", cidade="C", uf="SP", cep=f"{i}0000-000"
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo=f"End {i}",
+                logradouro="Rua",
+                numero=str(i),
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep=f"{i}0000-000",
             )
             ids.append(endereco_repo.inserir(endereco))
 
@@ -273,10 +343,16 @@ class TestIntegridadeDados:
     def test_complemento_nullable(self, usuario_endereco_teste):
         """Campo complemento deve aceitar None"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="Sem Complemento", logradouro="Rua",
-            numero="1", bairro="B", cidade="C", uf="SP", cep="00000-000",
-            complemento=None
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="Sem Complemento",
+            logradouro="Rua",
+            numero="1",
+            bairro="B",
+            cidade="C",
+            uf="SP",
+            cep="00000-000",
+            complemento=None,
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -286,9 +362,15 @@ class TestIntegridadeDados:
     def test_cep_formatado(self, usuario_endereco_teste):
         """CEP deve ser armazenado com formatação"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="CEP Teste", logradouro="Rua",
-            numero="1", bairro="B", cidade="C", uf="SP", cep="12345-678"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="CEP Teste",
+            logradouro="Rua",
+            numero="1",
+            bairro="B",
+            cidade="C",
+            uf="SP",
+            cep="12345-678",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -298,9 +380,15 @@ class TestIntegridadeDados:
     def test_numero_como_string(self, usuario_endereco_teste):
         """Número deve aceitar valores como string (ex: S/N)"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="Sem Número", logradouro="Rua",
-            numero="S/N", bairro="B", cidade="C", uf="SP", cep="00000-000"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="Sem Número",
+            logradouro="Rua",
+            numero="S/N",
+            bairro="B",
+            cidade="C",
+            uf="SP",
+            cep="00000-000",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -310,9 +398,15 @@ class TestIntegridadeDados:
     def test_uf_sigla(self, usuario_endereco_teste):
         """UF deve ser armazenado como sigla"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="UF Teste", logradouro="Rua",
-            numero="1", bairro="B", cidade="C", uf="MG", cep="00000-000"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="UF Teste",
+            logradouro="Rua",
+            numero="1",
+            bairro="B",
+            cidade="C",
+            uf="MG",
+            cep="00000-000",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -326,9 +420,15 @@ class TestIntegridadeDados:
 
         for titulo in titulos:
             endereco = Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo=titulo, logradouro="Rua",
-                numero="1", bairro="B", cidade="C", uf="SP", cep="00000-000"
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo=titulo,
+                logradouro="Rua",
+                numero="1",
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep="00000-000",
             )
             id_endereco = endereco_repo.inserir(endereco)
 
@@ -339,9 +439,15 @@ class TestIntegridadeDados:
         """Logradouro deve aceitar nomes longos"""
         logradouro_longo = "Rua " + "A" * 200
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
-            titulo="Long", logradouro=logradouro_longo,
-            numero="1", bairro="B", cidade="C", uf="SP", cep="00000-000"
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
+            titulo="Long",
+            logradouro=logradouro_longo,
+            numero="1",
+            bairro="B",
+            cidade="C",
+            uf="SP",
+            cep="00000-000",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -351,7 +457,8 @@ class TestIntegridadeDados:
     def test_caracteres_especiais(self, usuario_endereco_teste):
         """Deve aceitar caracteres especiais em campos de texto"""
         endereco = Endereco(
-            id_endereco=0, id_usuario=usuario_endereco_teste,
+            id_endereco=0,
+            id_usuario=usuario_endereco_teste,
             titulo="Casa (Principal)",
             logradouro="Rua João da Silva, Nº",
             numero="123-A",
@@ -359,7 +466,7 @@ class TestIntegridadeDados:
             cidade="São Paulo",
             uf="SP",
             cep="01234-567",
-            complemento="Apto 45-B (Bloco A)"
+            complemento="Apto 45-B (Bloco A)",
         )
         id_endereco = endereco_repo.inserir(endereco)
 
@@ -381,9 +488,15 @@ class TestObterTodos:
         """Deve retornar todos os endereços cadastrados"""
         for i in range(3):
             endereco = Endereco(
-                id_endereco=0, id_usuario=usuario_endereco_teste,
-                titulo=f"End {i}", logradouro="Rua",
-                numero=str(i), bairro="B", cidade="C", uf="SP", cep=f"{i}0000-000"
+                id_endereco=0,
+                id_usuario=usuario_endereco_teste,
+                titulo=f"End {i}",
+                logradouro="Rua",
+                numero=str(i),
+                bairro="B",
+                cidade="C",
+                uf="SP",
+                cep=f"{i}0000-000",
             )
             endereco_repo.inserir(endereco)
 

@@ -8,9 +8,9 @@ from fastapi import status
 class TestListarBackups:
     """Testes de listagem de backups"""
 
-    def test_listar_backups_requer_admin(self, cliente_autenticado):
-        """Cliente não deve acessar listagem de backups"""
-        response = cliente_autenticado.get("/admin/backups/listar", follow_redirects=False)
+    def test_listar_backups_requer_admin(self, estudante_autenticado):
+        """Estudante não deve acessar listagem de backups"""
+        response = estudante_autenticado.get("/admin/backups/listar", follow_redirects=False)
         assert response.status_code in [status.HTTP_303_SEE_OTHER, status.HTTP_403_FORBIDDEN]
 
     def test_listar_backups_admin_acessa(self, admin_autenticado):
@@ -71,9 +71,9 @@ class TestCriarBackup:
         assert "backup_" in backups[0].nome_arquivo
         assert ".db" in backups[0].nome_arquivo
 
-    def test_cliente_nao_pode_criar_backup(self, cliente_autenticado):
-        """Cliente não deve poder criar backup"""
-        response = cliente_autenticado.post("/admin/backups/criar", follow_redirects=False)
+    def test_estudante_nao_pode_criar_backup(self, estudante_autenticado):
+        """Estudante não deve poder criar backup"""
+        response = estudante_autenticado.post("/admin/backups/criar", follow_redirects=False)
         assert response.status_code in [status.HTTP_303_SEE_OTHER, status.HTTP_403_FORBIDDEN]
 
     def test_recrutador_nao_pode_criar_backup(self, recrutador_autenticado):
@@ -132,14 +132,14 @@ class TestRestaurarBackup:
         # Deve redirecionar (com mensagem de erro)
         assert response.status_code == status.HTTP_303_SEE_OTHER
 
-    def test_cliente_nao_pode_restaurar_backup(self, cliente_autenticado, criar_backup):
-        """Cliente não deve poder restaurar backup"""
+    def test_estudante_nao_pode_restaurar_backup(self, estudante_autenticado, criar_backup):
+        """Estudante não deve poder restaurar backup"""
         criar_backup()
         from util import backup_util
         backups = backup_util.listar_backups()
 
         if len(backups) > 0:
-            response = cliente_autenticado.post(
+            response = estudante_autenticado.post(
                 f"/admin/backups/restaurar/{backups[0].nome_arquivo}",
                 follow_redirects=False
             )
@@ -183,14 +183,14 @@ class TestExcluirBackup:
         # Deve redirecionar (com mensagem de erro)
         assert response.status_code == status.HTTP_303_SEE_OTHER
 
-    def test_cliente_nao_pode_excluir_backup(self, cliente_autenticado, criar_backup):
-        """Cliente não deve poder excluir backup"""
+    def test_estudante_nao_pode_excluir_backup(self, estudante_autenticado, criar_backup):
+        """Estudante não deve poder excluir backup"""
         criar_backup()
         from util import backup_util
         backups = backup_util.listar_backups()
 
         if len(backups) > 0:
-            response = cliente_autenticado.post(
+            response = estudante_autenticado.post(
                 f"/admin/backups/excluir/{backups[0].nome_arquivo}",
                 follow_redirects=False
             )
@@ -227,14 +227,14 @@ class TestDownloadBackup:
         # Deve redirecionar ou retornar 404
         assert response.status_code in [status.HTTP_303_SEE_OTHER, status.HTTP_404_NOT_FOUND]
 
-    def test_cliente_nao_pode_baixar_backup(self, cliente_autenticado, criar_backup):
-        """Cliente não deve poder baixar backup"""
+    def test_estudante_nao_pode_baixar_backup(self, estudante_autenticado, criar_backup):
+        """Estudante não deve poder baixar backup"""
         criar_backup()
         from util import backup_util
         backups = backup_util.listar_backups()
 
         if len(backups) > 0:
-            response = cliente_autenticado.get(
+            response = estudante_autenticado.get(
                 f"/admin/backups/download/{backups[0].nome_arquivo}",
                 follow_redirects=False
             )

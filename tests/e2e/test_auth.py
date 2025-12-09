@@ -14,6 +14,7 @@ Testes de Login:
 - Login com credenciais invalidas
 - Validacoes de campos
 """
+
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -66,47 +67,47 @@ class TestCadastroAcessoPagina:
     def test_pagina_cadastro_possui_opcoes_perfil(
         self, e2e_page: Page, e2e_server: str
     ):
-        """Deve exibir opcoes de perfil (Cliente/Vendedor)."""
+        """Deve exibir opcoes de perfil (Estudante/Recrutador)."""
         page = CadastroPage(e2e_page, e2e_server)
         page.navegar()
 
-        expect(e2e_page.locator('label[for="perfil_Cliente"]')).to_be_visible()
-        expect(e2e_page.locator('label[for="perfil_Vendedor"]')).to_be_visible()
+        expect(e2e_page.locator('label[for="perfil_Estudante"]')).to_be_visible()
+        expect(e2e_page.locator('label[for="perfil_Recrutador"]')).to_be_visible()
 
 
 @pytest.mark.e2e
 class TestCadastroSucesso:
     """Testes de cadastro com sucesso."""
 
-    def test_cadastro_cliente_com_dados_validos(
+    def test_cadastro_estudante_com_dados_validos(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
     ):
-        """Deve cadastrar usuario Cliente com dados validos."""
+        """Deve cadastrar usuario Estudante com dados validos."""
         page = CadastroPage(e2e_page, e2e_server)
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Completo",
-            email="teste_cliente@example.com",
-            senha="SenhaForte@123"
+            email="teste_estudante@example.com",
+            senha="SenhaForte@123",
         )
 
         assert page.aguardar_navegacao_login()
         assert "/login" in e2e_page.url
 
-    def test_cadastro_vendedor_com_dados_validos(
+    def test_cadastro_recrutador_com_dados_validos(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
     ):
-        """Deve cadastrar usuario Vendedor com dados validos."""
+        """Deve cadastrar usuario Recrutador com dados validos."""
         page = CadastroPage(e2e_page, e2e_server)
         page.navegar()
 
         page.cadastrar(
-            perfil="Vendedor",
-            nome="Vendedor Teste Nome",
-            email="teste_vendedor@example.com",
-            senha="SenhaForte@123"
+            perfil="Recrutador",
+            nome="Recrutador Teste Nome",
+            email="teste_recrutador@example.com",
+            senha="SenhaForte@123",
         )
 
         assert page.aguardar_navegacao_login()
@@ -119,10 +120,10 @@ class TestCadastroSucesso:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Mensagem Teste",
             email="teste_mensagem@example.com",
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         page.aguardar_navegacao_login()
@@ -141,10 +142,7 @@ class TestCadastroSucesso:
         cadastro = CadastroPage(e2e_page, e2e_server)
         cadastro.navegar()
         cadastro.cadastrar(
-            perfil="Cliente",
-            nome="Usuario Login Teste",
-            email=email,
-            senha=senha
+            perfil="Estudante", nome="Usuario Login Teste", email=email, senha=senha
         )
 
         assert cadastro.aguardar_navegacao_login()
@@ -172,10 +170,10 @@ class TestCadastroValidacaoNome:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="",
             email="teste@example.com",
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         assert "/cadastrar" in e2e_page.url or "/cadastro" in e2e_page.url.lower()
@@ -191,10 +189,10 @@ class TestCadastroValidacaoNome:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="AB",
             email="teste@example.com",
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -208,10 +206,10 @@ class TestCadastroValidacaoNome:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario",
             email="teste@example.com",
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -230,10 +228,10 @@ class TestCadastroValidacaoEmail:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="",
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -247,10 +245,10 @@ class TestCadastroValidacaoEmail:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="email_invalido",
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -267,20 +265,20 @@ class TestCadastroValidacaoEmail:
         # Primeiro cadastro
         page.navegar()
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Primeiro",
             email=email,
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
         page.aguardar_navegacao_login()
 
         # Segundo cadastro com mesmo email
         page.navegar()
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Segundo",
             email=email,
-            senha="SenhaForte@123"
+            senha="SenhaForte@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -299,10 +297,10 @@ class TestCadastroValidacaoSenha:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="teste@example.com",
-            senha="Ab@1"
+            senha="Ab@1",
         )
 
         conteudo = e2e_page.content().lower()
@@ -316,10 +314,10 @@ class TestCadastroValidacaoSenha:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="teste@example.com",
-            senha="senhafraca@123"
+            senha="senhafraca@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -333,10 +331,10 @@ class TestCadastroValidacaoSenha:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="teste@example.com",
-            senha="SENHAFRACA@123"
+            senha="SENHAFRACA@123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -350,10 +348,10 @@ class TestCadastroValidacaoSenha:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="teste@example.com",
-            senha="SenhaFraca@abc"
+            senha="SenhaFraca@abc",
         )
 
         conteudo = e2e_page.content().lower()
@@ -367,10 +365,10 @@ class TestCadastroValidacaoSenha:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="teste@example.com",
-            senha="SenhaFraca123"
+            senha="SenhaFraca123",
         )
 
         conteudo = e2e_page.content().lower()
@@ -384,11 +382,11 @@ class TestCadastroValidacaoSenha:
         page.navegar()
 
         page.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Teste Nome",
             email="teste@example.com",
             senha="SenhaForte@123",
-            confirmar_senha="SenhaDiferente@456"
+            confirmar_senha="SenhaDiferente@456",
         )
 
         assert verificar_erro_senhas_diferentes(e2e_page)
@@ -398,29 +396,29 @@ class TestCadastroValidacaoSenha:
 class TestCadastroValidacaoPerfil:
     """Testes de validacao do perfil."""
 
-    def test_perfil_cliente_selecionado_corretamente(
+    def test_perfil_estudante_selecionado_corretamente(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
     ):
-        """Deve permitir selecionar perfil Cliente."""
+        """Deve permitir selecionar perfil Estudante."""
         page = CadastroPage(e2e_page, e2e_server)
         page.navegar()
 
-        e2e_page.locator('label[for="perfil_Cliente"]').click()
+        e2e_page.locator('label[for="perfil_Estudante"]').click()
 
-        expect(e2e_page.locator('input#perfil_Cliente')).to_be_checked()
-        expect(e2e_page.locator('input#perfil_Vendedor')).not_to_be_checked()
+        expect(e2e_page.locator("input#perfil_Estudante")).to_be_checked()
+        expect(e2e_page.locator("input#perfil_Recrutador")).not_to_be_checked()
 
-    def test_perfil_vendedor_selecionado_corretamente(
+    def test_perfil_recrutador_selecionado_corretamente(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
     ):
-        """Deve permitir selecionar perfil Vendedor."""
+        """Deve permitir selecionar perfil Recrutador."""
         page = CadastroPage(e2e_page, e2e_server)
         page.navegar()
 
-        e2e_page.locator('label[for="perfil_Vendedor"]').click()
+        e2e_page.locator('label[for="perfil_Recrutador"]').click()
 
-        expect(e2e_page.locator('input#perfil_Vendedor')).to_be_checked()
-        expect(e2e_page.locator('input#perfil_Cliente')).not_to_be_checked()
+        expect(e2e_page.locator("input#perfil_Recrutador")).to_be_checked()
+        expect(e2e_page.locator("input#perfil_Estudante")).not_to_be_checked()
 
 
 # ============================================================
@@ -432,9 +430,7 @@ class TestCadastroValidacaoPerfil:
 class TestLoginAcessoPagina:
     """Testes de acesso a pagina de login."""
 
-    def test_pagina_login_carrega_corretamente(
-        self, e2e_page: Page, e2e_server: str
-    ):
+    def test_pagina_login_carrega_corretamente(self, e2e_page: Page, e2e_server: str):
         """Deve carregar a pagina de login com o formulario."""
         page = LoginPage(e2e_page, e2e_server)
         page.navegar()
@@ -445,9 +441,7 @@ class TestLoginAcessoPagina:
         expect(e2e_page.locator('input[name="senha"]')).to_be_visible()
         expect(e2e_page.locator('form button[type="submit"]').first).to_be_visible()
 
-    def test_pagina_login_possui_titulo_correto(
-        self, e2e_page: Page, e2e_server: str
-    ):
+    def test_pagina_login_possui_titulo_correto(self, e2e_page: Page, e2e_server: str):
         """Deve exibir titulo adequado na pagina."""
         page = LoginPage(e2e_page, e2e_server)
         page.navegar()
@@ -480,21 +474,18 @@ class TestLoginAcessoPagina:
 class TestLoginSucesso:
     """Testes de login com sucesso."""
 
-    def test_login_cliente_com_credenciais_validas(
+    def test_login_estudante_com_credenciais_validas(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
     ):
-        """Deve fazer login com credenciais validas de cliente."""
-        email = "cliente_login@example.com"
+        """Deve fazer login com credenciais validas de estudante."""
+        email = "estudante_login@example.com"
         senha = "SenhaForte@123"
 
         # Primeiro cadastrar o usuario
         cadastro = CadastroPage(e2e_page, e2e_server)
         cadastro.navegar()
         cadastro.cadastrar(
-            perfil="Cliente",
-            nome="Cliente Login Teste",
-            email=email,
-            senha=senha
+            perfil="Estudante", nome="Estudante Login Teste", email=email, senha=senha
         )
         cadastro.aguardar_navegacao_login()
 
@@ -505,21 +496,18 @@ class TestLoginSucesso:
         # Verificar redirecionamento para area do usuario
         assert login.aguardar_navegacao_usuario()
 
-    def test_login_vendedor_com_credenciais_validas(
+    def test_login_recrutador_com_credenciais_validas(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
     ):
-        """Deve fazer login com credenciais validas de vendedor."""
-        email = "vendedor_login@example.com"
+        """Deve fazer login com credenciais validas de recrutador."""
+        email = "recrutador_login@example.com"
         senha = "SenhaForte@123"
 
         # Primeiro cadastrar o usuario
         cadastro = CadastroPage(e2e_page, e2e_server)
         cadastro.navegar()
         cadastro.cadastrar(
-            perfil="Vendedor",
-            nome="Vendedor Login Teste",
-            email=email,
-            senha=senha
+            perfil="Recrutador", nome="Recrutador Login Teste", email=email, senha=senha
         )
         cadastro.aguardar_navegacao_login()
 
@@ -541,10 +529,7 @@ class TestLoginSucesso:
         cadastro = CadastroPage(e2e_page, e2e_server)
         cadastro.navegar()
         cadastro.cadastrar(
-            perfil="Cliente",
-            nome="Usuario Sessao Teste",
-            email=email,
-            senha=senha
+            perfil="Estudante", nome="Usuario Sessao Teste", email=email, senha=senha
         )
         cadastro.aguardar_navegacao_login()
 
@@ -622,10 +607,10 @@ class TestLoginCredenciaisInvalidas:
         cadastro = CadastroPage(e2e_page, e2e_server)
         cadastro.navegar()
         cadastro.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Senha Errada",
             email=email,
-            senha=senha_correta
+            senha=senha_correta,
         )
         cadastro.aguardar_navegacao_login()
 
@@ -640,7 +625,9 @@ class TestLoginCredenciaisInvalidas:
 
         # Deve exibir mensagem de erro
         conteudo = e2e_page.content().lower()
-        assert "senha" in conteudo or "credenciais" in conteudo or "incorret" in conteudo
+        assert (
+            "senha" in conteudo or "credenciais" in conteudo or "incorret" in conteudo
+        )
 
     def test_usuario_nao_cadastrado_exibe_erro(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
@@ -658,7 +645,11 @@ class TestLoginCredenciaisInvalidas:
 
         # Deve exibir mensagem de erro
         conteudo = e2e_page.content().lower()
-        assert "e-mail" in conteudo or "credenciais" in conteudo or "não encontrad" in conteudo
+        assert (
+            "e-mail" in conteudo
+            or "credenciais" in conteudo
+            or "não encontrad" in conteudo
+        )
 
     def test_multiplas_tentativas_falhas(
         self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
@@ -671,10 +662,10 @@ class TestLoginCredenciaisInvalidas:
         cadastro = CadastroPage(e2e_page, e2e_server)
         cadastro.navegar()
         cadastro.cadastrar(
-            perfil="Cliente",
+            perfil="Estudante",
             nome="Usuario Multiplas Tentativas",
             email=email,
-            senha=senha
+            senha=senha,
         )
         cadastro.aguardar_navegacao_login()
 

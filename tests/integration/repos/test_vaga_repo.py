@@ -9,18 +9,19 @@ from model.empresa_model import Empresa
 from model.usuario_model import Usuario
 from repo import vaga_repo, area_repo, empresa_repo, usuario_repo
 from util.security import criar_hash_senha
+from util.perfis import Perfil
 
 
 @pytest.fixture
-def area_teste(limpar_banco_dados):
-    """Cria uma área de teste"""
+def area_vaga_teste():
+    """Cria uma área de teste para vagas"""
     area = Area(id_area=0, nome="Tecnologia", descricao="TI")
     return area_repo.inserir(area)
 
 
 @pytest.fixture
-def empresa_teste(limpar_banco_dados):
-    """Cria uma empresa de teste"""
+def empresa_vaga_teste():
+    """Cria uma empresa de teste para vagas"""
     empresa = Empresa(
         id_empresa=0,
         nome="Tech Corp",
@@ -31,14 +32,14 @@ def empresa_teste(limpar_banco_dados):
 
 
 @pytest.fixture
-def recrutador_teste(limpar_banco_dados):
-    """Cria um recrutador de teste"""
+def recrutador_vaga_teste():
+    """Cria um recrutador de teste para vagas"""
     usuario = Usuario(
         id=0,
-        nome="Recrutador Teste",
-        email="recrutador@test.com",
+        nome="Recrutador Vaga Teste",
+        email="recrutador_vaga@test.com",
         senha=criar_hash_senha("senha123"),
-        perfil="RECRUTADOR"
+        perfil=Perfil.RECRUTADOR.value
     )
     return usuario_repo.inserir(usuario)
 
@@ -46,7 +47,7 @@ def recrutador_teste(limpar_banco_dados):
 class TestCriarTabela:
     """Testes para criação da tabela de vagas"""
 
-    def test_criar_tabela_sucesso(self, limpar_banco_dados):
+    def test_criar_tabela_sucesso(self):
         """Deve criar tabela de vagas com sucesso"""
         resultado = vaga_repo.criar_tabela()
         assert resultado is True
@@ -55,13 +56,13 @@ class TestCriarTabela:
 class TestInserir:
     """Testes para inserção de vagas"""
 
-    def test_inserir_vaga_completa(self, area_teste, empresa_teste, recrutador_teste):
+    def test_inserir_vaga_completa(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve inserir vaga com todos os campos"""
         vaga = Vaga(
             id_vaga=0,
-            id_area=area_teste,
-            id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste,
+            id_area=area_vaga_teste,
+            id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste,
             status_vaga="aberta",
             titulo="Desenvolvedor Python",
             descricao="Vaga para desenvolvedor Python sênior",
@@ -81,13 +82,13 @@ class TestInserir:
         assert id_vaga is not None
         assert id_vaga > 0
 
-    def test_inserir_vaga_campos_obrigatorios(self, area_teste, empresa_teste, recrutador_teste):
+    def test_inserir_vaga_campos_obrigatorios(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve inserir vaga apenas com campos obrigatórios"""
         vaga = Vaga(
             id_vaga=0,
-            id_area=area_teste,
-            id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste,
+            id_area=area_vaga_teste,
+            id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste,
             status_vaga="aberta",
             titulo="Vaga Simples",
             descricao="Descrição básica",
@@ -101,12 +102,12 @@ class TestInserir:
         assert id_vaga is not None
         assert id_vaga > 0
 
-    def test_inserir_multiplas_vagas(self, area_teste, empresa_teste, recrutador_teste):
+    def test_inserir_multiplas_vagas(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve inserir múltiplas vagas"""
         vagas = [
             Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="Desc", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -122,19 +123,19 @@ class TestInserir:
 class TestAlterar:
     """Testes para alteração de vagas"""
 
-    def test_alterar_vaga_existente(self, area_teste, empresa_teste, recrutador_teste):
+    def test_alterar_vaga_existente(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve alterar vaga existente"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Título Original", descricao="Desc Original",
             numero_vagas=1, salario=3000.0, data_cadastro=""
         )
         id_vaga = vaga_repo.inserir(vaga)
 
         vaga_alterada = Vaga(
-            id_vaga=id_vaga, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=id_vaga, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Título Alterado", descricao="Desc Alterada",
             numero_vagas=2, salario=4000.0, cidade="Rio de Janeiro",
             uf="RJ", data_cadastro=""
@@ -148,10 +149,10 @@ class TestAlterar:
         assert vaga_obtida.salario == 4000.0
         assert vaga_obtida.cidade == "Rio de Janeiro"
 
-    def test_alterar_vaga_inexistente(self, area_teste):
+    def test_alterar_vaga_inexistente(self, area_vaga_teste):
         """Deve retornar False ao alterar vaga inexistente"""
         vaga = Vaga(
-            id_vaga=999, id_area=area_teste, id_empresa=1,
+            id_vaga=999, id_area=area_vaga_teste, id_empresa=1,
             id_recrutador=1, status_vaga="aberta",
             titulo="Inexistente", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
@@ -164,11 +165,11 @@ class TestAlterar:
 class TestAlterarStatus:
     """Testes para alteração de status de vaga"""
 
-    def test_alterar_status_para_fechada(self, area_teste, empresa_teste, recrutador_teste):
+    def test_alterar_status_para_fechada(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve alterar status de vaga para fechada"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Vaga Teste", descricao="Desc", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
@@ -190,11 +191,11 @@ class TestAlterarStatus:
 class TestExcluir:
     """Testes para exclusão de vagas"""
 
-    def test_excluir_vaga_existente(self, area_teste, empresa_teste, recrutador_teste):
+    def test_excluir_vaga_existente(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve excluir vaga existente"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Temporária", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
@@ -214,11 +215,11 @@ class TestExcluir:
 class TestObterPorId:
     """Testes para busca de vaga por ID"""
 
-    def test_obter_vaga_existente(self, area_teste, empresa_teste, recrutador_teste):
+    def test_obter_vaga_existente(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve obter vaga por ID"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Desenvolvedor", descricao="Vaga dev",
             numero_vagas=1, salario=5000.0, data_cadastro=""
         )
@@ -240,17 +241,17 @@ class TestObterPorId:
 class TestObterTodas:
     """Testes para listagem de todas as vagas"""
 
-    def test_obter_todas_vazio(self, limpar_banco_dados):
+    def test_obter_todas_vazio(self):
         """Deve retornar lista vazia quando não há vagas"""
         vagas = vaga_repo.obter_todas()
         assert vagas == []
 
-    def test_obter_todas_com_vagas(self, area_teste, empresa_teste, recrutador_teste):
+    def test_obter_todas_com_vagas(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve retornar todas as vagas cadastradas"""
         for i in range(3):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="Desc", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -265,7 +266,7 @@ class TestObterTodas:
 class TestObterPorEmpresa:
     """Testes para busca de vagas por empresa"""
 
-    def test_obter_por_empresa(self, area_teste, empresa_teste, recrutador_teste, limpar_banco_dados):
+    def test_obter_por_empresa(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve retornar vagas da empresa especificada"""
         # Criar segunda empresa
         empresa2 = Empresa(
@@ -274,11 +275,11 @@ class TestObterPorEmpresa:
         )
         id_empresa2 = empresa_repo.inserir(empresa2)
 
-        # Inserir vagas para empresa_teste
+        # Inserir vagas para empresa_vaga_teste
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga Empresa 1 - {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -286,36 +287,36 @@ class TestObterPorEmpresa:
 
         # Inserir vaga para empresa2
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=id_empresa2,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=id_empresa2,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Vaga Empresa 2", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
         vaga_repo.inserir(vaga)
 
-        vagas_empresa1 = vaga_repo.obter_por_empresa(empresa_teste)
+        vagas_empresa1 = vaga_repo.obter_por_empresa(empresa_vaga_teste)
 
         assert len(vagas_empresa1) == 2
-        assert all(vaga.id_empresa == empresa_teste for vaga in vagas_empresa1)
+        assert all(vaga.id_empresa == empresa_vaga_teste for vaga in vagas_empresa1)
 
 
 class TestObterPorRecrutador:
     """Testes para busca de vagas por recrutador"""
 
-    def test_obter_por_recrutador(self, area_teste, empresa_teste, recrutador_teste, limpar_banco_dados):
+    def test_obter_por_recrutador(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve retornar vagas do recrutador especificado"""
         # Criar segundo recrutador
         usuario2 = Usuario(
-            id=0, nome="Recrutador 2", email="rec2@test.com",
-            senha=criar_hash_senha("senha"), perfil="RECRUTADOR"
+            id=0, nome="Recrutador 2", email="rec2_vaga@test.com",
+            senha=criar_hash_senha("senha"), perfil=Perfil.RECRUTADOR.value
         )
         id_recrutador2 = usuario_repo.inserir(usuario2)
 
-        # Inserir vagas para recrutador_teste
+        # Inserir vagas para recrutador_vaga_teste
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga Rec 1 - {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -323,28 +324,28 @@ class TestObterPorRecrutador:
 
         # Inserir vaga para recrutador2
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
             id_recrutador=id_recrutador2, status_vaga="aberta",
             titulo="Vaga Rec 2", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
         vaga_repo.inserir(vaga)
 
-        vagas_rec1 = vaga_repo.obter_por_recrutador(recrutador_teste)
+        vagas_rec1 = vaga_repo.obter_por_recrutador(recrutador_vaga_teste)
 
         assert len(vagas_rec1) == 2
-        assert all(vaga.id_recrutador == recrutador_teste for vaga in vagas_rec1)
+        assert all(vaga.id_recrutador == recrutador_vaga_teste for vaga in vagas_rec1)
 
 
 class TestBuscar:
     """Testes para busca de vagas com filtros"""
 
-    def test_buscar_sem_filtros(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_sem_filtros(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve retornar todas as vagas abertas sem filtros"""
         for i in range(3):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -353,17 +354,17 @@ class TestBuscar:
         vagas = vaga_repo.buscar()
         assert len(vagas) == 3
 
-    def test_buscar_por_area(self, area_teste, empresa_teste, recrutador_teste, limpar_banco_dados):
+    def test_buscar_por_area(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve filtrar vagas por área"""
         # Criar segunda área
         area2 = Area(id_area=0, nome="Saúde", descricao="")
         id_area2 = area_repo.inserir(area2)
 
-        # Inserir vagas para area_teste
+        # Inserir vagas para area_vaga_teste
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga TI {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -371,19 +372,19 @@ class TestBuscar:
 
         # Inserir vaga para area2
         vaga = Vaga(
-            id_vaga=0, id_area=id_area2, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=id_area2, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Vaga Saúde", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
         vaga_repo.inserir(vaga)
 
-        vagas = vaga_repo.buscar(id_area=area_teste)
+        vagas = vaga_repo.buscar(id_area=area_vaga_teste)
 
         assert len(vagas) == 2
-        assert all(vaga.id_area == area_teste for vaga in vagas)
+        assert all(vaga.id_area == area_vaga_teste for vaga in vagas)
 
-    def test_buscar_por_cidade(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_por_cidade(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve filtrar vagas por cidade"""
         vagas_cidades = [
             ("Vaga SP", "São Paulo", "SP"),
@@ -393,8 +394,8 @@ class TestBuscar:
 
         for titulo, cidade, uf in vagas_cidades:
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=titulo, descricao="", numero_vagas=1,
                 salario=0.0, cidade=cidade, uf=uf, data_cadastro=""
             )
@@ -405,7 +406,7 @@ class TestBuscar:
         assert len(vagas) == 2
         assert all("São Paulo" in (vaga.cidade or "") for vaga in vagas)
 
-    def test_buscar_por_uf(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_por_uf(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve filtrar vagas por UF"""
         vagas_dados = [
             ("Vaga SP 1", "SP"),
@@ -415,8 +416,8 @@ class TestBuscar:
 
         for titulo, uf in vagas_dados:
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=titulo, descricao="", numero_vagas=1,
                 salario=0.0, uf=uf, data_cadastro=""
             )
@@ -427,14 +428,14 @@ class TestBuscar:
         assert len(vagas) == 2
         assert all(vaga.uf == "SP" for vaga in vagas)
 
-    def test_buscar_por_modalidade(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_por_modalidade(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve filtrar vagas por modalidade"""
         modalidades = ["Remoto", "Remoto", "Presencial"]
 
         for i, modalidade in enumerate(modalidades):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="", numero_vagas=1,
                 salario=0.0, modalidade=modalidade, data_cadastro=""
             )
@@ -445,14 +446,14 @@ class TestBuscar:
         assert len(vagas) == 2
         assert all(vaga.modalidade == "Remoto" for vaga in vagas)
 
-    def test_buscar_por_salario_minimo(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_por_salario_minimo(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve filtrar vagas por salário mínimo"""
         salarios = [2000.0, 3000.0, 4000.0, 5000.0]
 
         for i, salario in enumerate(salarios):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="", numero_vagas=1,
                 salario=salario, data_cadastro=""
             )
@@ -463,12 +464,12 @@ class TestBuscar:
         assert len(vagas) == 2
         assert all(vaga.salario >= 3500.0 for vaga in vagas)
 
-    def test_buscar_com_limit(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_com_limit(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve respeitar limite de resultados"""
         for i in range(5):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -477,12 +478,12 @@ class TestBuscar:
         vagas = vaga_repo.buscar(limit=2)
         assert len(vagas) == 2
 
-    def test_buscar_com_offset(self, area_teste, empresa_teste, recrutador_teste):
+    def test_buscar_com_offset(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve respeitar offset de paginação"""
         for i in range(5):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -495,17 +496,17 @@ class TestBuscar:
 class TestObterQuantidade:
     """Testes para contagem de vagas"""
 
-    def test_quantidade_inicial_zero(self, limpar_banco_dados):
+    def test_quantidade_inicial_zero(self):
         """Deve retornar 0 quando não há vagas"""
         quantidade = vaga_repo.obter_quantidade()
         assert quantidade == 0
 
-    def test_quantidade_apos_insercoes(self, area_teste, empresa_teste, recrutador_teste):
+    def test_quantidade_apos_insercoes(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve contar corretamente após inserções"""
         for i in range(4):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
@@ -518,21 +519,21 @@ class TestObterQuantidade:
 class TestObterQuantidadePorStatus:
     """Testes para contagem de vagas por status"""
 
-    def test_contar_por_status(self, area_teste, empresa_teste, recrutador_teste):
+    def test_contar_por_status(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve contar vagas por status"""
         # Criar 2 abertas e 1 fechada
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga Aberta {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
             id_vaga = vaga_repo.inserir(vaga)
 
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="fechada",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="fechada",
             titulo="Vaga Fechada", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
@@ -548,21 +549,21 @@ class TestObterQuantidadePorStatus:
 class TestObterVagasAbertas:
     """Testes para listagem de vagas abertas"""
 
-    def test_obter_vagas_abertas(self, area_teste, empresa_teste, recrutador_teste):
+    def test_obter_vagas_abertas(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve retornar apenas vagas abertas"""
         # Criar 2 abertas e 1 fechada
         for i in range(2):
             vaga = Vaga(
-                id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-                id_recrutador=recrutador_teste, status_vaga="aberta",
+                id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+                id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
                 titulo=f"Vaga Aberta {i}", descricao="", numero_vagas=1,
                 salario=0.0, data_cadastro=""
             )
             vaga_repo.inserir(vaga)
 
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="fechada",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="fechada",
             titulo="Vaga Fechada", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
@@ -577,11 +578,11 @@ class TestObterVagasAbertas:
 class TestIntegridadeDados:
     """Testes de integridade e validação de dados"""
 
-    def test_campos_opcionais_null(self, area_teste, empresa_teste, recrutador_teste):
+    def test_campos_opcionais_null(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Campos opcionais devem aceitar None"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Vaga Mínima", descricao="Desc", numero_vagas=1,
             salario=0.0, requisitos=None, beneficios=None,
             carga_horaria=None, modalidade=None, cidade=None,
@@ -594,11 +595,11 @@ class TestIntegridadeDados:
         assert vaga_obtida.beneficios is None
         assert vaga_obtida.carga_horaria is None
 
-    def test_salario_zero(self, area_teste, empresa_teste, recrutador_teste):
+    def test_salario_zero(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Salário 0 deve ser aceito"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Vaga Voluntária", descricao="", numero_vagas=1,
             salario=0.0, data_cadastro=""
         )
@@ -607,11 +608,11 @@ class TestIntegridadeDados:
         vaga_obtida = vaga_repo.obter_por_id(id_vaga)
         assert vaga_obtida.salario == 0.0
 
-    def test_numero_vagas_multiplas(self, area_teste, empresa_teste, recrutador_teste):
+    def test_numero_vagas_multiplas(self, area_vaga_teste, empresa_vaga_teste, recrutador_vaga_teste):
         """Deve aceitar múltiplas vagas"""
         vaga = Vaga(
-            id_vaga=0, id_area=area_teste, id_empresa=empresa_teste,
-            id_recrutador=recrutador_teste, status_vaga="aberta",
+            id_vaga=0, id_area=area_vaga_teste, id_empresa=empresa_vaga_teste,
+            id_recrutador=recrutador_vaga_teste, status_vaga="aberta",
             titulo="Várias Vagas", descricao="", numero_vagas=10,
             salario=0.0, data_cadastro=""
         )

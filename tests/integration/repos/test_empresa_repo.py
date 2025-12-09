@@ -10,7 +10,7 @@ from repo import empresa_repo
 class TestCriarTabela:
     """Testes para criação da tabela de empresas"""
 
-    def test_criar_tabela_sucesso(self, limpar_banco_dados):
+    def test_criar_tabela_sucesso(self):
         """Deve criar tabela de empresas com sucesso"""
         resultado = empresa_repo.criar_tabela()
         assert resultado is True
@@ -19,7 +19,7 @@ class TestCriarTabela:
 class TestInserir:
     """Testes para inserção de empresas"""
 
-    def test_inserir_empresa_completa(self, limpar_banco_dados):
+    def test_inserir_empresa_completa(self):
         """Deve inserir empresa com todos os campos"""
         empresa = Empresa(
             id_empresa=0,
@@ -33,7 +33,7 @@ class TestInserir:
         assert id_empresa is not None
         assert id_empresa > 0
 
-    def test_inserir_empresa_sem_descricao(self, limpar_banco_dados):
+    def test_inserir_empresa_sem_descricao(self):
         """Deve inserir empresa sem descrição"""
         empresa = Empresa(
             id_empresa=0,
@@ -47,7 +47,7 @@ class TestInserir:
         assert id_empresa is not None
         assert id_empresa > 0
 
-    def test_inserir_multiplas_empresas(self, limpar_banco_dados):
+    def test_inserir_multiplas_empresas(self):
         """Deve inserir múltiplas empresas"""
         empresas = [
             Empresa(id_empresa=0, nome="Empresa A", cnpj="11.111.111/0001-11", descricao=""),
@@ -64,7 +64,7 @@ class TestInserir:
 class TestAlterar:
     """Testes para alteração de empresas"""
 
-    def test_alterar_empresa_existente(self, limpar_banco_dados):
+    def test_alterar_empresa_existente(self):
         """Deve alterar empresa existente"""
         empresa = Empresa(
             id_empresa=0,
@@ -88,7 +88,7 @@ class TestAlterar:
         assert empresa_obtida.nome == "Empresa Alterada LTDA"
         assert empresa_obtida.descricao == "Nova descrição"
 
-    def test_alterar_empresa_inexistente(self, limpar_banco_dados):
+    def test_alterar_empresa_inexistente(self):
         """Deve retornar False ao alterar empresa inexistente"""
         empresa = Empresa(
             id_empresa=999,
@@ -104,7 +104,7 @@ class TestAlterar:
 class TestExcluir:
     """Testes para exclusão de empresas"""
 
-    def test_excluir_empresa_existente(self, limpar_banco_dados):
+    def test_excluir_empresa_existente(self):
         """Deve excluir empresa existente"""
         empresa = Empresa(
             id_empresa=0,
@@ -119,7 +119,7 @@ class TestExcluir:
         assert resultado is True
         assert empresa_repo.obter_por_id(id_empresa) is None
 
-    def test_excluir_empresa_inexistente(self, limpar_banco_dados):
+    def test_excluir_empresa_inexistente(self):
         """Deve retornar False ao excluir empresa inexistente"""
         resultado = empresa_repo.excluir(999)
         assert resultado is False
@@ -128,7 +128,7 @@ class TestExcluir:
 class TestObterPorId:
     """Testes para busca de empresa por ID"""
 
-    def test_obter_empresa_existente(self, limpar_banco_dados):
+    def test_obter_empresa_existente(self):
         """Deve obter empresa por ID"""
         empresa = Empresa(
             id_empresa=0,
@@ -146,12 +146,12 @@ class TestObterPorId:
         assert empresa_obtida.cnpj == "12.345.678/0001-90"
         assert empresa_obtida.descricao == "Empresa de tecnologia"
 
-    def test_obter_empresa_inexistente(self, limpar_banco_dados):
+    def test_obter_empresa_inexistente(self):
         """Deve retornar None para empresa inexistente"""
         empresa = empresa_repo.obter_por_id(999)
         assert empresa is None
 
-    def test_obter_empresa_com_data_cadastro(self, limpar_banco_dados):
+    def test_obter_empresa_com_data_cadastro(self):
         """Deve obter empresa com data de cadastro"""
         empresa = Empresa(
             id_empresa=0,
@@ -169,12 +169,12 @@ class TestObterPorId:
 class TestObterTodas:
     """Testes para listagem de todas as empresas"""
 
-    def test_obter_todas_vazio(self, limpar_banco_dados):
+    def test_obter_todas_vazio(self):
         """Deve retornar lista vazia quando não há empresas"""
         empresas = empresa_repo.obter_todas()
         assert empresas == []
 
-    def test_obter_todas_com_empresas(self, limpar_banco_dados):
+    def test_obter_todas_com_empresas(self):
         """Deve retornar todas as empresas cadastradas"""
         empresas_inserir = [
             Empresa(id_empresa=0, nome="Empresa 1", cnpj="11.111.111/0001-11", descricao=""),
@@ -194,7 +194,7 @@ class TestObterTodas:
 class TestObterPorCnpj:
     """Testes para busca de empresa por CNPJ"""
 
-    def test_obter_por_cnpj_existente(self, limpar_banco_dados):
+    def test_obter_por_cnpj_existente(self):
         """Deve obter empresa por CNPJ"""
         empresa = Empresa(
             id_empresa=0,
@@ -210,7 +210,7 @@ class TestObterPorCnpj:
         assert empresa_obtida.cnpj == "12.345.678/0001-90"
         assert empresa_obtida.nome == "CNPJ Test"
 
-    def test_obter_por_cnpj_inexistente(self, limpar_banco_dados):
+    def test_obter_por_cnpj_inexistente(self):
         """Deve retornar None para CNPJ inexistente"""
         empresa = empresa_repo.obter_por_cnpj("99.999.999/0001-99")
         assert empresa is None
@@ -219,12 +219,12 @@ class TestObterPorCnpj:
 class TestObterQuantidade:
     """Testes para contagem de empresas"""
 
-    def test_quantidade_inicial_zero(self, limpar_banco_dados):
+    def test_quantidade_inicial_zero(self):
         """Deve retornar 0 quando não há empresas"""
         quantidade = empresa_repo.obter_quantidade()
         assert quantidade == 0
 
-    def test_quantidade_apos_insercoes(self, limpar_banco_dados):
+    def test_quantidade_apos_insercoes(self):
         """Deve contar corretamente após inserções"""
         for i in range(4):
             empresa = Empresa(
@@ -238,7 +238,7 @@ class TestObterQuantidade:
         quantidade = empresa_repo.obter_quantidade()
         assert quantidade == 4
 
-    def test_quantidade_apos_exclusao(self, limpar_banco_dados):
+    def test_quantidade_apos_exclusao(self):
         """Deve atualizar contagem após exclusão"""
         ids = []
         for i in range(3):
@@ -259,7 +259,7 @@ class TestObterQuantidade:
 class TestBuscar:
     """Testes para busca de empresas com filtros"""
 
-    def test_buscar_sem_filtros(self, limpar_banco_dados):
+    def test_buscar_sem_filtros(self):
         """Deve retornar todas as empresas sem filtros"""
         for i in range(3):
             empresa = Empresa(
@@ -273,7 +273,7 @@ class TestBuscar:
         empresas = empresa_repo.buscar()
         assert len(empresas) == 3
 
-    def test_buscar_por_nome(self, limpar_banco_dados):
+    def test_buscar_por_nome(self):
         """Deve buscar empresas por nome (LIKE)"""
         empresas = [
             Empresa(id_empresa=0, nome="Tech Solutions", cnpj="11.111.111/0001-11", descricao=""),
@@ -291,7 +291,7 @@ class TestBuscar:
         assert "Tech Solutions" in nomes
         assert "Tech Innovations" in nomes
 
-    def test_buscar_com_limit(self, limpar_banco_dados):
+    def test_buscar_com_limit(self):
         """Deve respeitar limite de resultados"""
         for i in range(5):
             empresa = Empresa(
@@ -305,7 +305,7 @@ class TestBuscar:
         empresas = empresa_repo.buscar(limit=2)
         assert len(empresas) == 2
 
-    def test_buscar_com_offset(self, limpar_banco_dados):
+    def test_buscar_com_offset(self):
         """Deve respeitar offset de paginação"""
         nomes = ["Alpha", "Beta", "Gamma", "Delta"]
         for i, nome in enumerate(nomes):
@@ -324,7 +324,7 @@ class TestBuscar:
 class TestIntegridadeDados:
     """Testes de integridade e validação de dados"""
 
-    def test_descricao_nullable(self, limpar_banco_dados):
+    def test_descricao_nullable(self):
         """Campo descricao deve aceitar valores vazios"""
         empresa = Empresa(
             id_empresa=0,
@@ -337,7 +337,7 @@ class TestIntegridadeDados:
         empresa_obtida = empresa_repo.obter_por_id(id_empresa)
         assert empresa_obtida.descricao == ""
 
-    def test_cnpj_formatado(self, limpar_banco_dados):
+    def test_cnpj_formatado(self):
         """CNPJ deve ser armazenado com formatação"""
         empresa = Empresa(
             id_empresa=0,
@@ -350,7 +350,7 @@ class TestIntegridadeDados:
         empresa_obtida = empresa_repo.obter_por_id(id_empresa)
         assert empresa_obtida.cnpj == "12.345.678/0001-90"
 
-    def test_nome_preserva_espacos(self, limpar_banco_dados):
+    def test_nome_preserva_espacos(self):
         """Nome deve preservar espaços"""
         empresa = Empresa(
             id_empresa=0,
@@ -363,7 +363,7 @@ class TestIntegridadeDados:
         empresa_obtida = empresa_repo.obter_por_id(id_empresa)
         assert empresa_obtida.nome == "  Empresa com Espaços  "
 
-    def test_caracteres_especiais_nome(self, limpar_banco_dados):
+    def test_caracteres_especiais_nome(self):
         """Nome deve aceitar caracteres especiais"""
         empresa = Empresa(
             id_empresa=0,
@@ -376,7 +376,7 @@ class TestIntegridadeDados:
         empresa_obtida = empresa_repo.obter_por_id(id_empresa)
         assert empresa_obtida.nome == "Tech & Solutions (Brasil) - LTDA"
 
-    def test_descricao_longa(self, limpar_banco_dados):
+    def test_descricao_longa(self):
         """Descrição deve aceitar texto longo"""
         descricao_longa = "A" * 2000
         empresa = Empresa(

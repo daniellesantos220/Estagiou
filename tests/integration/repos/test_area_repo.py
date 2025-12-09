@@ -11,7 +11,7 @@ from repo import area_repo
 class TestCriarTabela:
     """Testes para criação da tabela de áreas"""
 
-    def test_criar_tabela_sucesso(self, limpar_banco_dados):
+    def test_criar_tabela_sucesso(self):
         """Deve criar tabela de áreas com sucesso"""
         resultado = area_repo.criar_tabela()
         assert resultado is True
@@ -20,7 +20,7 @@ class TestCriarTabela:
 class TestInserir:
     """Testes para inserção de áreas"""
 
-    def test_inserir_area_completa(self, limpar_banco_dados):
+    def test_inserir_area_completa(self):
         """Deve inserir área com todos os campos"""
         area = Area(
             id_area=0,
@@ -33,7 +33,7 @@ class TestInserir:
         assert id_area is not None
         assert id_area > 0
 
-    def test_inserir_area_sem_descricao(self, limpar_banco_dados):
+    def test_inserir_area_sem_descricao(self):
         """Deve inserir área sem descrição"""
         area = Area(id_area=0, nome="Marketing", descricao="")
 
@@ -42,7 +42,7 @@ class TestInserir:
         assert id_area is not None
         assert id_area > 0
 
-    def test_inserir_multiplas_areas(self, limpar_banco_dados):
+    def test_inserir_multiplas_areas(self):
         """Deve inserir múltiplas áreas"""
         areas = [
             Area(id_area=0, nome="Saúde", descricao="Área da saúde"),
@@ -59,7 +59,7 @@ class TestInserir:
 class TestAlterar:
     """Testes para alteração de áreas"""
 
-    def test_alterar_area_existente(self, limpar_banco_dados):
+    def test_alterar_area_existente(self):
         """Deve alterar área existente"""
         # Inserir área
         area = Area(id_area=0, nome="TI", descricao="Tecnologia")
@@ -80,7 +80,7 @@ class TestAlterar:
         assert area_obtida.nome == "Tecnologia da Informação"
         assert area_obtida.descricao == "Tecnologia e Inovação"
 
-    def test_alterar_area_inexistente(self, limpar_banco_dados):
+    def test_alterar_area_inexistente(self):
         """Deve retornar False ao alterar área inexistente"""
         area = Area(id_area=999, nome="Inexistente", descricao="")
         resultado = area_repo.alterar(area)
@@ -91,7 +91,7 @@ class TestAlterar:
 class TestExcluir:
     """Testes para exclusão de áreas"""
 
-    def test_excluir_area_existente(self, limpar_banco_dados):
+    def test_excluir_area_existente(self):
         """Deve excluir área existente"""
         area = Area(id_area=0, nome="Temporária", descricao="")
         id_area = area_repo.inserir(area)
@@ -101,7 +101,7 @@ class TestExcluir:
         assert resultado is True
         assert area_repo.obter_por_id(id_area) is None
 
-    def test_excluir_area_inexistente(self, limpar_banco_dados):
+    def test_excluir_area_inexistente(self):
         """Deve retornar False ao excluir área inexistente"""
         resultado = area_repo.excluir(999)
         assert resultado is False
@@ -110,7 +110,7 @@ class TestExcluir:
 class TestObterPorId:
     """Testes para busca de área por ID"""
 
-    def test_obter_area_existente(self, limpar_banco_dados):
+    def test_obter_area_existente(self):
         """Deve obter área por ID"""
         area = Area(id_area=0, nome="Engenharia", descricao="Área de engenharia")
         id_area = area_repo.inserir(area)
@@ -122,7 +122,7 @@ class TestObterPorId:
         assert area_obtida.nome == "Engenharia"
         assert area_obtida.descricao == "Área de engenharia"
 
-    def test_obter_area_inexistente(self, limpar_banco_dados):
+    def test_obter_area_inexistente(self):
         """Deve retornar None para área inexistente"""
         area = area_repo.obter_por_id(999)
         assert area is None
@@ -131,12 +131,12 @@ class TestObterPorId:
 class TestObterTodas:
     """Testes para listagem de todas as áreas"""
 
-    def test_obter_todas_vazio(self, limpar_banco_dados):
+    def test_obter_todas_vazio(self):
         """Deve retornar lista vazia quando não há áreas"""
         areas = area_repo.obter_todas()
         assert areas == []
 
-    def test_obter_todas_com_areas(self, limpar_banco_dados):
+    def test_obter_todas_com_areas(self):
         """Deve retornar todas as áreas cadastradas"""
         areas_inserir = [
             Area(id_area=0, nome="TI", descricao="Tech"),
@@ -160,7 +160,7 @@ class TestObterTodas:
 class TestObterPorNome:
     """Testes para busca de área por nome"""
 
-    def test_obter_por_nome_existente(self, limpar_banco_dados):
+    def test_obter_por_nome_existente(self):
         """Deve obter área por nome exato"""
         area = Area(id_area=0, nome="Design", descricao="Design gráfico")
         area_repo.inserir(area)
@@ -170,12 +170,12 @@ class TestObterPorNome:
         assert area_obtida is not None
         assert area_obtida.nome == "Design"
 
-    def test_obter_por_nome_inexistente(self, limpar_banco_dados):
+    def test_obter_por_nome_inexistente(self):
         """Deve retornar None para nome inexistente"""
         area = area_repo.obter_por_nome("Inexistente")
         assert area is None
 
-    def test_obter_por_nome_case_sensitive(self, limpar_banco_dados):
+    def test_obter_por_nome_case_sensitive(self):
         """Nome deve ser case sensitive"""
         area = Area(id_area=0, nome="Marketing", descricao="")
         area_repo.inserir(area)
@@ -187,12 +187,12 @@ class TestObterPorNome:
 class TestObterQuantidade:
     """Testes para contagem de áreas"""
 
-    def test_quantidade_inicial_zero(self, limpar_banco_dados):
+    def test_quantidade_inicial_zero(self):
         """Deve retornar 0 quando não há áreas"""
         quantidade = area_repo.obter_quantidade()
         assert quantidade == 0
 
-    def test_quantidade_apos_insercoes(self, limpar_banco_dados):
+    def test_quantidade_apos_insercoes(self):
         """Deve contar corretamente após inserções"""
         for i in range(5):
             area = Area(id_area=0, nome=f"Área {i}", descricao="")
@@ -201,7 +201,7 @@ class TestObterQuantidade:
         quantidade = area_repo.obter_quantidade()
         assert quantidade == 5
 
-    def test_quantidade_apos_exclusao(self, limpar_banco_dados):
+    def test_quantidade_apos_exclusao(self):
         """Deve atualizar contagem após exclusão"""
         ids = []
         for i in range(3):
@@ -217,7 +217,7 @@ class TestObterQuantidade:
 class TestVerificarUso:
     """Testes para verificação de uso de área em vagas"""
 
-    def test_verificar_uso_area_sem_vagas(self, limpar_banco_dados):
+    def test_verificar_uso_area_sem_vagas(self):
         """Deve retornar 0 para área sem vagas"""
         area = Area(id_area=0, nome="Sem Vagas", descricao="")
         id_area = area_repo.inserir(area)
@@ -225,7 +225,7 @@ class TestVerificarUso:
         quantidade = area_repo.obter_quantidade_vagas_por_area(id_area)
         assert quantidade == 0
 
-    def test_verificar_uso_area_inexistente(self, limpar_banco_dados):
+    def test_verificar_uso_area_inexistente(self):
         """Deve retornar 0 para área inexistente"""
         quantidade = area_repo.obter_quantidade_vagas_por_area(999)
         assert quantidade == 0
@@ -234,7 +234,7 @@ class TestVerificarUso:
 class TestIntegridadeDados:
     """Testes de integridade e validação de dados"""
 
-    def test_descricao_nullable(self, limpar_banco_dados):
+    def test_descricao_nullable(self):
         """Campo descricao deve aceitar valores vazios"""
         area = Area(id_area=0, nome="Teste", descricao="")
         id_area = area_repo.inserir(area)
@@ -242,7 +242,7 @@ class TestIntegridadeDados:
         area_obtida = area_repo.obter_por_id(id_area)
         assert area_obtida.descricao == ""
 
-    def test_nome_preserva_espacos(self, limpar_banco_dados):
+    def test_nome_preserva_espacos(self):
         """Nome deve preservar espaços"""
         area = Area(id_area=0, nome="  Nome com espaços  ", descricao="")
         id_area = area_repo.inserir(area)
@@ -250,7 +250,7 @@ class TestIntegridadeDados:
         area_obtida = area_repo.obter_por_id(id_area)
         assert area_obtida.nome == "  Nome com espaços  "
 
-    def test_caracteres_especiais_nome(self, limpar_banco_dados):
+    def test_caracteres_especiais_nome(self):
         """Nome deve aceitar caracteres especiais"""
         area = Area(id_area=0, nome="TI & Tecnologia (Dev)", descricao="Área de TI")
         id_area = area_repo.inserir(area)
@@ -258,7 +258,7 @@ class TestIntegridadeDados:
         area_obtida = area_repo.obter_por_id(id_area)
         assert area_obtida.nome == "TI & Tecnologia (Dev)"
 
-    def test_descricao_longa(self, limpar_banco_dados):
+    def test_descricao_longa(self):
         """Descrição deve aceitar texto longo"""
         descricao_longa = "A" * 1000
         area = Area(id_area=0, nome="Teste Long", descricao=descricao_longa)

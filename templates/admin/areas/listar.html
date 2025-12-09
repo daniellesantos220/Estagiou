@@ -27,24 +27,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for area in areas %}
+                            {% for item in areas %}
                             <tr>
-                                <td>{{ area.id_area }}</td>
-                                <td>{{ area.nome }}</td>
-                                <td>{{ area.descricao[:80] }}{% if area.descricao|length > 80 %}...{% endif %}</td>
+                                <td>{{ item.area.id_area }}</td>
+                                <td>{{ item.area.nome }}</td>
+                                <td>{{ item.area.descricao[:80] }}{% if item.area.descricao|length > 80 %}...{% endif %}</td>
                                 <td class="text-center">
                                     <span class="badge bg-info">
-                                        {{ area_repo.verificar_uso(area.id_area) }}
+                                        {{ item.qtd_vagas }}
                                     </span>
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="/admin/areas/editar/{{ area.id_area }}"
+                                        <a href="/admin/areas/editar/{{ item.area.id_area }}"
                                             class="btn btn-outline-primary" title="Editar">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button" class="btn btn-outline-danger" title="Excluir"
-                                            onclick="excluirArea({{ area.id_area }}, '{{ area.nome|replace("'", "\\'") }}')">
+                                            onclick="excluirArea({{ item.area.id_area }}, '{{ item.area.nome|replace("'", "\\'") }}')">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>

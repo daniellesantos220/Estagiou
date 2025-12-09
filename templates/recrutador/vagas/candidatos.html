@@ -1,0 +1,92 @@
+{% extends "base_privada.html" %}
+
+{% block titulo %}Candidatos - {{ vaga.titulo }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-people"></i> Candidatos</h2>
+                <p class="text-muted mb-0">Vaga: <strong>{{ vaga.titulo }}</strong></p>
+            </div>
+            <a href="/recrutador/vagas/listar" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if candidaturas %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Candidato</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th class="text-center">Data da Candidatura</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in candidaturas %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.candidato_nome }}</strong>
+                                </td>
+                                <td>
+                                    <a href="mailto:{{ item.candidato_email }}">{{ item.candidato_email }}</a>
+                                </td>
+                                <td>
+                                    {% if item.candidato_telefone %}
+                                    <a href="tel:{{ item.candidato_telefone }}">{{ item.candidato_telefone }}</a>
+                                    {% else %}
+                                    <span class="text-muted">Não informado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {{ item.candidatura.data_candidatura[:10] if item.candidatura.data_candidatura else 'N/A' }}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.candidatura.status == 'pendente' %}
+                                    <span class="badge bg-warning text-dark">Pendente</span>
+                                    {% elif item.candidatura.status == 'em_analise' %}
+                                    <span class="badge bg-info">Em Análise</span>
+                                    {% elif item.candidatura.status == 'aprovado' %}
+                                    <span class="badge bg-success">Aprovado</span>
+                                    {% elif item.candidatura.status == 'rejeitado' %}
+                                    <span class="badge bg-danger">Rejeitado</span>
+                                    {% elif item.candidatura.status == 'cancelado' %}
+                                    <span class="badge bg-secondary">Cancelado</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">{{ item.candidatura.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        Total de candidatos: <strong>{{ candidaturas|length }}</strong>
+                    </p>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-people display-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">Nenhum candidato ainda</h4>
+                    <p class="text-muted">Esta vaga ainda não recebeu candidaturas.</p>
+                    <a href="/recrutador/vagas/listar" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Minhas Vagas
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

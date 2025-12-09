@@ -1,57 +1,29 @@
-from pydantic import ValidationError
-from dtos.area_dto import AlterarAreaDTO, CriarAreaDTO
-from model.area_model import Area
-from util.exceptions import FormValidationError
-from util.logger_config import logger
+"""Rotas de administração de áreas."""
 from typing import Optional
 from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import RedirectResponse
+from pydantic import ValidationError
+
+from dtos.area_dto import CriarAreaDTO, AlterarAreaDTO
+from model.area_model import Area
 from repo import area_repo
 from util.auth_decorator import requer_autenticacao
-from util.flash_messages import informar_erro, informar_sucesso
-from util.perfis import Perfil
 from util.template_util import criar_templates
-
+from util.flash_messages import informar_sucesso, informar_erro
+from util.logger_config import logger
+from util.perfis import Perfil
+from util.exceptions import ErroValidacaoFormulario
 
 router = APIRouter(prefix="/admin/areas")
-templates = criar_templates("templates/admin/areas")
+templates = criar_templates()
 
 
-@router.post("/excluir/{id}")
+@router.get("/")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def post_excluir(
-    request: Request, id: int, usuario_logado: Optional[dict] = None
-):
-    """Exclui uma área"""
-    assert usuario_logado is not None
-
-    area = area_repo.obter_por_id(id)
-    if not area:
-        informar_erro(request, "Área não encontrada")
-        return RedirectResponse(
-            "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
-        )
-
-    # Verificar se área está sendo usada por vagas
-    quantidade_vagas = area_repo.obter_quantidade_vagas_por_area(id)
-    if quantidade_vagas > 0:
-        informar_erro(
-            request,
-            f"Não é possível excluir esta área pois existem {quantidade_vagas} vaga(s) vinculada(s) a ela",
-        )
-        logger.warning(
-            f"Admin {usuario_logado['id']} tentou excluir área {id} com {quantidade_vagas} vaga(s) vinculada(s)"
-        )
-        return RedirectResponse(
-            "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
-        )
-
-    area_repo.excluir(id)
-    logger.info(f"Área {id} ('{area.nome}') excluída por admin {usuario_logado['id']}")
-    informar_sucesso(request, "Área excluída com sucesso!")
-
+async def index(request: Request, usuario_logado: Optional[dict] = None):
+    """Redireciona para lista de áreas"""
     return RedirectResponse(
-        "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
+        "/admin/areas/listar", status_code=status.HTTP_307_TEMPORARY_REDIRECT
     )
 
 
@@ -60,8 +32,18 @@ async def post_excluir(
 async def listar(request: Request, usuario_logado: Optional[dict] = None):
     """Lista todas as áreas cadastradas no sistema"""
     areas = area_repo.obter_todas()
+
+    # Enriquecer áreas com quantidade de vagas
+    areas_enriquecidas = []
+    for area in areas:
+        qtd_vagas = area_repo.obter_quantidade_vagas_por_area(area.id_area)
+        areas_enriquecidas.append({
+            "area": area,
+            "qtd_vagas": qtd_vagas
+        })
+
     return templates.TemplateResponse(
-        "admin/areas/listar.html", {"request": request, "areas": areas}
+        "admin/areas/listar.html", {"request": request, "areas": areas_enriquecidas}
     )
 
 
@@ -110,7 +92,7 @@ async def post_cadastrar(
         )
 
     except ValidationError as e:
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/areas/cadastro.html",
             dados_formulario=dados_formulario,
@@ -191,7 +173,7 @@ async def post_editar(
 
     except ValidationError as e:
         dados_formulario["area"] = area_repo.obter_por_id(id)
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/areas/editar.html",
             dados_formulario=dados_formulario,
@@ -199,32 +181,39 @@ async def post_editar(
         )
 
 
-from typing import Optional
-from fastapi import APIRouter, Form, Request, status
-from fastapi.responses import RedirectResponse
-from pydantic import ValidationError
-
-from dtos.area_dto import CriarAreaDTO, AlterarAreaDTO
-from model.area_model import Area
-from repo import area_repo
-from util.auth_decorator import requer_autenticacao
-from util.template_util import criar_templates
-from util.flash_messages import informar_sucesso, informar_erro
-from util.logger_config import logger
-from util.perfis import Perfil
-from util.exceptions import FormValidationError
-
-router = APIRouter(prefix="/admin/areas")
-templates = criar_templates("templates/admin/areas")
-
-
-@router.get("/")
+@router.post("/excluir/{id}")
 @requer_autenticacao([Perfil.ADMIN.value])
-async def index(request: Request, usuario_logado: Optional[dict] = None):
-    """Redireciona para lista de áreas"""
+async def post_excluir(
+    request: Request, id: int, usuario_logado: Optional[dict] = None
+):
+    """Exclui uma área"""
+    assert usuario_logado is not None
+
+    area = area_repo.obter_por_id(id)
+    if not area:
+        informar_erro(request, "Área não encontrada")
+        return RedirectResponse(
+            "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
+        )
+
+    # Verificar se área está sendo usada por vagas
+    quantidade_vagas = area_repo.obter_quantidade_vagas_por_area(id)
+    if quantidade_vagas > 0:
+        informar_erro(
+            request,
+            f"Não é possível excluir esta área pois existem {quantidade_vagas} vaga(s) vinculada(s) a ela",
+        )
+        logger.warning(
+            f"Admin {usuario_logado['id']} tentou excluir área {id} com {quantidade_vagas} vaga(s) vinculada(s)"
+        )
+        return RedirectResponse(
+            "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
+        )
+
+    area_repo.excluir(id)
+    logger.info(f"Área {id} ('{area.nome}') excluída por admin {usuario_logado['id']}")
+    informar_sucesso(request, "Área excluída com sucesso!")
+
     return RedirectResponse(
-        "/admin/areas/listar", status_code=status.HTTP_307_TEMPORARY_REDIRECT
+        "/admin/areas/listar", status_code=status.HTTP_303_SEE_OTHER
     )
-
-
-# Código das Seções 1, 2, 3 e 4 (ver seções acima)

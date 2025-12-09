@@ -274,3 +274,67 @@ def verificar_candidatura(id_vaga: int, id_candidato: int) -> bool:
         True se existe candidatura, False caso contrário
     """
     return verificar_candidatura_existente(id_vaga, id_candidato)
+
+
+def obter_por_vaga_com_candidato(id_vaga: int) -> list[dict]:
+    """
+    Retorna candidaturas de uma vaga com dados do candidato (para recrutadores).
+
+    Args:
+        id_vaga: ID da vaga
+
+    Returns:
+        Lista de dicionários com dados da candidatura e do candidato
+    """
+    with obter_conexao() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_POR_VAGA_COM_CANDIDATO, (id_vaga,))
+        rows = cursor.fetchall()
+        result = []
+        for row in rows:
+            result.append({
+                "candidatura": Candidatura(
+                    id_candidatura=row["id_candidatura"],
+                    id_vaga=row["id_vaga"],
+                    id_candidato=row["id_candidato"],
+                    data_candidatura=row["data_candidatura"],
+                    status=row["status"]
+                ),
+                "candidato_nome": row["candidato_nome"] if "candidato_nome" in row.keys() else "N/A",
+                "candidato_email": row["candidato_email"] if "candidato_email" in row.keys() else "N/A",
+                "candidato_telefone": row["candidato_telefone"] if "candidato_telefone" in row.keys() else None,
+            })
+        return result
+
+
+def obter_por_candidato_com_vaga(id_candidato: int) -> list[dict]:
+    """
+    Retorna candidaturas de um candidato com dados da vaga (para estudantes).
+
+    Args:
+        id_candidato: ID do candidato
+
+    Returns:
+        Lista de dicionários com dados da candidatura e da vaga
+    """
+    with obter_conexao() as conn:
+        cursor = conn.cursor()
+        cursor.execute(OBTER_POR_CANDIDATO, (id_candidato,))
+        rows = cursor.fetchall()
+        result = []
+        for row in rows:
+            result.append({
+                "candidatura": Candidatura(
+                    id_candidatura=row["id_candidatura"],
+                    id_vaga=row["id_vaga"],
+                    id_candidato=row["id_candidato"],
+                    data_candidatura=row["data_candidatura"],
+                    status=row["status"]
+                ),
+                "vaga_titulo": row["vaga_titulo"] if "vaga_titulo" in row.keys() else "N/A",
+                "vaga_salario": row["vaga_salario"] if "vaga_salario" in row.keys() else 0.0,
+                "vaga_cidade": row["vaga_cidade"] if "vaga_cidade" in row.keys() else None,
+                "vaga_status": row["vaga_status"] if "vaga_status" in row.keys() else None,
+                "recrutador_nome": row["recrutador_nome"] if "recrutador_nome" in row.keys() else "N/A",
+            })
+        return result

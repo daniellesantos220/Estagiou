@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from model.curtida_model import Curtida
 from repo import curtida_repo
 from util.auth_decorator import requer_autenticacao
-from util.exceptions import FormValidationError
+from util.exceptions import ErroValidacaoFormulario
 from util.flash_messages import informar_erro, informar_sucesso
 from util.perfis import Perfil
 from util.rate_limiter import RateLimiter, obter_identificador_cliente
@@ -92,7 +92,7 @@ async def post_cadastrar(
         )
 
     except ValidationError as e:
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/curtidas/cadastro.html",
             dados_formulario=dados_formulario,
@@ -169,7 +169,7 @@ async def post_editar(
     except ValidationError as e:
         # Adicionar item aos dados para renderizar o template
         dados_formulario = curtida_repo.obter_por_id(id_usuario, id_vaga)
-        raise FormValidationError(
+        raise ErroValidacaoFormulario(
             validation_error=e,
             template_path="admin/curtidas/editar.html",
             dados_formulario=dados_formulario.__dict__,

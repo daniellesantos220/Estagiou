@@ -50,11 +50,21 @@ ORDER BY c.data_candidatura DESC
 OBTER_POR_CANDIDATO = """
 SELECT c.*,
        v.titulo as vaga_titulo, v.salario as vaga_salario, v.cidade as vaga_cidade,
-       e.nome as empresa_nome
+       v.status_vaga as vaga_status,
+       u.nome as recrutador_nome
 FROM candidatura c
 LEFT JOIN vaga v ON c.id_vaga = v.id_vaga
-LEFT JOIN empresa e ON v.id_empresa = e.id_empresa
+LEFT JOIN usuario u ON v.id_recrutador = u.id
 WHERE c.id_candidato = ?
+ORDER BY c.data_candidatura DESC
+"""
+
+OBTER_POR_VAGA_COM_CANDIDATO = """
+SELECT c.*,
+       u.nome as candidato_nome, u.email as candidato_email, u.telefone as candidato_telefone
+FROM candidatura c
+LEFT JOIN usuario u ON c.id_candidato = u.id
+WHERE c.id_vaga = ?
 ORDER BY c.data_candidatura DESC
 """
 

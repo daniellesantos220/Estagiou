@@ -3,7 +3,7 @@ from fastapi import APIRouter, Form, Request, Query, status
 from fastapi.responses import RedirectResponse
 from pydantic import ValidationError
 
-from repo import vaga_repo, area_repo, empresa_repo
+from repo import vaga_repo, area_repo
 from util.auth_decorator import requer_autenticacao
 from util.template_util import criar_templates
 from util.flash_messages import informar_sucesso, informar_erro
@@ -11,7 +11,7 @@ from util.logger_config import logger
 from util.perfis import Perfil
 
 router = APIRouter(prefix="/admin/vagas")
-templates = criar_templates("templates/admin/vagas")
+templates = criar_templates()
 
 @router.get("/")
 @requer_autenticacao([Perfil.ADMIN.value])
@@ -34,16 +34,15 @@ async def listar(
     else:
         vagas = vaga_repo.obter_todas()
 
-    # Enriquecer vagas com dados de área e empresa
+    # Enriquecer vagas com dados de área
     vagas_enriquecidas = []
     for vaga in vagas:
         area = area_repo.obter_por_id(vaga.id_area) if vaga.id_area else None
-        empresa = empresa_repo.obter_por_id(vaga.id_empresa) if vaga.id_empresa else None
 
         vagas_enriquecidas.append({
             "vaga": vaga,
             "area_nome": area.nome if area else "N/A",
-            "empresa_nome": empresa.nome if empresa else "N/A"
+            "recrutador_nome": vaga.recrutador_nome if vaga.recrutador_nome else "N/A"
         })
 
     status_opcoes = ["Pendente", "Aprovada", "Reprovada", "Arquivada"]

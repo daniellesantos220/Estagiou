@@ -1,0 +1,145 @@
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Meu Endereço{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-geo-alt"></i> Meu Endereço</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/usuario/endereco">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alert_erro_geral.html" %}
+                        </div>
+
+                        {% if endereco %}
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                Você já possui um endereço cadastrado. Altere os campos abaixo se desejar atualizá-lo.
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-secondary">
+                                <i class="bi bi-info-circle"></i>
+                                Preencha os campos abaixo para cadastrar seu endereço.
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='cep', label='CEP', type='text', required=true,
+                                     placeholder='00000-000', maxlength='9',
+                                     extra_attrs='data-mask="cep"') }}
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            {{ field(name='logradouro', label='Logradouro', type='text', required=true,
+                                     placeholder='Rua, Avenida, Praça...') }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            {{ field(name='numero', label='Número', type='text', required=true,
+                                     placeholder='123') }}
+                        </div>
+
+                        <div class="col-md-5 mb-3">
+                            {{ field(name='complemento', label='Complemento', type='text', required=false,
+                                     placeholder='Apto, Bloco, Sala...') }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            {{ field(name='bairro', label='Bairro', type='text', required=true,
+                                     placeholder='Nome do bairro') }}
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            {{ field(name='cidade', label='Cidade', type='text', required=true,
+                                     placeholder='Nome da cidade') }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="uf" class="form-label">Estado (UF) <span class="text-danger">*</span></label>
+                            <select name="uf" id="uf" class="form-select" required>
+                                <option value="">Selecione...</option>
+                                <option value="AC" {{ 'selected' if dados.uf == 'AC' else '' }}>AC</option>
+                                <option value="AL" {{ 'selected' if dados.uf == 'AL' else '' }}>AL</option>
+                                <option value="AP" {{ 'selected' if dados.uf == 'AP' else '' }}>AP</option>
+                                <option value="AM" {{ 'selected' if dados.uf == 'AM' else '' }}>AM</option>
+                                <option value="BA" {{ 'selected' if dados.uf == 'BA' else '' }}>BA</option>
+                                <option value="CE" {{ 'selected' if dados.uf == 'CE' else '' }}>CE</option>
+                                <option value="DF" {{ 'selected' if dados.uf == 'DF' else '' }}>DF</option>
+                                <option value="ES" {{ 'selected' if dados.uf == 'ES' else '' }}>ES</option>
+                                <option value="GO" {{ 'selected' if dados.uf == 'GO' else '' }}>GO</option>
+                                <option value="MA" {{ 'selected' if dados.uf == 'MA' else '' }}>MA</option>
+                                <option value="MT" {{ 'selected' if dados.uf == 'MT' else '' }}>MT</option>
+                                <option value="MS" {{ 'selected' if dados.uf == 'MS' else '' }}>MS</option>
+                                <option value="MG" {{ 'selected' if dados.uf == 'MG' else '' }}>MG</option>
+                                <option value="PA" {{ 'selected' if dados.uf == 'PA' else '' }}>PA</option>
+                                <option value="PB" {{ 'selected' if dados.uf == 'PB' else '' }}>PB</option>
+                                <option value="PR" {{ 'selected' if dados.uf == 'PR' else '' }}>PR</option>
+                                <option value="PE" {{ 'selected' if dados.uf == 'PE' else '' }}>PE</option>
+                                <option value="PI" {{ 'selected' if dados.uf == 'PI' else '' }}>PI</option>
+                                <option value="RJ" {{ 'selected' if dados.uf == 'RJ' else '' }}>RJ</option>
+                                <option value="RN" {{ 'selected' if dados.uf == 'RN' else '' }}>RN</option>
+                                <option value="RS" {{ 'selected' if dados.uf == 'RS' else '' }}>RS</option>
+                                <option value="RO" {{ 'selected' if dados.uf == 'RO' else '' }}>RO</option>
+                                <option value="RR" {{ 'selected' if dados.uf == 'RR' else '' }}>RR</option>
+                                <option value="SC" {{ 'selected' if dados.uf == 'SC' else '' }}>SC</option>
+                                <option value="SP" {{ 'selected' if dados.uf == 'SP' else '' }}>SP</option>
+                                <option value="SE" {{ 'selected' if dados.uf == 'SE' else '' }}>SE</option>
+                                <option value="TO" {{ 'selected' if dados.uf == 'TO' else '' }}>TO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i>
+                            {% if endereco %}Salvar Alterações{% else %}Cadastrar Endereço{% endif %}
+                        </button>
+                        <a href="/usuario" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Buscar endereço pelo CEP usando ViaCEP
+    document.addEventListener('DOMContentLoaded', function() {
+        const cepInput = document.getElementById('cep');
+        if (cepInput) {
+            cepInput.addEventListener('blur', function() {
+                const cep = this.value.replace(/\D/g, '');
+                if (cep.length === 8) {
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.erro) {
+                                document.getElementById('logradouro').value = data.logradouro || '';
+                                document.getElementById('bairro').value = data.bairro || '';
+                                document.getElementById('cidade').value = data.localidade || '';
+                                document.getElementById('uf').value = data.uf || '';
+                            }
+                        })
+                        .catch(error => console.log('Erro ao buscar CEP:', error));
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

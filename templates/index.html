@@ -30,6 +30,69 @@
     </div>
 </div>
 
+<!-- Vagas de Estágio Section -->
+<div class="mb-5" id="vagas">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><i class="bi bi-briefcase"></i> Vagas de Estágio</h2>
+        <p class="text-muted">Confira as últimas oportunidades disponíveis</p>
+    </div>
+
+    {% if vagas and vagas|length > 0 %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for item in vagas %}
+        <div class="col">
+            <a href="/vagas/{{ item.vaga.id_vaga }}" class="text-decoration-none">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">{{ item.vaga.titulo }}</h5>
+                        <p class="card-text">
+                            <span class="badge bg-primary">{{ item.area_nome }}</span>
+                            {% if item.vaga.modalidade %}
+                            <span class="badge bg-secondary">{{ item.vaga.modalidade }}</span>
+                            {% endif %}
+                        </p>
+                        <p class="card-text text-muted small">
+                            {{ item.vaga.descricao[:100] }}{% if item.vaga.descricao|length > 100 %}...{% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                {% if item.vaga.cidade %}
+                                <i class="bi bi-geo-alt"></i> {{ item.vaga.cidade }}{% if item.vaga.uf %}/{{ item.vaga.uf }}{% endif %}
+                                {% endif %}
+                            </small>
+                            <small class="text-success fw-bold">
+                                {% if item.vaga.salario and item.vaga.salario > 0 %}
+                                R$ {{ "%.2f"|format(item.vaga.salario) }}
+                                {% else %}
+                                A combinar
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/vagas" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-search"></i> Ver Todas as Vagas
+        </a>
+    </div>
+    {% else %}
+    <div class="text-center py-4">
+        <i class="bi bi-briefcase display-3 text-muted"></i>
+        <p class="text-muted mt-3">Nenhuma vaga disponível no momento. Volte em breve!</p>
+        <a href="/cadastrar" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Cadastre-se para ser notificado
+        </a>
+    </div>
+    {% endif %}
+</div>
+
 <!-- Recursos Section -->
 <div class="mb-5" id="recursos">
     <div class="text-center mb-5">
@@ -211,4 +274,16 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block head %}
+<style>
+    .hover-shadow {
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        transform: translateY(-3px);
+    }
+</style>
 {% endblock %}

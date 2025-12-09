@@ -29,6 +29,10 @@ from repo import (
     chamado_repo,
     chamado_interacao_repo,
     indices_repo,
+    area_repo,
+    vaga_repo,
+    candidatura_repo,
+    endereco_repo,
 )
 from repo import chat_sala_repo, chat_participante_repo, chat_mensagem_repo
 
@@ -41,6 +45,11 @@ from routes.admin_backups_routes import router as admin_backups_router
 from routes.admin_chamados_routes import router as admin_chamados_router
 from routes.usuario_routes import router as usuario_router
 from routes.chat_routes import router as chat_router
+from routes.admin_areas_routes import router as admin_areas_router
+from routes.recrutador_vagas_routes import router as recrutador_vagas_router
+from routes.candidaturas_routes import router as candidaturas_router
+from routes.endereco_routes import router as endereco_router
+from routes.vagas_publicas_routes import router as vagas_publicas_router
 from routes.public_routes import router as public_router
 from routes.examples_routes import router as examples_router
 
@@ -82,6 +91,10 @@ TABELAS = [
     (chat_sala_repo, "chat_sala"),
     (chat_participante_repo, "chat_participante"),
     (chat_mensagem_repo, "chat_mensagem"),
+    (area_repo, "area"),
+    (vaga_repo, "vaga"),
+    (candidatura_repo, "candidatura"),
+    (endereco_repo, "endereco"),
 ]
 
 # Criar tabelas do banco de dados
@@ -121,8 +134,13 @@ ROUTERS = [
     (admin_config_router, ["Admin - Configurações"], "admin de configurações"),
     (admin_backups_router, ["Admin - Backups"], "admin de backups"),
     (admin_chamados_router, ["Admin - Chamados"], "admin de chamados"),
+    (admin_areas_router, ["Admin - Áreas"], "admin de áreas"),
     (usuario_router, ["Usuário"], "usuário"),
     (chat_router, ["Chat"], "chat"),
+    (recrutador_vagas_router, ["Recrutador - Vagas"], "recrutador de vagas"),
+    (candidaturas_router, ["Candidaturas"], "candidaturas"),
+    (endereco_router, ["Endereço"], "endereço"),
+    (vagas_publicas_router, ["Vagas"], "vagas públicas"),
     (public_router, ["Público"], "público"),
     (examples_router, ["Exemplos"], "exemplos"),
 ]

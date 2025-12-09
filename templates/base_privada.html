@@ -61,6 +61,11 @@
                             {{ 'aria-current=page' if '/admin/usuarios/' in request.path else '' }}>Usuários</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/admin/areas/' in request.path else '' }}"
+                            href="/admin/areas/listar"
+                            {{ 'aria-current=page' if '/admin/areas/' in request.path else '' }}>Áreas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ 'active' if '/admin/configuracoes' in request.path else '' }}"
                             href="/admin/configuracoes"
                             {{ 'aria-current=page' if '/admin/configuracoes' in request.path else '' }}>Configurações</a>
@@ -79,6 +84,33 @@
                         <a class="nav-link {{ 'active' if '/admin/backups/' in request.path else '' }}"
                             href="/admin/backups/listar"
                             {{ 'aria-current=page' if '/admin/backups/' in request.path else '' }}>Backup</a>
+                    </li>
+                    {% elif usuario_logado and usuario_logado.perfil == 'Recrutador' %}
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/recrutador/vagas/' in request.path else '' }}"
+                            href="/recrutador/vagas/listar"
+                            {{ 'aria-current=page' if '/recrutador/vagas/' in request.path else '' }}>Minhas Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/chamados/' in request.path else '' }}"
+                            href="/chamados/listar"
+                            {{ 'aria-current=page' if '/chamados/' in request.path else '' }}>Chamados</a>
+                    </li>
+                    {% elif usuario_logado and usuario_logado.perfil == 'Estudante' %}
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/vagas' in request.path and '/recrutador/' not in request.path else '' }}"
+                            href="/vagas"
+                            {{ 'aria-current=page' if '/vagas' in request.path and '/recrutador/' not in request.path else '' }}>Vagas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/candidaturas/' in request.path else '' }}"
+                            href="/candidaturas/minhas"
+                            {{ 'aria-current=page' if '/candidaturas/' in request.path else '' }}>Minhas Candidaturas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if '/chamados/' in request.path else '' }}"
+                            href="/chamados/listar"
+                            {{ 'aria-current=page' if '/chamados/' in request.path else '' }}>Chamados</a>
                     </li>
                     {% else %}
                     <li class="nav-item">

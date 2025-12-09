@@ -6,7 +6,6 @@ CRIAR_TABELA = """
 CREATE TABLE IF NOT EXISTS vaga (
     id_vaga INTEGER PRIMARY KEY AUTOINCREMENT,
     id_area INTEGER NOT NULL,
-    id_empresa INTEGER NOT NULL,
     id_recrutador INTEGER NOT NULL,
     status_vaga TEXT DEFAULT 'aberta',
     titulo TEXT NOT NULL,
@@ -15,24 +14,23 @@ CREATE TABLE IF NOT EXISTS vaga (
     salario REAL DEFAULT 0,
     requisitos TEXT,
     beneficios TEXT,
-    carga_horaria INTEGER,
+    carga_horaria TEXT,
     modalidade TEXT,
     cidade TEXT,
     uf TEXT,
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_area) REFERENCES area(id_area),
-    FOREIGN KEY (id_empresa) REFERENCES empresa(id_empresa),
     FOREIGN KEY (id_recrutador) REFERENCES usuario(id)
 )
 """
 
 INSERIR = """
 INSERT INTO vaga (
-    id_area, id_empresa, id_recrutador, status_vaga, titulo, descricao,
+    id_area, id_recrutador, status_vaga, titulo, descricao,
     numero_vagas, salario, requisitos, beneficios,
     carga_horaria, modalidade, cidade, uf
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 ALTERAR = """
@@ -54,11 +52,9 @@ EXCLUIR = "DELETE FROM vaga WHERE id_vaga = ?"
 OBTER_POR_ID = """
 SELECT v.*,
        a.nome as area_nome, a.descricao as area_descricao,
-       e.nome as empresa_nome, e.cnpj as empresa_cnpj, e.descricao as empresa_descricao,
        u.nome as recrutador_nome, u.email as recrutador_email
 FROM vaga v
 LEFT JOIN area a ON v.id_area = a.id_area
-LEFT JOIN empresa e ON v.id_empresa = e.id_empresa
 LEFT JOIN usuario u ON v.id_recrutador = u.id
 WHERE v.id_vaga = ?
 """
@@ -66,26 +62,17 @@ WHERE v.id_vaga = ?
 OBTER_TODAS = """
 SELECT v.*,
        a.nome as area_nome,
-       e.nome as empresa_nome
+       u.nome as recrutador_nome
 FROM vaga v
 LEFT JOIN area a ON v.id_area = a.id_area
-LEFT JOIN empresa e ON v.id_empresa = e.id_empresa
-ORDER BY v.data_cadastro DESC
-"""
-
-OBTER_POR_EMPRESA = """
-SELECT v.*, a.nome as area_nome
-FROM vaga v
-LEFT JOIN area a ON v.id_area = a.id_area
-WHERE v.id_empresa = ?
+LEFT JOIN usuario u ON v.id_recrutador = u.id
 ORDER BY v.data_cadastro DESC
 """
 
 OBTER_POR_RECRUTADOR = """
-SELECT v.*, a.nome as area_nome, e.nome as empresa_nome
+SELECT v.*, a.nome as area_nome
 FROM vaga v
 LEFT JOIN area a ON v.id_area = a.id_area
-LEFT JOIN empresa e ON v.id_empresa = e.id_empresa
 WHERE v.id_recrutador = ?
 ORDER BY v.data_cadastro DESC
 """
@@ -93,10 +80,10 @@ ORDER BY v.data_cadastro DESC
 BUSCAR = """
 SELECT v.*,
        a.nome as area_nome,
-       e.nome as empresa_nome
+       u.nome as recrutador_nome
 FROM vaga v
 LEFT JOIN area a ON v.id_area = a.id_area
-LEFT JOIN empresa e ON v.id_empresa = e.id_empresa
+LEFT JOIN usuario u ON v.id_recrutador = u.id
 WHERE (? IS NULL OR v.id_area = ?)
   AND (? IS NULL OR v.cidade LIKE '%' || ? || '%')
   AND (? IS NULL OR v.uf = ?)
@@ -120,11 +107,38 @@ SELECT COUNT(*) as quantidade FROM vaga WHERE id_area = ?
 OBTER_VAGAS_ABERTAS = """
 SELECT v.*,
        a.nome as area_nome,
-       e.nome as empresa_nome
+       u.nome as recrutador_nome
 FROM vaga v
 LEFT JOIN area a ON v.id_area = a.id_area
-LEFT JOIN empresa e ON v.id_empresa = e.id_empresa
+LEFT JOIN usuario u ON v.id_recrutador = u.id
 WHERE v.status_vaga = 'aberta'
 ORDER BY v.data_cadastro DESC
 LIMIT ? OFFSET ?
+"""
+
+OBTER_ULTIMAS_ABERTAS = """
+SELECT v.*,
+       a.nome as area_nome,
+       u.nome as recrutador_nome
+FROM vaga v
+LEFT JOIN area a ON v.id_area = a.id_area
+LEFT JOIN usuario u ON v.id_recrutador = u.id
+WHERE v.status_vaga = 'aberta'
+ORDER BY v.data_cadastro DESC
+LIMIT ?
+"""
+
+BUSCAR_POR_TERMO = """
+SELECT v.*,
+       a.nome as area_nome,
+       u.nome as recrutador_nome
+FROM vaga v
+LEFT JOIN area a ON v.id_area = a.id_area
+LEFT JOIN usuario u ON v.id_recrutador = u.id
+WHERE v.status_vaga = 'aberta'
+  AND (? IS NULL OR v.id_area = ?)
+  AND (? IS NULL OR ? = '' OR
+       v.titulo LIKE '%' || ? || '%' OR
+       v.descricao LIKE '%' || ? || '%')
+ORDER BY v.data_cadastro DESC
 """

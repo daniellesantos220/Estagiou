@@ -1,0 +1,153 @@
+{% extends "base_privada.html" %}
+{% from "macros/form_fields.html" import field with context %}
+
+{% block titulo %}Cadastrar Vaga{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center mb-4">
+            <h2 class="mb-0"><i class="bi bi-briefcase"></i> Cadastrar Nova Vaga</h2>
+        </div>
+
+        <div class="card shadow-sm">
+            <form method="POST" action="/recrutador/vagas/cadastrar">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-12">
+                            {% include "components/alert_erro_geral.html" %}
+                        </div>
+
+                        <!-- Informações Básicas -->
+                        <div class="col-12">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-info-circle"></i> Informações Básicas</h5>
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            {{ field(name='titulo', label='Título da Vaga', type='text', required=true,
+                                     placeholder='Ex: Estagiário em Desenvolvimento de Software') }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="id_area" class="form-label">Área <span class="text-danger">*</span></label>
+                            <select name="id_area" id="id_area" class="form-select" required>
+                                <option value="">Selecione uma área</option>
+                                {% for area in areas %}
+                                <option value="{{ area.id_area }}" {{ 'selected' if dados.id_area|string == area.id_area|string else '' }}>
+                                    {{ area.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            {{ field(name='descricao', label='Descrição da Vaga', type='textarea', required=true,
+                                     rows=4, placeholder='Descreva as atividades e responsabilidades do estagiário...') }}
+                        </div>
+
+                        <!-- Requisitos e Benefícios -->
+                        <div class="col-12 mt-2">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-list-check"></i> Requisitos e Benefícios</h5>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='requisitos', label='Requisitos', type='textarea', required=false,
+                                     rows=3, placeholder='Ex: Cursando Sistemas de Informação, conhecimento em Python...') }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ field(name='beneficios', label='Benefícios', type='textarea', required=false,
+                                     rows=3, placeholder='Ex: Vale transporte, vale alimentação, seguro de vida...') }}
+                        </div>
+
+                        <!-- Detalhes da Vaga -->
+                        <div class="col-12 mt-2">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-gear"></i> Detalhes da Vaga</h5>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            {{ field(name='numero_vagas', label='Número de Vagas', type='number', required=false,
+                                     value=dados.numero_vagas|default(1), min='1', max='100') }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            {{ field(name='salario', label='Bolsa/Salário (R$)', type='number', required=false,
+                                     value=dados.salario|default(0), min='0', step='0.01',
+                                     placeholder='0.00') }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            {{ field(name='carga_horaria', label='Carga Horária', type='text', required=false,
+                                     placeholder='Ex: 6h/dia ou 30h/semana') }}
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label for="modalidade" class="form-label">Modalidade</label>
+                            <select name="modalidade" id="modalidade" class="form-select">
+                                <option value="">Selecione...</option>
+                                <option value="Presencial" {{ 'selected' if dados.modalidade == 'Presencial' else '' }}>Presencial</option>
+                                <option value="Remoto" {{ 'selected' if dados.modalidade == 'Remoto' else '' }}>Remoto</option>
+                                <option value="Híbrido" {{ 'selected' if dados.modalidade == 'Híbrido' else '' }}>Híbrido</option>
+                            </select>
+                        </div>
+
+                        <!-- Localização -->
+                        <div class="col-12 mt-2">
+                            <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-geo-alt"></i> Localização</h5>
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            {{ field(name='cidade', label='Cidade', type='text', required=false,
+                                     placeholder='Ex: Vitória') }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="uf" class="form-label">Estado (UF)</label>
+                            <select name="uf" id="uf" class="form-select">
+                                <option value="">Selecione...</option>
+                                <option value="AC" {{ 'selected' if dados.uf == 'AC' else '' }}>AC</option>
+                                <option value="AL" {{ 'selected' if dados.uf == 'AL' else '' }}>AL</option>
+                                <option value="AP" {{ 'selected' if dados.uf == 'AP' else '' }}>AP</option>
+                                <option value="AM" {{ 'selected' if dados.uf == 'AM' else '' }}>AM</option>
+                                <option value="BA" {{ 'selected' if dados.uf == 'BA' else '' }}>BA</option>
+                                <option value="CE" {{ 'selected' if dados.uf == 'CE' else '' }}>CE</option>
+                                <option value="DF" {{ 'selected' if dados.uf == 'DF' else '' }}>DF</option>
+                                <option value="ES" {{ 'selected' if dados.uf == 'ES' else '' }}>ES</option>
+                                <option value="GO" {{ 'selected' if dados.uf == 'GO' else '' }}>GO</option>
+                                <option value="MA" {{ 'selected' if dados.uf == 'MA' else '' }}>MA</option>
+                                <option value="MT" {{ 'selected' if dados.uf == 'MT' else '' }}>MT</option>
+                                <option value="MS" {{ 'selected' if dados.uf == 'MS' else '' }}>MS</option>
+                                <option value="MG" {{ 'selected' if dados.uf == 'MG' else '' }}>MG</option>
+                                <option value="PA" {{ 'selected' if dados.uf == 'PA' else '' }}>PA</option>
+                                <option value="PB" {{ 'selected' if dados.uf == 'PB' else '' }}>PB</option>
+                                <option value="PR" {{ 'selected' if dados.uf == 'PR' else '' }}>PR</option>
+                                <option value="PE" {{ 'selected' if dados.uf == 'PE' else '' }}>PE</option>
+                                <option value="PI" {{ 'selected' if dados.uf == 'PI' else '' }}>PI</option>
+                                <option value="RJ" {{ 'selected' if dados.uf == 'RJ' else '' }}>RJ</option>
+                                <option value="RN" {{ 'selected' if dados.uf == 'RN' else '' }}>RN</option>
+                                <option value="RS" {{ 'selected' if dados.uf == 'RS' else '' }}>RS</option>
+                                <option value="RO" {{ 'selected' if dados.uf == 'RO' else '' }}>RO</option>
+                                <option value="RR" {{ 'selected' if dados.uf == 'RR' else '' }}>RR</option>
+                                <option value="SC" {{ 'selected' if dados.uf == 'SC' else '' }}>SC</option>
+                                <option value="SP" {{ 'selected' if dados.uf == 'SP' else '' }}>SP</option>
+                                <option value="SE" {{ 'selected' if dados.uf == 'SE' else '' }}>SE</option>
+                                <option value="TO" {{ 'selected' if dados.uf == 'TO' else '' }}>TO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-4">
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Cadastrar Vaga
+                        </button>
+                        <a href="/recrutador/vagas/listar" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

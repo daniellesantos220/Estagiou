@@ -45,10 +45,18 @@
 <div class="row justify-content-center">
     <div class="col-lg-10">
         <!-- Navegação -->
-        <div class="mb-4">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
             <a href="/vagas" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-arrow-left me-1"></i>Voltar para Vagas
             </a>
+            <div class="btn-compartilhar">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-copiar-link">
+                    <i class="bi bi-share me-1"></i>Compartilhar Vaga
+                </button>
+                <div class="tooltip-copiado" id="tooltip-copiado">
+                    Link copiado!
+                </div>
+            </div>
         </div>
 
         <!-- Header da Vaga -->

@@ -4,302 +4,379 @@
 
 {% block content %}
 
-<!-- Cabeçalho de Boas-Vindas -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="bg-primary text-white rounded p-4 shadow-sm">
-            <h1 class="mb-2">
-                <i class="bi bi-house-door"></i>
-                Bem-vindo(a), {{ usuario_logado.nome }}!
-            </h1>
-            <p class="mb-0 lead">Este é o seu painel de controle pessoal.</p>
+<!-- Cabeçalho de Boas-Vindas com Hero Gradient -->
+<div class="mb-5">
+    <div class="hero-gradient text-white rounded-4 shadow-lg p-4 p-md-5">
+        <div class="row align-items-center position-relative" style="z-index: 1;">
+            <div class="col-lg-8">
+                <span class="badge bg-light text-primary mb-3 px-3 py-2">
+                    <i class="bi bi-house-door me-1"></i> Seu Painel de Controle
+                </span>
+                <h1 class="display-4 fw-bold mb-3">
+                    Bem-vindo(a), {{ usuario_logado.nome }}!
+                </h1>
+                <p class="lead mb-0 opacity-90">
+                    Gerencie suas atividades e acesse todas as funcionalidades do sistema.
+                </p>
+            </div>
+            <div class="col-lg-4 text-center mt-4 mt-lg-0 d-none d-lg-block">
+                <div class="floating">
+                    <i class="bi bi-person-circle display-1 opacity-25"></i>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Cards de Ação Rápida -->
-<div class="row g-4 mb-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
-    <!-- Meu Perfil -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-person-circle text-primary display-3"></i>
+<div class="mb-5">
+    <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+        <!-- Meu Perfil -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-primary-subtle text-primary mx-auto">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Meu Perfil</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Visualize e edite suas informações pessoais
+                    </p>
+                    <a href="/usuario/perfil/visualizar" class="btn btn-primary btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Meu Perfil</h5>
-                <p class="card-text text-muted">
-                    Visualize e edite suas informações pessoais
-                </p>
-                <a href="/usuario/perfil/visualizar" class="btn btn-primary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <!-- Configurações (apenas para admin) -->
-    {% if usuario_logado and usuario_logado.perfil == 'Administrador' %}
-    <!-- Usuários -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-people text-success display-3"></i>
+        <!-- Configurações (apenas para admin) -->
+        {% if usuario_logado and usuario_logado.perfil == 'Administrador' %}
+        <!-- Usuários -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-success-subtle text-success mx-auto">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Usuários</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Gerencie os usuários cadastrados no sistema
+                    </p>
+                    <a href="/admin/usuarios/listar" class="btn btn-success btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Usuários</h5>
-                <p class="card-text text-muted">
-                    Gerencie os usuários cadastrados no sistema
-                </p>
-                <a href="/admin/usuarios/listar" class="btn btn-success">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-sliders text-primary display-3"></i>
+        <!-- Configurações -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-primary-subtle text-primary mx-auto">
+                            <i class="bi bi-sliders"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Configurações</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Configure parâmetros e preferências do sistema
+                    </p>
+                    <a href="/admin/configuracoes" class="btn btn-primary btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Configurações</h5>
-                <p class="card-text text-muted">
-                    Configure parâmetros e preferências do sistema
-                </p>
-                <a href="/admin/configuracoes" class="btn btn-primary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-diagram-3 text-secondary display-3"></i>
+        <!-- Áreas -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-secondary-subtle text-secondary mx-auto">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Áreas</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Gerencie as áreas de atuação do sistema
+                    </p>
+                    <a href="/admin/areas/listar" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Áreas</h5>
-                <p class="card-text text-muted">
-                    Gerencie as áreas de atuação do sistema
-                </p>
-                <a href="/admin/areas/listar" class="btn btn-secondary">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-palette text-danger display-3"></i>
+        <!-- Personalizar Tema -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-danger-subtle text-danger mx-auto">
+                            <i class="bi bi-palette"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Tema</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Escolha entre diversos temas visuais
+                    </p>
+                    <a href="/admin/tema" class="btn btn-danger btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Personalizar Tema</h5>
-                <p class="card-text text-muted">
-                    Escolha entre diversos temas visuais para personalizar a aplicação
-                </p>
-                <a href="/admin/tema" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-journal-text text-warning display-3"></i>
+        <!-- Auditoria de Logs -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-warning-subtle text-warning mx-auto">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Auditoria</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Visualize e filtre logs do sistema
+                    </p>
+                    <a href="/admin/auditoria" class="btn btn-warning btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Auditoria de Logs</h5>
-                <p class="card-text text-muted">
-                    Visualize e filtre logs do sistema por data e severidade
-                </p>
-                <a href="/admin/auditoria" class="btn btn-warning">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-database text-info display-3"></i>
+        <!-- Backup do Banco -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-info-subtle text-info mx-auto">
+                            <i class="bi bi-database"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Backup</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Crie, gerencie e restaure backups
+                    </p>
+                    <a href="/admin/backups/listar" class="btn btn-info btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Backup do Banco</h5>
-                <p class="card-text text-muted">
-                    Crie, gerencie e restaure backups do banco de dados
-                </p>
-                <a href="/admin/backups/listar" class="btn btn-info">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <!-- Chamados -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-danger-subtle text-danger mx-auto">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Chamados</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Gerencie chamados de suporte
+                    </p>
+                    {% if chamados_pendentes > 0 %}
+                    <div class="mb-3">
+                        <span class="badge bg-danger">{{ chamados_pendentes }} pendente(s)</span>
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <span class="badge bg-success">Tudo em dia</span>
+                    </div>
+                    {% endif %}
+                    <a href="/admin/chamados/listar" class="btn btn-danger btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Chamados</h5>
-                <p class="card-text text-muted">
-                    Gerencie chamados de suporte dos usuários
-                </p>
-                {% if chamados_pendentes > 0 %}
-                <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_pendentes }} pendente(s)</span>
-                </div>
-                {% endif %}
-                <a href="/admin/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
-    {% elif usuario_logado and usuario_logado.perfil == 'Recrutador' %}
-    <!-- Minhas Vagas -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-briefcase text-success display-3"></i>
-                </div>
-                <h5 class="card-title">Minhas Vagas</h5>
-                <p class="card-text text-muted">
-                    Gerencie as vagas de estágio que você publicou
-                </p>
-                <a href="/recrutador/vagas/listar" class="btn btn-success">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
-            </div>
-        </div>
-    </div>
 
-    <!-- Chamados para Recrutador -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <!-- Recrutador -->
+        {% elif usuario_logado and usuario_logado.perfil == 'Recrutador' %}
+        <!-- Minhas Vagas -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-success-subtle text-success mx-auto">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Minhas Vagas</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Gerencie as vagas que você publicou
+                    </p>
+                    <a href="/recrutador/vagas/listar" class="btn btn-success btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Meus Chamados</h5>
-                <p class="card-text text-muted">
-                    Abra chamados de suporte e acompanhe suas solicitações
-                </p>
-                {% if chamados_abertos > 0 %}
-                <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
-                </div>
-                {% endif %}
-                <a href="/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    {% elif usuario_logado and usuario_logado.perfil == 'Estudante' %}
-    <!-- Vagas -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-file-earmark-text text-success display-3"></i>
+        <!-- Meus Chamados -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-danger-subtle text-danger mx-auto">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Meus Chamados</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Abra chamados de suporte
+                    </p>
+                    {% if chamados_abertos > 0 %}
+                    <div class="mb-3">
+                        <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <span class="badge bg-success">Nenhum em aberto</span>
+                    </div>
+                    {% endif %}
+                    <a href="/chamados/listar" class="btn btn-danger btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Vagas</h5>
-                <p class="card-text text-muted">
-                    Explore e candidte-se às vagas de estágio disponíveis
-                </p>
-                <a href="/vagas" class="btn btn-success">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <!-- Minhas Candidaturas -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-hand-thumbs-up text-info display-3"></i>
+        <!-- Estudante -->
+        {% elif usuario_logado and usuario_logado.perfil == 'Estudante' %}
+        <!-- Vagas -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-success-subtle text-success mx-auto">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Vagas</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Explore e candidte-se às vagas
+                    </p>
+                    <a href="/vagas" class="btn btn-success btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Minhas Candidaturas</h5>
-                <p class="card-text text-muted">
-                    Acompanhe suas candidaturas e respostas dos recrutadores
-                </p>
-                <a href="/candidaturas/minhas" class="btn btn-info">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    <!-- Chamados para Estudante -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <!-- Minhas Candidaturas -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-info-subtle text-info mx-auto">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Candidaturas</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Acompanhe suas candidaturas
+                    </p>
+                    <a href="/candidaturas/minhas" class="btn btn-info btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Meus Chamados</h5>
-                <p class="card-text text-muted">
-                    Abra chamados de suporte e acompanhe suas solicitações
-                </p>
-                {% if chamados_abertos > 0 %}
-                <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
-                </div>
-                {% endif %}
-                <a href="/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
-    </div>
 
-    {% else %}
-    <!-- Chamados para usuários comuns -->
-    <div class="col">
-        <div class="card h-100 shadow-sm shadow-hover">
-            <div class="card-body text-center">
-                <div class="mb-3">
-                    <i class="bi bi-headset text-danger display-3"></i>
+        <!-- Meus Chamados -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-danger-subtle text-danger mx-auto">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Meus Chamados</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Abra chamados de suporte
+                    </p>
+                    {% if chamados_abertos > 0 %}
+                    <div class="mb-3">
+                        <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <span class="badge bg-success">Nenhum em aberto</span>
+                    </div>
+                    {% endif %}
+                    <a href="/chamados/listar" class="btn btn-danger btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
                 </div>
-                <h5 class="card-title">Meus Chamados</h5>
-                <p class="card-text text-muted">
-                    Abra chamados de suporte e acompanhe suas solicitações
-                </p>
-                {% if chamados_abertos > 0 %}
-                <div class="mb-3">
-                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
-                </div>
-                {% endif %}
-                <a href="/chamados/listar" class="btn btn-danger">
-                    <i class="bi bi-arrow-right-circle"></i> Acessar
-                </a>
             </div>
         </div>
+
+        <!-- Usuários comuns -->
+        {% else %}
+        <!-- Meus Chamados -->
+        <div class="col">
+            <div class="card card-modern h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4 d-flex flex-column">
+                    <div class="mb-4">
+                        <div class="feature-icon bg-danger-subtle text-danger mx-auto">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                    </div>
+                    <h5 class="card-title fw-bold mb-2">Meus Chamados</h5>
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                        Abra chamados de suporte
+                    </p>
+                    {% if chamados_abertos > 0 %}
+                    <div class="mb-3">
+                        <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <span class="badge bg-success">Nenhum em aberto</span>
+                    </div>
+                    {% endif %}
+                    <a href="/chamados/listar" class="btn btn-danger btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Acessar
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 
-<!-- Estatísticas ou Informações Adicionais -->
+<!-- Dica do Dia -->
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-info" role="alert">
-            <i class="bi bi-lightbulb"></i>
-            <strong>Dica do Dia:</strong>
-            Mantenha suas informações sempre atualizadas em "Meu Perfil" para garantir uma melhor experiência no
-            sistema.
+        <div class="card card-modern border-0 border-start border-5 border-info">
+            <div class="card-body p-4 d-flex align-items-start gap-3">
+                <div class="flex-shrink-0">
+                    <i class="bi bi-lightbulb-fill text-info display-6"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h5 class="card-title fw-bold mb-2">
+                        <i class="bi bi-info-circle me-2"></i>Dica do Dia
+                    </h5>
+                    <p class="card-text text-muted mb-0">
+                        Mantenha suas informações sempre atualizadas em "Meu Perfil" para garantir uma melhor experiência no sistema.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

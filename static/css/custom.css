@@ -527,6 +527,69 @@ body {
     padding: 2.5rem;
 }
 
+/* ===== DASHBOARD CARDS IMPROVEMENTS ===== */
+.card-modern {
+    transition: all var(--transition-normal);
+}
+
+.card-modern:hover {
+    border-color: transparent !important;
+}
+
+.card-modern .feature-icon {
+    transition: var(--transition-normal);
+}
+
+.card-modern:hover .feature-icon {
+    transform: translateY(-4px);
+}
+
+/* Badge improvements */
+.badge {
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.badge-subtle {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+/* Card border variants */
+.border-start {
+    border-left: 0.25rem solid;
+}
+
+.border-5 {
+    border-width: 0.5rem !important;
+}
+
+/* ===== NAVBAR IMPROVEMENTS FOR PRIVATE AREA ===== */
+.navbar-modern {
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-normal);
+}
+
+.navbar-modern.scrolled {
+    box-shadow: var(--shadow-md);
+}
+
+.navbar-modern .navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ===== FOOTER IMPROVEMENTS ===== */
+.footer-modern {
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 1px solid #dee2e6;
+    transition: var(--transition-normal);
+}
+
+.footer-modern hr {
+    opacity: 0.3;
+}
+
 /* ===== RESPONSIVE UTILITIES ===== */
 @media (max-width: 767.98px) {
     .hero-gradient {
@@ -540,6 +603,16 @@ body {
     .step-circle {
         width: 56px;
         height: 56px;
+        font-size: 1.25rem;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+
+    .card-modern .feature-icon {
+        width: 52px;
+        height: 52px;
         font-size: 1.25rem;
     }
 }

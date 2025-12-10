@@ -5,13 +5,20 @@
 {% block titulo %}Gerenciar Chamados{% endblock %}
 
 {% block content %}
+<!-- Page Header -->
+<div class="mb-5">
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="feature-icon bg-danger-subtle text-danger">
+            <i class="bi bi-headset"></i>
+        </div>
+        <h1 class="display-6 mb-0 fw-bold">Gerenciar Chamados</h1>
+    </div>
+    <p class="text-muted lead mb-0">Acompanhe e responda aos chamados de suporte dos usuários</p>
+</div>
+
 <div class="row">
     <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-headset"></i> Gerenciar Chamados</h2>
-        </div>
-
-        <div class="card shadow-sm">
+        <div class="card card-modern border-0 shadow-sm">
             <div class="card-body">
                 {% if chamados %}
                 <div class="table-responsive">

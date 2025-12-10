@@ -24,9 +24,9 @@
 
 <body class="d-flex flex-column min-vh-100">
     <!-- Navbar Privada (Área Autenticada) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-modern" style="background: linear-gradient(90deg, #0d6efd 0%, #4dabf7 100%);">
         <div class="container">
-            <a class="navbar-brand d-flex align-middle" href="/index">
+            <a class="navbar-brand d-flex align-middle fw-bold" href="/index">
                 <img src="/static/img/logo.svg" alt="Logo" height="30" class="d-inline-block align-text-top me-2"
                     onerror="this.style.display='none'">
                 {{ APP_NAME }}
@@ -150,8 +150,21 @@
     {% endif %}
 
     <!-- Footer -->
-    <footer class="bg-light text-center text-muted py-3 mt-auto">
+    <footer class="footer-modern text-center text-muted py-4 mt-auto border-top">
         <div class="container">
+            <div class="row g-3 mb-3">
+                <div class="col-md-6 text-md-start">
+                    <p class="mb-0">
+                        <strong>{{ APP_NAME }}</strong> - Plataforma de Estágios
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end small">
+                    <p class="mb-0">
+                        <i class="bi bi-shield-check"></i> Seguro e confiável
+                    </p>
+                </div>
+            </div>
+            <hr class="my-3">
             <p class="mb-0">&copy; 2025 {{ APP_NAME }}. Todos os direitos reservados.</p>
         </div>
     </footer>

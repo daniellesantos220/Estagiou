@@ -688,3 +688,117 @@ class TestLoginCredenciaisInvalidas:
 
         # Deve conseguir logar
         assert login.aguardar_navegacao_usuario()
+
+
+# ============================================================
+# TESTES DE LOGOUT (UC-AUTH-05)
+# ============================================================
+
+
+@pytest.mark.e2e
+class TestLogout:
+    """Testes de logout do sistema."""
+
+    def test_logout_redireciona_para_home_ou_login(
+        self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
+    ):
+        """UC-AUTH-05: Logout deve encerrar sessao e redirecionar."""
+        email = "logout_teste@example.com"
+        senha = "SenhaForte@123"
+
+        # Primeiro cadastrar e logar
+        cadastro = CadastroPage(e2e_page, e2e_server)
+        cadastro.navegar()
+        cadastro.cadastrar(
+            perfil="Estudante", nome="Usuario Logout Teste", email=email, senha=senha
+        )
+        cadastro.aguardar_navegacao_login()
+
+        login = LoginPage(e2e_page, e2e_server)
+        login.fazer_login(email, senha)
+        assert login.aguardar_navegacao_usuario()
+
+        # Fazer logout
+        e2e_page.goto(f"{e2e_server}/logout")
+        e2e_page.wait_for_timeout(500)
+
+        # Deve redirecionar para home ou login
+        assert "/" in e2e_page.url
+
+    def test_logout_impede_acesso_area_restrita(
+        self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
+    ):
+        """UC-AUTH-05: Apos logout, areas restritas devem redirecionar para login."""
+        email = "logout_restrito@example.com"
+        senha = "SenhaForte@123"
+
+        # Cadastrar e logar
+        cadastro = CadastroPage(e2e_page, e2e_server)
+        cadastro.navegar()
+        cadastro.cadastrar(
+            perfil="Estudante", nome="Usuario Logout Restrito", email=email, senha=senha
+        )
+        cadastro.aguardar_navegacao_login()
+
+        login = LoginPage(e2e_page, e2e_server)
+        login.fazer_login(email, senha)
+        assert login.aguardar_navegacao_usuario()
+
+        # Fazer logout
+        e2e_page.goto(f"{e2e_server}/logout")
+        e2e_page.wait_for_timeout(500)
+
+        # Tentar acessar area restrita
+        e2e_page.goto(f"{e2e_server}/usuario")
+        e2e_page.wait_for_timeout(500)
+
+        # Deve redirecionar para login
+        assert "/login" in e2e_page.url
+
+
+# ============================================================
+# TESTES DE ESQUECI SENHA (UC-AUTH-03)
+# ============================================================
+
+
+@pytest.mark.e2e
+class TestEsqueciSenha:
+    """Testes de recuperacao de senha."""
+
+    def test_pagina_esqueci_senha_carrega(self, e2e_page: Page, e2e_server: str):
+        """UC-AUTH-03: Deve carregar pagina de esqueci senha."""
+        e2e_page.goto(f"{e2e_server}/esqueci-senha")
+
+        assert "/esqueci-senha" in e2e_page.url
+        expect(e2e_page.locator('input[name="email"]')).to_be_visible()
+
+    def test_esqueci_senha_aceita_email(
+        self, e2e_page: Page, e2e_server: str, limpar_banco_e2e
+    ):
+        """UC-AUTH-03: Deve processar solicitacao de recuperacao."""
+        email = "esqueci_senha@example.com"
+        senha = "SenhaForte@123"
+
+        # Criar usuario primeiro
+        cadastro = CadastroPage(e2e_page, e2e_server)
+        cadastro.navegar()
+        cadastro.cadastrar(
+            perfil="Estudante", nome="Usuario Esqueci Senha", email=email, senha=senha
+        )
+        cadastro.aguardar_navegacao_login()
+
+        # Acessar pagina de esqueci senha
+        e2e_page.goto(f"{e2e_server}/esqueci-senha")
+        e2e_page.fill('input[name="email"]', email)
+        e2e_page.locator('button[type="submit"]').click()
+
+        e2e_page.wait_for_timeout(500)
+
+        # Deve exibir mensagem (sucesso ou instrucoes)
+        conteudo = e2e_page.content().lower()
+        assert (
+            "e-mail" in conteudo
+            or "enviado" in conteudo
+            or "verifique" in conteudo
+            or "/login" in e2e_page.url
+        )

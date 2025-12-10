@@ -1,5 +1,5 @@
 """Rotas públicas de vagas (acessíveis sem autenticação)."""
-from typing import Optional
+from typing import Optional, Union
 from fastapi import APIRouter, Request, Query
 
 from repo import vaga_repo, area_repo, candidatura_repo
@@ -13,13 +13,21 @@ templates = criar_templates()
 async def listar_vagas(
     request: Request,
     termo: Optional[str] = Query(None),
-    id_area: Optional[int] = Query(None),
+    id_area: Optional[Union[int, str]] = Query(None),
 ):
     """Lista vagas abertas com filtros de busca"""
 
+    # Converter id_area para int ou None (tratar string vazia como None)
+    id_area_int = None
+    if id_area and str(id_area).strip():
+        try:
+            id_area_int = int(id_area)
+        except (ValueError, TypeError):
+            id_area_int = None
+
     # Buscar vagas com filtros
-    if termo or id_area:
-        vagas = vaga_repo.buscar_por_termo(termo=termo, id_area=id_area)
+    if termo or id_area_int:
+        vagas = vaga_repo.buscar_por_termo(termo=termo, id_area=id_area_int)
     else:
         vagas = vaga_repo.obter_vagas_abertas(limit=50)
 
@@ -42,7 +50,7 @@ async def listar_vagas(
             "vagas": vagas_enriquecidas,
             "areas": areas,
             "termo": termo or "",
-            "id_area": id_area,
+            "id_area": id_area_int,
         }
     )
 

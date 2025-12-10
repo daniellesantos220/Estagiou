@@ -150,6 +150,27 @@ class TestFiltrarVagasArea:
         # Deve permanecer na pagina de vagas
         assert "/vagas" in e2e_page.url
 
+    def test_filtro_area_vazio_nao_causa_erro(
+        self, e2e_page: Page, e2e_server: str
+    ):
+        """UC-VAGA-03: Filtro por area vazio nao deve causar erro 422."""
+        vagas = VagasPublicasPage(e2e_page, e2e_server)
+        vagas.navegar()
+
+        # Selecionar opcao vazia "Todas as areas"
+        select_area = e2e_page.locator('select[name="id_area"]')
+        if select_area.is_visible():
+            # Selecionar primeira opcao (value="")
+            select_area.select_option(value="")
+            e2e_page.locator('button[type="submit"]').first.click()
+            e2e_page.wait_for_timeout(500)
+
+        # Nao deve mostrar erro 422
+        conteudo = e2e_page.content().lower()
+        assert "422" not in conteudo
+        assert "validation" not in conteudo
+        assert "/vagas" in e2e_page.url
+
 
 # =============================================================================
 # UC-VAGA-04: Visualizar detalhes de uma vaga

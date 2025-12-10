@@ -3,124 +3,164 @@
 {% block titulo %}Vagas de Estágio{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-briefcase"></i> Vagas de Estágio</h2>
+<!-- Header -->
+<div class="mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-briefcase me-2"></i>Vagas de Estágio</h2>
+            <p class="text-muted mb-0">Encontre a oportunidade ideal para sua carreira</p>
         </div>
-
-        <!-- Filtros de Busca -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <form method="GET" action="/vagas" class="row g-3 align-items-end">
-                    <div class="col-md-5">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="termo" name="termo"
-                                   value="{{ termo }}" placeholder="Ex: Desenvolvedor, Marketing, Administração...">
-                            <label for="termo">Buscar por palavra-chave</label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-floating">
-                            <select class="form-select" id="id_area" name="id_area">
-                                <option value="">Todas as áreas</option>
-                                {% for area in areas %}
-                                <option value="{{ area.id_area }}" {{ 'selected' if id_area|string == area.id_area|string else '' }}>
-                                    {{ area.nome }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                            <label for="id_area">Área</label>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-search"></i> Buscar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Lista de Vagas -->
         {% if vagas %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for item in vagas %}
-            <div class="col">
-                <a href="/vagas/{{ item.vaga.id_vaga }}" class="text-decoration-none">
-                    <div class="card h-100 shadow-sm hover-shadow">
-                        <div class="card-body">
-                            <h5 class="card-title text-dark">{{ item.vaga.titulo }}</h5>
-                            <p class="card-text">
-                                <span class="badge bg-primary">{{ item.area_nome }}</span>
-                                {% if item.vaga.modalidade %}
-                                <span class="badge bg-secondary">{{ item.vaga.modalidade }}</span>
-                                {% endif %}
-                            </p>
-                            <p class="card-text text-muted small">
-                                {{ item.vaga.descricao[:120] }}{% if item.vaga.descricao|length > 120 %}...{% endif %}
-                            </p>
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    {% if item.vaga.cidade %}
-                                    <i class="bi bi-geo-alt"></i> {{ item.vaga.cidade }}{% if item.vaga.uf %}/{{ item.vaga.uf }}{% endif %}
-                                    {% endif %}
-                                </small>
-                                <small class="text-success fw-bold">
-                                    {% if item.vaga.salario and item.vaga.salario > 0 %}
-                                    R$ {{ "%.2f"|format(item.vaga.salario) }}
-                                    {% else %}
-                                    A combinar
-                                    {% endif %}
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="mt-4">
-            <p class="text-muted">
-                <i class="bi bi-info-circle"></i>
-                {{ vagas|length }} vaga(s) encontrada(s)
-            </p>
-        </div>
-        {% else %}
-        <div class="card shadow-sm">
-            <div class="card-body text-center py-5">
-                <i class="bi bi-search display-1 text-muted"></i>
-                <h4 class="mt-3 text-muted">Nenhuma vaga encontrada</h4>
-                <p class="text-muted">
-                    {% if termo or id_area %}
-                    Tente ajustar os filtros de busca.
-                    {% else %}
-                    Não há vagas abertas no momento. Volte em breve!
-                    {% endif %}
-                </p>
-                {% if termo or id_area %}
-                <a href="/vagas" class="btn btn-outline-primary">
-                    <i class="bi bi-x-circle"></i> Limpar Filtros
-                </a>
-                {% endif %}
-            </div>
-        </div>
+        <span class="badge bg-primary-subtle text-primary px-3 py-2 fs-6">
+            <i class="bi bi-list-ul me-1"></i>{{ vagas|length }} vaga(s)
+        </span>
         {% endif %}
     </div>
 </div>
-{% endblock %}
 
-{% block head %}
-<style>
-    .hover-shadow {
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-    }
-    .hover-shadow:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        transform: translateY(-3px);
-    }
-</style>
+<!-- Filtros de Busca -->
+<div class="card card-modern border-0 mb-4">
+    <div class="card-body p-4">
+        <form method="GET" action="/vagas" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="termo" name="termo"
+                           value="{{ termo }}" placeholder="Ex: Desenvolvedor, Marketing...">
+                    <label for="termo"><i class="bi bi-search me-1"></i>Buscar por palavra-chave</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating">
+                    <select class="form-select" id="id_area" name="id_area">
+                        <option value="">Todas as áreas</option>
+                        {% for area in areas %}
+                        <option value="{{ area.id_area }}" {{ 'selected' if id_area|string == area.id_area|string else '' }}>
+                            {{ area.nome }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <label for="id_area"><i class="bi bi-grid me-1"></i>Área</label>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1 py-3">
+                    <i class="bi bi-search me-1"></i>Buscar
+                </button>
+                {% if termo or id_area %}
+                <a href="/vagas" class="btn btn-outline-secondary py-3" title="Limpar filtros">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Filtros ativos -->
+{% if termo or id_area %}
+<div class="mb-4">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+        <span class="text-muted small">Filtros ativos:</span>
+        {% if termo %}
+        <span class="badge bg-primary d-flex align-items-center gap-1 py-2 px-3">
+            <i class="bi bi-search"></i>"{{ termo }}"
+        </span>
+        {% endif %}
+        {% if id_area %}
+        {% for area in areas %}
+        {% if id_area|string == area.id_area|string %}
+        <span class="badge bg-success d-flex align-items-center gap-1 py-2 px-3">
+            <i class="bi bi-grid"></i>{{ area.nome }}
+        </span>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Lista de Vagas -->
+{% if vagas %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for item in vagas %}
+    <div class="col">
+        <a href="/vagas/{{ item.vaga.id_vaga }}" class="text-decoration-none">
+            <div class="card job-card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <h5 class="card-title text-dark mb-0 fw-bold">{{ item.vaga.titulo }}</h5>
+                    </div>
+                    <div class="mb-3">
+                        <span class="badge bg-primary me-1">{{ item.area_nome }}</span>
+                        {% if item.vaga.modalidade %}
+                        <span class="badge bg-secondary">{{ item.vaga.modalidade }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text text-muted small mb-3">
+                        {{ item.vaga.descricao[:120] }}{% if item.vaga.descricao|length > 120 %}...{% endif %}
+                    </p>
+
+                    <!-- Info adicional -->
+                    <div class="d-flex flex-wrap gap-2 mb-0">
+                        {% if item.vaga.cidade %}
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-geo-alt me-1"></i>{{ item.vaga.cidade }}{% if item.vaga.uf %}/{{ item.vaga.uf }}{% endif %}
+                        </span>
+                        {% endif %}
+                        {% if item.vaga.carga_horaria %}
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-clock me-1"></i>{{ item.vaga.carga_horaria }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 px-4 pb-4 pt-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if item.vaga.salario and item.vaga.salario > 0 %}
+                            <span class="text-success fw-bold fs-5">
+                                R$ {{ "%.2f"|format(item.vaga.salario) }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted">A combinar</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-primary fw-semibold small">
+                            Ver detalhes <i class="bi bi-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card card-modern border-0">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                <i class="bi bi-search display-4 text-muted"></i>
+            </div>
+        </div>
+        <h4 class="fw-bold text-muted mb-2">Nenhuma vaga encontrada</h4>
+        <p class="text-muted mb-4">
+            {% if termo or id_area %}
+            Tente ajustar os filtros de busca para encontrar mais oportunidades.
+            {% else %}
+            Não há vagas abertas no momento. Volte em breve!
+            {% endif %}
+        </p>
+        {% if termo or id_area %}
+        <a href="/vagas" class="btn btn-primary">
+            <i class="bi bi-x-circle me-1"></i>Limpar Filtros
+        </a>
+        {% else %}
+        <a href="/cadastrar" class="btn btn-primary">
+            <i class="bi bi-bell me-1"></i>Cadastre-se para ser notificado
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 {% endblock %}

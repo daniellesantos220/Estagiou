@@ -24,47 +24,47 @@
 
 <body class="d-flex flex-column min-vh-100">
     <!-- Navbar Pública -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(135deg, #1e3a5f 0%, #0d6efd 100%);">
         <div class="container">
-            <a class="navbar-brand d-flex align-middle" href="/index">
-                <img src="/static/img/logo.svg" alt="Logo" height="30" class="d-inline-block align-text-top me-2"
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="/index">
+                <img src="/static/img/logo.svg" alt="Logo" height="32" class="d-inline-block me-2"
                     onerror="this.style.display='none'">
-                {{ APP_NAME }}
+                <span>{{ APP_NAME }}</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if request.path == '/' or request.path == '/index' else '' }}"
-                            href="/">Início</a>
+                        <a class="nav-link px-3 {{ 'active fw-semibold' if request.path == '/' or request.path == '/index' else '' }}"
+                            href="/"><i class="bi bi-house me-1"></i>Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if '/vagas' in request.path else '' }}"
-                            href="/vagas">Vagas de Estágio</a>
+                        <a class="nav-link px-3 {{ 'active fw-semibold' if '/vagas' in request.path else '' }}"
+                            href="/vagas"><i class="bi bi-briefcase me-1"></i>Vagas de Estágio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if request.path == '/sobre' else '' }}"
-                            href="/sobre">Sobre</a>
+                        <a class="nav-link px-3 {{ 'active fw-semibold' if request.path == '/sobre' else '' }}"
+                            href="/sobre"><i class="bi bi-info-circle me-1"></i>Sobre</a>
                     </li>
                 </ul>
 
                 <!-- Menu do Usuário (se logado) ou Botões de Login/Cadastro -->
-                <ul class="navbar-nav">
+                <ul class="navbar-nav align-items-lg-center gap-2">
                     {% if request.session.get('usuario_logado') %}
                     {% include 'components/navbar_user_dropdown.html' %}
                     {% else %}
                     <!-- Botões de Login e Cadastro -->
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if request.path == '/login' else '' }}"
-                            href="/login">Login</a>
+                        <a class="nav-link px-3 {{ 'active fw-semibold' if request.path == '/login' else '' }}"
+                            href="/login"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ 'active' if request.path == '/cadastrar' else '' }}"
-                            href="/cadastrar">Cadastrar</a>
+                        <a class="btn btn-light btn-sm px-3 {{ 'active' if request.path == '/cadastrar' else '' }}"
+                            href="/cadastrar"><i class="bi bi-person-plus me-1"></i>Cadastrar</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -92,9 +92,25 @@
     {% include 'components/modal_alerta.html' %}
 
     <!-- Footer -->
-    <footer class="bg-light text-center text-muted py-3 mt-auto">
+    <footer class="footer-modern mt-auto py-4">
         <div class="container">
-            <p class="mb-0">&copy; 2025 {{ APP_NAME }}. Todos os direitos reservados.</p>
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    <a href="/" class="text-decoration-none text-dark fw-bold">
+                        <i class="bi bi-mortarboard me-1"></i>{{ APP_NAME }}
+                    </a>
+                </div>
+                <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="/" class="text-muted text-decoration-none small">Início</a>
+                        <a href="/vagas" class="text-muted text-decoration-none small">Vagas</a>
+                        <a href="/sobre" class="text-muted text-decoration-none small">Sobre</a>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <small class="text-muted">&copy; 2025 {{ APP_NAME }}. Todos os direitos reservados.</small>
+                </div>
+            </div>
         </div>
     </footer>
 

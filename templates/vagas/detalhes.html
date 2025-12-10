@@ -5,145 +5,233 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
+        <!-- Navegação -->
         <div class="mb-4">
-            <a href="/vagas" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Voltar para Vagas
+            <a href="/vagas" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>Voltar para Vagas
             </a>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h3 class="mb-0">{{ vaga.titulo }}</h3>
-            </div>
-            <div class="card-body p-4">
-                <div class="row">
-                    <!-- Informações Gerais -->
-                    <div class="col-md-8">
-                        <div class="mb-4">
-                            <span class="badge bg-primary fs-6">{{ area.nome if area else 'N/A' }}</span>
+        <!-- Header da Vaga -->
+        <div class="card card-modern border-0 mb-4">
+            <div class="hero-gradient text-white p-4 p-md-5" style="border-radius: var(--radius-md);">
+                <div class="row align-items-center position-relative" style="z-index: 1;">
+                    <div class="col-lg-8">
+                        <div class="mb-3">
+                            <span class="badge bg-light text-primary me-2">{{ area.nome if area else 'N/A' }}</span>
                             {% if vaga.modalidade %}
-                            <span class="badge bg-secondary fs-6">{{ vaga.modalidade }}</span>
+                            <span class="badge bg-white bg-opacity-25">{{ vaga.modalidade }}</span>
                             {% endif %}
                             {% if vaga.status_vaga == 'aberta' %}
-                            <span class="badge bg-success fs-6">Vaga Aberta</span>
+                            <span class="badge bg-success ms-2">
+                                <i class="bi bi-check-circle me-1"></i>Vaga Aberta
+                            </span>
                             {% else %}
-                            <span class="badge bg-warning text-dark fs-6">{{ vaga.status_vaga }}</span>
+                            <span class="badge bg-warning text-dark ms-2">{{ vaga.status_vaga }}</span>
                             {% endif %}
                         </div>
-
-                        <h5 class="border-bottom pb-2"><i class="bi bi-file-text"></i> Descrição</h5>
-                        <p class="text-dark" style="white-space: pre-line;">{{ vaga.descricao }}</p>
-
-                        {% if vaga.requisitos %}
-                        <h5 class="border-bottom pb-2 mt-4"><i class="bi bi-list-check"></i> Requisitos</h5>
-                        <p class="text-dark" style="white-space: pre-line;">{{ vaga.requisitos }}</p>
-                        {% endif %}
-
-                        {% if vaga.beneficios %}
-                        <h5 class="border-bottom pb-2 mt-4"><i class="bi bi-gift"></i> Benefícios</h5>
-                        <p class="text-dark" style="white-space: pre-line;">{{ vaga.beneficios }}</p>
+                        <h1 class="display-6 fw-bold mb-3">{{ vaga.titulo }}</h1>
+                        {% if vaga.recrutador_nome %}
+                        <p class="mb-0 opacity-90">
+                            <i class="bi bi-building me-2"></i>{{ vaga.recrutador_nome }}
+                        </p>
                         {% endif %}
                     </div>
-
-                    <!-- Informações Laterais -->
-                    <div class="col-md-4">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h6 class="card-title border-bottom pb-2"><i class="bi bi-info-circle"></i> Detalhes</h6>
-
-                                <div class="mb-3">
-                                    <strong><i class="bi bi-cash-stack text-success"></i> Bolsa/Salário:</strong>
-                                    <br>
-                                    {% if vaga.salario and vaga.salario > 0 %}
-                                    <span class="fs-5 text-success fw-bold">R$ {{ "%.2f"|format(vaga.salario) }}</span>
-                                    {% else %}
-                                    <span class="text-muted">A combinar</span>
-                                    {% endif %}
-                                </div>
-
-                                {% if vaga.carga_horaria %}
-                                <div class="mb-3">
-                                    <strong><i class="bi bi-clock"></i> Carga Horária:</strong>
-                                    <br>
-                                    {{ vaga.carga_horaria }}
-                                </div>
-                                {% endif %}
-
-                                {% if vaga.numero_vagas %}
-                                <div class="mb-3">
-                                    <strong><i class="bi bi-people"></i> Vagas Disponíveis:</strong>
-                                    <br>
-                                    {{ vaga.numero_vagas }}
-                                </div>
-                                {% endif %}
-
-                                {% if vaga.cidade or vaga.uf %}
-                                <div class="mb-3">
-                                    <strong><i class="bi bi-geo-alt"></i> Localização:</strong>
-                                    <br>
-                                    {{ vaga.cidade or '' }}{% if vaga.cidade and vaga.uf %}/{% endif %}{{ vaga.uf or '' }}
-                                </div>
-                                {% endif %}
-
-                                {% if vaga.recrutador_nome %}
-                                <div class="mb-3">
-                                    <strong><i class="bi bi-building"></i> Empresa:</strong>
-                                    <br>
-                                    {{ vaga.recrutador_nome }}
-                                </div>
-                                {% endif %}
-                            </div>
+                    <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                        {% if vaga.salario and vaga.salario > 0 %}
+                        <div class="bg-white bg-opacity-25 rounded-3 p-3 d-inline-block">
+                            <small class="d-block opacity-75">Bolsa/Salário</small>
+                            <span class="fs-3 fw-bold">R$ {{ "%.2f"|format(vaga.salario) }}</span>
                         </div>
+                        {% else %}
+                        <div class="bg-white bg-opacity-25 rounded-3 p-3 d-inline-block">
+                            <small class="d-block opacity-75">Bolsa/Salário</small>
+                            <span class="fs-4 fw-bold">A combinar</span>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Footer com botão de candidatura -->
-            <div class="card-footer p-4">
-                {% if vaga.status_vaga == 'aberta' %}
-                    {% set usuario_logado = request.session.get('usuario_logado') %}
-                    {% if usuario_logado %}
-                        {% if usuario_logado.perfil == 'Estudante' %}
-                            {% if ja_candidatou %}
-                            <div class="alert alert-success mb-0">
-                                <i class="bi bi-check-circle"></i>
-                                <strong>Você já se candidatou a esta vaga!</strong>
-                                <br>
-                                <a href="/candidaturas/minhas" class="alert-link">Ver minhas candidaturas</a>
-                            </div>
-                            {% else %}
-                            <form method="POST" action="/candidaturas/candidatar/{{ vaga.id_vaga }}" class="d-inline">
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="bi bi-send"></i> Quero Me Candidatar
-                                </button>
-                            </form>
-                            {% endif %}
-                        {% elif usuario_logado.perfil == 'Recrutador' %}
-                        <div class="alert alert-info mb-0">
-                            <i class="bi bi-info-circle"></i>
-                            Você está logado como recrutador. Apenas estudantes podem se candidatar a vagas.
-                        </div>
-                        {% else %}
-                        <div class="alert alert-info mb-0">
-                            <i class="bi bi-info-circle"></i>
-                            Apenas estudantes podem se candidatar a vagas.
-                        </div>
-                        {% endif %}
-                    {% else %}
-                    <div class="alert alert-warning mb-0">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <strong>Para se candidatar, você precisa estar logado como estudante.</strong>
-                        <br>
-                        <a href="/login" class="alert-link">Fazer login</a> ou
-                        <a href="/cadastrar" class="alert-link">Criar uma conta</a>
+        <div class="row g-4">
+            <!-- Conteúdo Principal -->
+            <div class="col-lg-8">
+                <!-- Descrição -->
+                <div class="card card-modern border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-file-text text-primary me-2"></i>Descrição da Vaga
+                        </h5>
+                        <p class="text-dark mb-0" style="white-space: pre-line;">{{ vaga.descricao }}</p>
                     </div>
-                    {% endif %}
-                {% else %}
-                <div class="alert alert-secondary mb-0">
-                    <i class="bi bi-x-circle"></i>
-                    Esta vaga não está mais aceitando candidaturas.
+                </div>
+
+                <!-- Requisitos -->
+                {% if vaga.requisitos %}
+                <div class="card card-modern border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-list-check text-primary me-2"></i>Requisitos
+                        </h5>
+                        <p class="text-dark mb-0" style="white-space: pre-line;">{{ vaga.requisitos }}</p>
+                    </div>
                 </div>
                 {% endif %}
+
+                <!-- Benefícios -->
+                {% if vaga.beneficios %}
+                <div class="card card-modern border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-gift text-primary me-2"></i>Benefícios
+                        </h5>
+                        <p class="text-dark mb-0" style="white-space: pre-line;">{{ vaga.beneficios }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Detalhes -->
+                <div class="card card-modern border-0 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">
+                            <i class="bi bi-info-circle text-primary me-2"></i>Detalhes
+                        </h5>
+
+                        <div class="d-flex flex-column gap-3">
+                            {% if vaga.carga_horaria %}
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon bg-primary-subtle text-primary me-3" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Carga Horária</small>
+                                    <span class="fw-medium">{{ vaga.carga_horaria }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if vaga.numero_vagas %}
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon bg-success-subtle text-success me-3" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Vagas Disponíveis</small>
+                                    <span class="fw-medium">{{ vaga.numero_vagas }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if vaga.cidade or vaga.uf %}
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon bg-info-subtle text-info me-3" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                                    <i class="bi bi-geo-alt"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Localização</small>
+                                    <span class="fw-medium">{{ vaga.cidade or '' }}{% if vaga.cidade and vaga.uf %}/{% endif %}{{ vaga.uf or '' }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if vaga.modalidade %}
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon bg-warning-subtle text-warning me-3" style="width: 48px; height: 48px; font-size: 1.2rem;">
+                                    <i class="bi bi-laptop"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Modalidade</small>
+                                    <span class="fw-medium">{{ vaga.modalidade }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Candidatura -->
+                <div class="card card-modern border-0 sticky-lg-top" style="top: 1rem;">
+                    <div class="card-body p-4">
+                        {% if vaga.status_vaga == 'aberta' %}
+                            {% set usuario_logado = request.session.get('usuario_logado') %}
+                            {% if usuario_logado %}
+                                {% if usuario_logado.perfil == 'Estudante' %}
+                                    {% if ja_candidatou %}
+                                    <div class="text-center">
+                                        <div class="bg-success-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                            <i class="bi bi-check-lg text-success fs-3"></i>
+                                        </div>
+                                        <h6 class="fw-bold text-success mb-2">Candidatura Enviada!</h6>
+                                        <p class="text-muted small mb-3">Você já se candidatou a esta vaga.</p>
+                                        <a href="/candidaturas/minhas" class="btn btn-outline-success btn-sm w-100">
+                                            <i class="bi bi-list-ul me-1"></i>Ver Minhas Candidaturas
+                                        </a>
+                                    </div>
+                                    {% else %}
+                                    <div class="text-center mb-3">
+                                        <h6 class="fw-bold mb-2">Interessado nesta vaga?</h6>
+                                        <p class="text-muted small mb-0">Candidate-se agora e dê o primeiro passo!</p>
+                                    </div>
+                                    <form method="POST" action="/candidaturas/candidatar/{{ vaga.id_vaga }}">
+                                        <button type="submit" class="btn btn-success btn-lg w-100">
+                                            <i class="bi bi-send me-2"></i>Quero Me Candidatar
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                {% elif usuario_logado.perfil == 'Recrutador' %}
+                                <div class="text-center">
+                                    <div class="bg-info-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                        <i class="bi bi-info-lg text-info fs-3"></i>
+                                    </div>
+                                    <p class="text-muted small mb-0">
+                                        Você está logado como recrutador. Apenas estudantes podem se candidatar.
+                                    </p>
+                                </div>
+                                {% else %}
+                                <div class="text-center">
+                                    <div class="bg-info-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                        <i class="bi bi-info-lg text-info fs-3"></i>
+                                    </div>
+                                    <p class="text-muted small mb-0">
+                                        Apenas estudantes podem se candidatar a vagas.
+                                    </p>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                            <div class="text-center">
+                                <div class="bg-warning-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                    <i class="bi bi-person text-warning fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2">Quer se candidatar?</h6>
+                                <p class="text-muted small mb-3">Faça login ou crie uma conta para se candidatar.</p>
+                                <div class="d-grid gap-2">
+                                    <a href="/login" class="btn btn-primary">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i>Fazer Login
+                                    </a>
+                                    <a href="/cadastrar" class="btn btn-outline-primary">
+                                        <i class="bi bi-person-plus me-1"></i>Criar Conta
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                        <div class="text-center">
+                            <div class="bg-secondary-subtle rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                <i class="bi bi-x-lg text-secondary fs-3"></i>
+                            </div>
+                            <h6 class="fw-bold text-muted mb-2">Vaga Encerrada</h6>
+                            <p class="text-muted small mb-3">Esta vaga não está mais aceitando candidaturas.</p>
+                            <a href="/vagas" class="btn btn-outline-secondary btn-sm w-100">
+                                <i class="bi bi-search me-1"></i>Ver Outras Vagas
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -5,29 +5,44 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="mb-5">
-    <div class="bg-primary text-white rounded-4 shadow-lg p-5">
-        <div class="row align-items-center">
+    <div class="hero-gradient text-white rounded-4 shadow-lg p-4 p-md-5">
+        <div class="row align-items-center position-relative" style="z-index: 1;">
             <div class="col-lg-7">
+                <span class="badge bg-light text-primary mb-3 px-3 py-2">
+                    <i class="bi bi-stars me-1"></i> Plataforma gratuita
+                </span>
                 <h1 class="display-4 fw-bold mb-3">
                     Encontre o estágio ideal para sua carreira
                 </h1>
-                <p class="lead mb-4">
+                <p class="lead mb-4 opacity-90">
                     Conectamos estudantes a empresas que buscam novos talentos.
                     Candidate-se às melhores vagas de estágio da região.
                 </p>
                 <div class="d-flex gap-3 flex-column flex-sm-row">
-                    <a href="/vagas" class="btn btn-light btn-lg">
-                        <i class="bi bi-search"></i> Buscar Vagas
+                    <a href="/vagas" class="btn btn-light btn-lg px-4 shadow-sm">
+                        <i class="bi bi-search me-2"></i>Buscar Vagas
                     </a>
-                    <a href="/cadastrar" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-person-plus"></i> Criar Conta
+                    <a href="/cadastrar" class="btn btn-glass btn-lg px-4">
+                        <i class="bi bi-person-plus me-2"></i>Criar Conta
                     </a>
                 </div>
             </div>
             <div class="col-lg-5 text-center mt-4 mt-lg-0 d-none d-lg-block">
-                <i class="bi bi-mortarboard display-1 opacity-50"></i>
-                <i class="bi bi-arrow-right display-4 opacity-50 mx-3"></i>
-                <i class="bi bi-building display-1 opacity-50"></i>
+                <div class="d-flex align-items-center justify-content-center gap-4">
+                    <div class="floating">
+                        <div class="bg-white bg-opacity-25 rounded-4 p-4">
+                            <i class="bi bi-mortarboard display-2"></i>
+                        </div>
+                    </div>
+                    <div class="floating floating-delay-1">
+                        <i class="bi bi-arrow-right display-4 opacity-75"></i>
+                    </div>
+                    <div class="floating floating-delay-2">
+                        <div class="bg-white bg-opacity-25 rounded-4 p-4">
+                            <i class="bi bi-building display-2"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -35,36 +50,36 @@
 
 <!-- Como Funciona -->
 <div class="mb-5">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Como Funciona</h2>
-        <p class="text-muted">Em poucos passos você encontra sua oportunidade</p>
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-6">Como Funciona</h2>
+        <p class="text-muted lead">Em poucos passos você encontra sua oportunidade</p>
     </div>
 
     <div class="row g-4">
         <div class="col-md-4">
-            <div class="text-center">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                    <span class="fs-4 fw-bold">1</span>
+            <div class="text-center step-card">
+                <div class="step-circle bg-primary text-white mx-auto mb-4">
+                    <span>1</span>
                 </div>
-                <h5>Crie seu Perfil</h5>
+                <h5 class="fw-bold mb-3">Crie seu Perfil</h5>
                 <p class="text-muted">Cadastre-se como estudante e preencha suas informações acadêmicas e profissionais.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="text-center">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                    <span class="fs-4 fw-bold">2</span>
+            <div class="text-center step-card">
+                <div class="step-circle bg-success text-white mx-auto mb-4">
+                    <span>2</span>
                 </div>
-                <h5>Encontre Vagas</h5>
+                <h5 class="fw-bold mb-3">Encontre Vagas</h5>
                 <p class="text-muted">Busque vagas por área de atuação, localização e modalidade de trabalho.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="text-center">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                    <span class="fs-4 fw-bold">3</span>
+            <div class="text-center step-card">
+                <div class="step-circle bg-info text-white mx-auto mb-4">
+                    <span>3</span>
                 </div>
-                <h5>Candidate-se</h5>
+                <h5 class="fw-bold mb-3">Candidate-se</h5>
                 <p class="text-muted">Envie sua candidatura com um clique e acompanhe o status pelo sistema.</p>
             </div>
         </div>
@@ -73,9 +88,9 @@
 
 <!-- Vagas de Estágio Section -->
 <div class="mb-5" id="vagas">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold"><i class="bi bi-briefcase"></i> Vagas em Destaque</h2>
-        <p class="text-muted">Confira as últimas oportunidades disponíveis</p>
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-6"><i class="bi bi-briefcase me-2"></i>Vagas em Destaque</h2>
+        <p class="text-muted lead">Confira as últimas oportunidades disponíveis</p>
     </div>
 
     {% if vagas and vagas|length > 0 %}
@@ -83,32 +98,35 @@
         {% for item in vagas %}
         <div class="col">
             <a href="/vagas/{{ item.vaga.id_vaga }}" class="text-decoration-none">
-                <div class="card h-100 shadow-sm hover-shadow">
-                    <div class="card-body">
-                        <h5 class="card-title text-dark">{{ item.vaga.titulo }}</h5>
-                        <p class="card-text">
-                            <span class="badge bg-primary">{{ item.area_nome }}</span>
+                <div class="card job-card h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <h5 class="card-title text-dark mb-0 fw-bold">{{ item.vaga.titulo }}</h5>
+                            {% if item.vaga.salario and item.vaga.salario > 0 %}
+                            <span class="badge bg-success-subtle text-success fs-6">
+                                R$ {{ "%.0f"|format(item.vaga.salario) }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-1">{{ item.area_nome }}</span>
                             {% if item.vaga.modalidade %}
                             <span class="badge bg-secondary">{{ item.vaga.modalidade }}</span>
                             {% endif %}
-                        </p>
-                        <p class="card-text text-muted small">
+                        </div>
+                        <p class="card-text text-muted small mb-0">
                             {{ item.vaga.descricao[:100] }}{% if item.vaga.descricao|length > 100 %}...{% endif %}
                         </p>
                     </div>
-                    <div class="card-footer bg-transparent">
+                    <div class="card-footer bg-transparent border-0 px-4 pb-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">
                                 {% if item.vaga.cidade %}
-                                <i class="bi bi-geo-alt"></i> {{ item.vaga.cidade }}{% if item.vaga.uf %}/{{ item.vaga.uf }}{% endif %}
+                                <i class="bi bi-geo-alt me-1"></i>{{ item.vaga.cidade }}{% if item.vaga.uf %}/{{ item.vaga.uf }}{% endif %}
                                 {% endif %}
                             </small>
-                            <small class="text-success fw-bold">
-                                {% if item.vaga.salario and item.vaga.salario > 0 %}
-                                R$ {{ "%.2f"|format(item.vaga.salario) }}
-                                {% else %}
-                                A combinar
-                                {% endif %}
+                            <small class="text-primary fw-semibold">
+                                Ver detalhes <i class="bi bi-arrow-right"></i>
                             </small>
                         </div>
                     </div>
@@ -118,18 +136,20 @@
         {% endfor %}
     </div>
 
-    <div class="text-center mt-4">
-        <a href="/vagas" class="btn btn-outline-primary btn-lg">
-            <i class="bi bi-search"></i> Ver Todas as Vagas
+    <div class="text-center mt-5">
+        <a href="/vagas" class="btn btn-primary btn-lg px-5 shadow-sm">
+            <i class="bi bi-search me-2"></i>Ver Todas as Vagas
         </a>
     </div>
     {% else %}
-    <div class="text-center py-4">
-        <i class="bi bi-briefcase display-3 text-muted"></i>
-        <p class="text-muted mt-3">Nenhuma vaga disponível no momento. Volte em breve!</p>
-        <a href="/cadastrar" class="btn btn-primary">
-            <i class="bi bi-person-plus"></i> Cadastre-se para ser notificado
-        </a>
+    <div class="text-center py-5">
+        <div class="bg-light rounded-4 p-5 d-inline-block">
+            <i class="bi bi-briefcase display-1 text-muted mb-3"></i>
+            <p class="text-muted mt-3 mb-4">Nenhuma vaga disponível no momento. Volte em breve!</p>
+            <a href="/cadastrar" class="btn btn-primary">
+                <i class="bi bi-person-plus me-2"></i>Cadastre-se para ser notificado
+            </a>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -139,20 +159,34 @@
     <div class="row g-4">
         <!-- Para Estudantes -->
         <div class="col-md-6">
-            <div class="card h-100 border-primary">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-mortarboard text-primary display-5 me-3"></i>
-                        <h4 class="mb-0">Para Estudantes</h4>
+            <div class="card card-modern h-100 border-0">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="feature-icon bg-primary-subtle text-primary me-3">
+                            <i class="bi bi-mortarboard"></i>
+                        </div>
+                        <h4 class="mb-0 fw-bold">Para Estudantes</h4>
                     </div>
                     <ul class="list-unstyled mb-4">
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Acesso a diversas vagas de estágio</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Candidatura simplificada</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Acompanhamento das suas candidaturas</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Perfil profissional completo</li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Acesso a diversas vagas de estágio</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Candidatura simplificada</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Acompanhamento das suas candidaturas</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Perfil profissional completo</span>
+                        </li>
                     </ul>
-                    <a href="/cadastrar" class="btn btn-primary">
-                        <i class="bi bi-person-plus"></i> Cadastrar como Estudante
+                    <a href="/cadastrar" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-person-plus me-2"></i>Cadastrar como Estudante
                     </a>
                 </div>
             </div>
@@ -160,20 +194,34 @@
 
         <!-- Para Empresas -->
         <div class="col-md-6">
-            <div class="card h-100 border-success">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-building text-success display-5 me-3"></i>
-                        <h4 class="mb-0">Para Empresas</h4>
+            <div class="card card-modern h-100 border-0">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="feature-icon bg-success-subtle text-success me-3">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h4 class="mb-0 fw-bold">Para Empresas</h4>
                     </div>
                     <ul class="list-unstyled mb-4">
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Publique vagas de estágio</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Receba candidaturas qualificadas</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Gerencie seus processos seletivos</li>
-                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Encontre talentos da região</li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Publique vagas de estágio</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Receba candidaturas qualificadas</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Gerencie seus processos seletivos</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-3 fs-5"></i>
+                            <span>Encontre talentos da região</span>
+                        </li>
                     </ul>
-                    <a href="/cadastrar" class="btn btn-success">
-                        <i class="bi bi-plus-circle"></i> Cadastrar como Recrutador
+                    <a href="/cadastrar" class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-plus-circle me-2"></i>Cadastrar como Recrutador
                     </a>
                 </div>
             </div>
@@ -181,29 +229,45 @@
     </div>
 </div>
 
-<!-- Estatísticas (números fictícios para demonstração) -->
+<!-- Estatísticas -->
 <div class="mb-5">
-    <div class="bg-light rounded-4 p-5">
-        <div class="row text-center g-4">
+    <div class="bg-light rounded-4 p-4 p-md-5">
+        <div class="row g-4">
             <div class="col-6 col-md-3">
-                <i class="bi bi-briefcase text-primary display-5"></i>
-                <h3 class="fw-bold mt-2 mb-0">{{ total_vagas if total_vagas is defined else '50+' }}</h3>
-                <p class="text-muted mb-0">Vagas Disponíveis</p>
+                <div class="stat-card">
+                    <div class="stat-icon text-primary">
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+                    <div class="stat-number text-primary">{{ total_vagas if total_vagas is defined else '50+' }}</div>
+                    <p class="text-muted mb-0 small">Vagas Disponíveis</p>
+                </div>
             </div>
             <div class="col-6 col-md-3">
-                <i class="bi bi-building text-success display-5"></i>
-                <h3 class="fw-bold mt-2 mb-0">{{ total_empresas if total_empresas is defined else '20+' }}</h3>
-                <p class="text-muted mb-0">Empresas Parceiras</p>
+                <div class="stat-card">
+                    <div class="stat-icon text-success">
+                        <i class="bi bi-building-fill"></i>
+                    </div>
+                    <div class="stat-number text-success">{{ total_empresas if total_empresas is defined else '20+' }}</div>
+                    <p class="text-muted mb-0 small">Empresas Parceiras</p>
+                </div>
             </div>
             <div class="col-6 col-md-3">
-                <i class="bi bi-people text-info display-5"></i>
-                <h3 class="fw-bold mt-2 mb-0">{{ total_estudantes if total_estudantes is defined else '100+' }}</h3>
-                <p class="text-muted mb-0">Estudantes Cadastrados</p>
+                <div class="stat-card">
+                    <div class="stat-icon text-info">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="stat-number text-info">{{ total_estudantes if total_estudantes is defined else '100+' }}</div>
+                    <p class="text-muted mb-0 small">Estudantes Cadastrados</p>
+                </div>
             </div>
             <div class="col-6 col-md-3">
-                <i class="bi bi-hand-thumbs-up text-warning display-5"></i>
-                <h3 class="fw-bold mt-2 mb-0">{{ total_contratados if total_contratados is defined else '30+' }}</h3>
-                <p class="text-muted mb-0">Contratações</p>
+                <div class="stat-card">
+                    <div class="stat-icon text-warning">
+                        <i class="bi bi-trophy-fill"></i>
+                    </div>
+                    <div class="stat-number text-warning">{{ total_contratados if total_contratados is defined else '30+' }}</div>
+                    <p class="text-muted mb-0 small">Contratações</p>
+                </div>
             </div>
         </div>
     </div>
@@ -211,19 +275,19 @@
 
 <!-- FAQ Section -->
 <div class="mb-5">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Perguntas Frequentes</h2>
-        <p class="text-muted">Tire suas dúvidas sobre estágios</p>
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-6">Perguntas Frequentes</h2>
+        <p class="text-muted lead">Tire suas dúvidas sobre estágios</p>
     </div>
 
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <div class="accordion" id="faqAccordion">
+            <div class="accordion accordion-modern" id="faqAccordion">
                 <!-- FAQ 1 -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            Quem pode se candidatar às vagas?
+                            <i class="bi bi-question-circle me-2"></i>Quem pode se candidatar às vagas?
                         </button>
                     </h2>
                     <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
@@ -238,7 +302,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            Como funciona o processo de candidatura?
+                            <i class="bi bi-question-circle me-2"></i>Como funciona o processo de candidatura?
                         </button>
                     </h2>
                     <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -254,7 +318,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                            Sou recrutador. Como cadastro uma vaga?
+                            <i class="bi bi-question-circle me-2"></i>Sou recrutador. Como cadastro uma vaga?
                         </button>
                     </h2>
                     <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -270,7 +334,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                            A plataforma é gratuita?
+                            <i class="bi bi-question-circle me-2"></i>A plataforma é gratuita?
                         </button>
                     </h2>
                     <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -285,7 +349,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                            Posso cancelar minha candidatura?
+                            <i class="bi bi-question-circle me-2"></i>Posso cancelar minha candidatura?
                         </button>
                     </h2>
                     <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
@@ -302,33 +366,21 @@
 
 <!-- CTA Final -->
 <div class="mb-5">
-    <div class="card bg-primary text-white shadow-lg">
-        <div class="card-body text-center p-5">
-            <h2 class="fw-bold mb-3">Comece sua jornada profissional hoje!</h2>
-            <p class="lead mb-4">
+    <div class="cta-gradient text-white shadow-lg">
+        <div class="card-body text-center p-5 position-relative" style="z-index: 1;">
+            <h2 class="fw-bold mb-3 display-6">Comece sua jornada profissional hoje!</h2>
+            <p class="lead mb-4 opacity-90">
                 Milhares de estudantes já encontraram seu estágio ideal através da nossa plataforma.
             </p>
             <div class="d-flex justify-content-center gap-3 flex-column flex-sm-row">
-                <a href="/vagas" class="btn btn-light btn-lg">
-                    <i class="bi bi-search"></i> Explorar Vagas
+                <a href="/vagas" class="btn btn-light btn-lg px-5 shadow">
+                    <i class="bi bi-search me-2"></i>Explorar Vagas
                 </a>
-                <a href="/cadastrar" class="btn btn-outline-light btn-lg">
-                    <i class="bi bi-person-plus"></i> Criar Conta Grátis
+                <a href="/cadastrar" class="btn btn-glass btn-lg px-5">
+                    <i class="bi bi-person-plus me-2"></i>Criar Conta Grátis
                 </a>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block head %}
-<style>
-    .hover-shadow {
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-    }
-    .hover-shadow:hover {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        transform: translateY(-3px);
-    }
-</style>
 {% endblock %}

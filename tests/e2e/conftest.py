@@ -194,17 +194,28 @@ def limpar_banco_e2e(e2e_test_database):
             tabelas = [row[0] for row in cursor.fetchall()]
 
             # Nao limpar 'configuracao' para manter rate limits altos
+            # Limpar em ordem de dependencias (tabelas com FK primeiro)
             ordem_limpeza = [
                 "chamado_interacao",
                 "chamado",
                 "chat_mensagem",
                 "chat_participante",
                 "chat_sala",
+                "candidatura",
+                "curtida",
+                "vaga",
+                "endereco",
                 "usuario",
             ]
 
             for tabela in ordem_limpeza:
                 if tabela in tabelas:
+                    cursor.execute(f"DELETE FROM {tabela}")
+
+            # Limpar outras tabelas exceto 'configuracao' e 'area'
+            tabelas_protegidas = {"configuracao", "area"}
+            for tabela in tabelas:
+                if tabela not in tabelas_protegidas and tabela not in ordem_limpeza:
                     cursor.execute(f"DELETE FROM {tabela}")
 
             if "sqlite_sequence" in [

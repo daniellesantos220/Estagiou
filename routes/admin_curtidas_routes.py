@@ -126,8 +126,8 @@ async def get_editar(
 @requer_autenticacao([Perfil.ADMIN.value])
 async def post_editar(
     request: Request,
-    id_usuario: str = Form(...),
-    id_vaga: str = Form(...),
+    id_usuario: int,
+    id_vaga: int,
     usuario_logado: Optional[dict] = None,
 ):
     """Altera dados de um registro"""

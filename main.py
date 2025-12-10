@@ -46,6 +46,8 @@ from routes.admin_chamados_routes import router as admin_chamados_router
 from routes.usuario_routes import router as usuario_router
 from routes.chat_routes import router as chat_router
 from routes.admin_areas_routes import router as admin_areas_router
+from routes.admin_vagas_routes import router as admin_vagas_router
+from routes.admin_curtidas_routes import router as admin_curtidas_router
 from routes.recrutador_vagas_routes import router as recrutador_vagas_router
 from routes.candidaturas_routes import router as candidaturas_router
 from routes.endereco_routes import router as endereco_router
@@ -135,6 +137,8 @@ ROUTERS = [
     (admin_backups_router, ["Admin - Backups"], "admin de backups"),
     (admin_chamados_router, ["Admin - Chamados"], "admin de chamados"),
     (admin_areas_router, ["Admin - Áreas"], "admin de áreas"),
+    (admin_vagas_router, ["Admin - Vagas"], "admin de vagas"),
+    (admin_curtidas_router, ["Admin - Curtidas"], "admin de curtidas"),
     (usuario_router, ["Usuário"], "usuário"),
     (chat_router, ["Chat"], "chat"),
     (recrutador_vagas_router, ["Recrutador - Vagas"], "recrutador de vagas"),

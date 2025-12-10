@@ -28,6 +28,9 @@ class CadastroPage:
         email: str,
         senha: str,
         confirmar_senha: Optional[str] = None,
+        data_nascimento: str = "2000-01-15",
+        numero_documento: str = "529.982.247-25",
+        telefone: str = "(27) 99999-8888",
     ) -> None:
         """
         Preenche o formulario de cadastro.
@@ -38,16 +41,23 @@ class CadastroPage:
             email: E-mail
             senha: Senha
             confirmar_senha: Confirmacao de senha (usa senha se nao informado)
+            data_nascimento: Data de nascimento no formato YYYY-MM-DD
+            numero_documento: CPF formatado
+            telefone: Telefone formatado
         """
         if confirmar_senha is None:
             confirmar_senha = senha
 
         # Selecionar perfil (radio button com estilo de botao Bootstrap)
         # Precisamos clicar no label pois o input esta escondido
+        # O ID no template e: perfil_Estudante ou perfil_Recrutador (com capital)
         self.page.locator(f'label[for="perfil_{perfil}"]').click()
 
         # Preencher campos
         self.page.fill('input[name="nome"]', nome)
+        self.page.fill('input[name="data_nascimento"]', data_nascimento)
+        self.page.fill('input[name="numero_documento"]', numero_documento)
+        self.page.fill('input[name="telefone"]', telefone)
         self.page.fill('input[name="email"]', email)
         self.page.fill('input[name="senha"]', senha)
         self.page.fill('input[name="confirmar_senha"]', confirmar_senha)
@@ -740,6 +750,31 @@ def verificar_mensagem_flash(page: Page, texto_esperado: str) -> bool:
         return False
 
 
+def _gerar_cpf_valido(seed: int) -> str:
+    """
+    Gera um CPF valido baseado em uma seed.
+    """
+    # Usar seed para gerar 9 digitos base
+    import random
+    rng = random.Random(seed)
+    cpf_base = [rng.randint(0, 9) for _ in range(9)]
+
+    # Calcular primeiro digito verificador
+    soma = sum((10 - i) * d for i, d in enumerate(cpf_base))
+    resto = soma % 11
+    d1 = 0 if resto < 2 else 11 - resto
+    cpf_base.append(d1)
+
+    # Calcular segundo digito verificador
+    soma = sum((11 - i) * d for i, d in enumerate(cpf_base))
+    resto = soma % 11
+    d2 = 0 if resto < 2 else 11 - resto
+    cpf_base.append(d2)
+
+    cpf = "".join(str(d) for d in cpf_base)
+    return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
+
+
 def criar_usuario_e_logar(
     page: Page,
     base_url: str,
@@ -752,11 +787,34 @@ def criar_usuario_e_logar(
     Cria um usuario e faz login.
     Retorna True se login foi bem sucedido.
     """
+    import random
+
+    # Gerar CPF valido unico baseado no email
+    email_hash = abs(hash(email))
+    cpf_formatado = _gerar_cpf_valido(email_hash)
+
+    # Gerar telefone unico
+    rng = random.Random(email_hash)
+    telefone = f"(27) 9{rng.randint(1000,9999)}-{rng.randint(1000,9999)}"
+
     cadastro = CadastroPage(page, base_url)
     cadastro.navegar()
-    cadastro.cadastrar(perfil=perfil, nome=nome, email=email, senha=senha)
+    cadastro.preencher_formulario(
+        perfil=perfil,
+        nome=nome,
+        email=email,
+        senha=senha,
+        numero_documento=cpf_formatado,
+        telefone=telefone,
+    )
+    cadastro.submeter()
 
-    if not cadastro.aguardar_navegacao_login():
+    # Aguardar redirecionamento - pode ir para login ou ficar na pagina com erro
+    page.wait_for_timeout(1000)
+
+    # Verificar se foi redirecionado para login (sucesso)
+    if "/login" not in page.url:
+        # Pode ter ocorrido erro no cadastro
         return False
 
     login = LoginPage(page, base_url)

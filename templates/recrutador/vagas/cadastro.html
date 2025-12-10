@@ -2,7 +2,22 @@
 {% from "macros/form_fields.html" import field with context %}
 
 {% block titulo %}Cadastrar Vaga{% endblock %}
-
+{% block styles %}
+<style>
+    .char-counter {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 4px;
+    }
+    .char-counter.warning {
+        color: #ffc107;
+    }
+    .char-counter.danger {
+        color: #dc3545;
+    }
+</style>
+{% endblock %}
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-lg-10">
@@ -23,9 +38,12 @@
                             <h5 class="border-bottom pb-2 mb-3"><i class="bi bi-info-circle"></i> Informações Básicas</h5>
                         </div>
 
-                        <div class="col-md-8 mb-3">
-                            {{ field(name='titulo', label='Título da Vaga', type='text', required=true,
-                                     placeholder='Ex: Estagiário em Desenvolvimento de Software') }}
+                       <div class="col-md-8 mb-3">
+    {{ field(name='titulo', label='Título da Vaga', type='text', required=true,
+             placeholder='Ex: Estagiário em Desenvolvimento de Software') }}
+    <div class="char-counter" id="contador-titulo">
+        <span id="chars-titulo">0</span> / 100 caracteres
+    </div>
                         </div>
 
                         <div class="col-md-4 mb-3">
@@ -42,10 +60,13 @@
                             </div>
                         </div>
 
-                        <div class="col-12 mb-3">
-                            {{ field(name='descricao', label='Descrição da Vaga', type='textarea', required=true,
-                                     rows=4, placeholder='Descreva as atividades e responsabilidades do estagiário...') }}
-                        </div>
+                       <div class="col-12 mb-3">
+    {{ field(name='descricao', label='Descrição da Vaga', type='textarea', required=true,
+             rows=4, placeholder='Descreva as atividades e responsabilidades do estagiário...') }}
+    <div class="char-counter" id="contador-descricao">
+        <span id="chars-descricao">0</span> / 2000 caracteres
+    </div>
+    </div>
 
                         <!-- Requisitos e Benefícios -->
                         <div class="col-12 mt-2">
@@ -156,4 +177,51 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Contador para o título
+        const inputTitulo = document.querySelector('input[name="titulo"]');
+        const contadorTitulo = document.getElementById('chars-titulo');
+        const divContadorTitulo = document.getElementById('contador-titulo');
+
+        if (inputTitulo) {
+            inputTitulo.addEventListener('input', function() {
+                const length = this.value.length;
+                contadorTitulo.textContent = length;
+
+                divContadorTitulo.classList.remove('warning', 'danger');
+                if (length >= 90) {
+                    divContadorTitulo.classList.add('danger');
+                } else if (length >= 70) {
+                    divContadorTitulo.classList.add('warning');
+                }
+            });
+            // Atualiza contador ao carregar (para quando há dados pré-preenchidos)
+            contadorTitulo.textContent = inputTitulo.value.length;
+        }
+
+        // Contador para a descrição
+        const textareaDescricao = document.querySelector('textarea[name="descricao"]');
+        const contadorDescricao = document.getElementById('chars-descricao');
+        const divContadorDescricao = document.getElementById('contador-descricao');
+
+        if (textareaDescricao) {
+            textareaDescricao.addEventListener('input', function() {
+                const length = this.value.length;
+                contadorDescricao.textContent = length;
+
+                divContadorDescricao.classList.remove('warning', 'danger');
+                if (length >= 1800) {
+                    divContadorDescricao.classList.add('danger');
+                } else if (length >= 1500) {
+                    divContadorDescricao.classList.add('warning');
+                }
+            });
+            // Atualiza contador ao carregar
+            contadorDescricao.textContent = textareaDescricao.value.length;
+        }
+    });
+</script>
 {% endblock %}

@@ -14,20 +14,24 @@
             <div class="card-body">
                 <form method="GET" action="/vagas" class="row g-3 align-items-end">
                     <div class="col-md-5">
-                        <label for="termo" class="form-label">Buscar por palavra-chave</label>
-                        <input type="text" class="form-control" id="termo" name="termo"
-                               value="{{ termo }}" placeholder="Ex: Desenvolvedor, Marketing, Administração...">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="termo" name="termo"
+                                   value="{{ termo }}" placeholder="Ex: Desenvolvedor, Marketing, Administração...">
+                            <label for="termo">Buscar por palavra-chave</label>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <label for="id_area" class="form-label">Área</label>
-                        <select class="form-select" id="id_area" name="id_area">
-                            <option value="">Todas as áreas</option>
-                            {% for area in areas %}
-                            <option value="{{ area.id_area }}" {{ 'selected' if id_area|string == area.id_area|string else '' }}>
-                                {{ area.nome }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                        <div class="form-floating">
+                            <select class="form-select" id="id_area" name="id_area">
+                                <option value="">Todas as áreas</option>
+                                {% for area in areas %}
+                                <option value="{{ area.id_area }}" {{ 'selected' if id_area|string == area.id_area|string else '' }}>
+                                    {{ area.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <label for="id_area">Área</label>
+                        </div>
                     </div>
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-primary w-100">

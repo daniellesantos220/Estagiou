@@ -66,37 +66,39 @@
                         </div>
 
                         <div class="col-md-4 mb-3">
-                            <label for="uf" class="form-label">Estado (UF) <span class="text-danger">*</span></label>
-                            <select name="uf" id="uf" class="form-select" required>
-                                <option value="">Selecione...</option>
-                                <option value="AC" {{ 'selected' if dados.uf == 'AC' else '' }}>AC</option>
-                                <option value="AL" {{ 'selected' if dados.uf == 'AL' else '' }}>AL</option>
-                                <option value="AP" {{ 'selected' if dados.uf == 'AP' else '' }}>AP</option>
-                                <option value="AM" {{ 'selected' if dados.uf == 'AM' else '' }}>AM</option>
-                                <option value="BA" {{ 'selected' if dados.uf == 'BA' else '' }}>BA</option>
-                                <option value="CE" {{ 'selected' if dados.uf == 'CE' else '' }}>CE</option>
-                                <option value="DF" {{ 'selected' if dados.uf == 'DF' else '' }}>DF</option>
-                                <option value="ES" {{ 'selected' if dados.uf == 'ES' else '' }}>ES</option>
-                                <option value="GO" {{ 'selected' if dados.uf == 'GO' else '' }}>GO</option>
-                                <option value="MA" {{ 'selected' if dados.uf == 'MA' else '' }}>MA</option>
-                                <option value="MT" {{ 'selected' if dados.uf == 'MT' else '' }}>MT</option>
-                                <option value="MS" {{ 'selected' if dados.uf == 'MS' else '' }}>MS</option>
-                                <option value="MG" {{ 'selected' if dados.uf == 'MG' else '' }}>MG</option>
-                                <option value="PA" {{ 'selected' if dados.uf == 'PA' else '' }}>PA</option>
-                                <option value="PB" {{ 'selected' if dados.uf == 'PB' else '' }}>PB</option>
-                                <option value="PR" {{ 'selected' if dados.uf == 'PR' else '' }}>PR</option>
-                                <option value="PE" {{ 'selected' if dados.uf == 'PE' else '' }}>PE</option>
-                                <option value="PI" {{ 'selected' if dados.uf == 'PI' else '' }}>PI</option>
-                                <option value="RJ" {{ 'selected' if dados.uf == 'RJ' else '' }}>RJ</option>
-                                <option value="RN" {{ 'selected' if dados.uf == 'RN' else '' }}>RN</option>
-                                <option value="RS" {{ 'selected' if dados.uf == 'RS' else '' }}>RS</option>
-                                <option value="RO" {{ 'selected' if dados.uf == 'RO' else '' }}>RO</option>
-                                <option value="RR" {{ 'selected' if dados.uf == 'RR' else '' }}>RR</option>
-                                <option value="SC" {{ 'selected' if dados.uf == 'SC' else '' }}>SC</option>
-                                <option value="SP" {{ 'selected' if dados.uf == 'SP' else '' }}>SP</option>
-                                <option value="SE" {{ 'selected' if dados.uf == 'SE' else '' }}>SE</option>
-                                <option value="TO" {{ 'selected' if dados.uf == 'TO' else '' }}>TO</option>
-                            </select>
+                            <div class="form-floating">
+                                <select name="uf" id="uf" class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="AC" {{ 'selected' if dados.uf == 'AC' else '' }}>AC</option>
+                                    <option value="AL" {{ 'selected' if dados.uf == 'AL' else '' }}>AL</option>
+                                    <option value="AP" {{ 'selected' if dados.uf == 'AP' else '' }}>AP</option>
+                                    <option value="AM" {{ 'selected' if dados.uf == 'AM' else '' }}>AM</option>
+                                    <option value="BA" {{ 'selected' if dados.uf == 'BA' else '' }}>BA</option>
+                                    <option value="CE" {{ 'selected' if dados.uf == 'CE' else '' }}>CE</option>
+                                    <option value="DF" {{ 'selected' if dados.uf == 'DF' else '' }}>DF</option>
+                                    <option value="ES" {{ 'selected' if dados.uf == 'ES' else '' }}>ES</option>
+                                    <option value="GO" {{ 'selected' if dados.uf == 'GO' else '' }}>GO</option>
+                                    <option value="MA" {{ 'selected' if dados.uf == 'MA' else '' }}>MA</option>
+                                    <option value="MT" {{ 'selected' if dados.uf == 'MT' else '' }}>MT</option>
+                                    <option value="MS" {{ 'selected' if dados.uf == 'MS' else '' }}>MS</option>
+                                    <option value="MG" {{ 'selected' if dados.uf == 'MG' else '' }}>MG</option>
+                                    <option value="PA" {{ 'selected' if dados.uf == 'PA' else '' }}>PA</option>
+                                    <option value="PB" {{ 'selected' if dados.uf == 'PB' else '' }}>PB</option>
+                                    <option value="PR" {{ 'selected' if dados.uf == 'PR' else '' }}>PR</option>
+                                    <option value="PE" {{ 'selected' if dados.uf == 'PE' else '' }}>PE</option>
+                                    <option value="PI" {{ 'selected' if dados.uf == 'PI' else '' }}>PI</option>
+                                    <option value="RJ" {{ 'selected' if dados.uf == 'RJ' else '' }}>RJ</option>
+                                    <option value="RN" {{ 'selected' if dados.uf == 'RN' else '' }}>RN</option>
+                                    <option value="RS" {{ 'selected' if dados.uf == 'RS' else '' }}>RS</option>
+                                    <option value="RO" {{ 'selected' if dados.uf == 'RO' else '' }}>RO</option>
+                                    <option value="RR" {{ 'selected' if dados.uf == 'RR' else '' }}>RR</option>
+                                    <option value="SC" {{ 'selected' if dados.uf == 'SC' else '' }}>SC</option>
+                                    <option value="SP" {{ 'selected' if dados.uf == 'SP' else '' }}>SP</option>
+                                    <option value="SE" {{ 'selected' if dados.uf == 'SE' else '' }}>SE</option>
+                                    <option value="TO" {{ 'selected' if dados.uf == 'TO' else '' }}>TO</option>
+                                </select>
+                                <label for="uf">Estado (UF) <span class="text-danger">*</span></label>
+                            </div>
                         </div>
                     </div>
                 </div>

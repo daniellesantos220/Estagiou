@@ -790,7 +790,7 @@ class TestEsqueciSenha:
         # Acessar pagina de esqueci senha
         e2e_page.goto(f"{e2e_server}/esqueci-senha")
         e2e_page.fill('input[name="email"]', email)
-        e2e_page.locator('button[type="submit"]').click()
+        e2e_page.locator('form button[type="submit"]').first.click()
 
         e2e_page.wait_for_timeout(500)
 

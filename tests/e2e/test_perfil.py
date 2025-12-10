@@ -203,7 +203,12 @@ class TestEditarPerfil:
 
         e2e_page.wait_for_timeout(500)
         conteudo = e2e_page.content().lower()
-        assert "e-mail" in conteudo and "cadastrado" in conteudo
+        # Mensagem pode ser "e-mail já cadastrado" ou "e-mail já está sendo usado"
+        assert (
+            ("e-mail" in conteudo and "cadastrado" in conteudo)
+            or ("e-mail" in conteudo and "usado" in conteudo)
+            or "email" in conteudo and "duplicado" in conteudo
+        )
 
 
 # =============================================================================

@@ -215,7 +215,7 @@ class EsqueciSenhaPage:
 
     def submeter(self) -> None:
         """Submete o formulario."""
-        self.page.locator('button[type="submit"]').click()
+        self.page.locator('form button[type="submit"]').first.click()
 
     def solicitar_recuperacao(self, email: str) -> None:
         """Solicita recuperacao de senha."""

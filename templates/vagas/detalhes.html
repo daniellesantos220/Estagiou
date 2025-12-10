@@ -237,3 +237,26 @@
     </div>
 </div>
 {% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pega o ID da vaga atual
+        const idVaga = '{{ vaga.id_vaga }}';
+
+        // Recupera as vagas vistas do localStorage
+        let vagasVistas = JSON.parse(localStorage.getItem('vagasVistas') || '[]');
+
+        // Adiciona esta vaga se ainda não estiver na lista
+        if (!vagasVistas.includes(idVaga)) {
+            vagasVistas.push(idVaga);
+
+            // Limita a 50 vagas para não crescer demais o localStorage
+            if (vagasVistas.length > 50) {
+                vagasVistas = vagasVistas.slice(-50);
+            }
+
+            localStorage.setItem('vagasVistas', JSON.stringify(vagasVistas)); 
+        }
+    });
+</script>
+{% endblock %}

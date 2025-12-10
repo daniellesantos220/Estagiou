@@ -1,7 +1,25 @@
 {% extends "base_publica.html" %}
 
 {% block titulo %}Vagas de Estágio{% endblock %}
-
+{% block styles %}
+<style>
+    .badge-visto {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 0.7rem;
+    }
+    .job-card {
+        position: relative;
+    }
+    .job-card.ja-vista {
+        border-left: 4px solid #6c757d !important;
+    }
+    .job-card.ja-vista .card-title {
+        color: #6c757d !important;
+    }
+</style>
+{% endblock %}
 {% block content %}
 <!-- Header -->
 <div class="mb-4">
@@ -85,7 +103,7 @@
     {% for item in vagas %}
     <div class="col">
         <a href="/vagas/{{ item.vaga.id_vaga }}" class="text-decoration-none">
-            <div class="card job-card h-100">
+            <div class="card job-card h-100" data-id="{{ item.vaga.id_vaga }}">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-start justify-content-between mb-3">
                         <h5 class="card-title text-dark mb-0 fw-bold">{{ item.vaga.titulo }}</h5>
@@ -163,4 +181,26 @@
     </div>
 </div>
 {% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Recupera as vagas vistas do localStorage
+        const vagasVistas = JSON.parse(localStorage.getItem('vagasVistas') || '[]');
+
+        // Marca os cards das vagas já vistas
+        document.querySelectorAll('.job-card').forEach(function(card) {
+            const idVaga = card.dataset.id;
+            if (idVaga && vagasVistas.includes(idVaga)) {
+                card.classList.add('ja-vista');
+
+                // Adiciona o badge "Vista"
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-secondary badge-visto';
+                badge.innerHTML = '<i class="bi bi-eye me-1"></i>Vista';
+                card.querySelector('.card-body').appendChild(badge);
+            }
+        });
+    });
+</script>
 {% endblock %}

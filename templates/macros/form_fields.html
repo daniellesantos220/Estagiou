@@ -48,6 +48,13 @@ decimal_suffix=''
 {% set field_placeholder = placeholder or label %}
 {% set has_error = field_error is not none %}
 
+{# Formatar data para o formato YYYY-MM-DD se for um campo de data #}
+{% if type == 'date' and field_value %}
+    {% if field_value.__class__.__name__ == 'date' %}
+        {% set field_value = field_value.isoformat() %}
+    {% endif %}
+{% endif %}
+
 {# Atributos HTML extras #}
 {% set extra_attrs = attributes or {} %}
 

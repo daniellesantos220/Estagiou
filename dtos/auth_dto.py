@@ -7,7 +7,7 @@ from dtos.validators import (
     validar_string_obrigatoria,
     validar_senhas_coincidem,
     validar_data_nascimento,
-    validar_cpf,
+    validar_cpf_simples,
     validar_telefone_br,
 )
 from util.perfis import Perfil
@@ -35,7 +35,7 @@ class CadastroDTO(BaseModel):
     _validar_nome = field_validator("nome")(validar_nome_pessoa())
     _validar_data_nascimento = field_validator("data_nascimento")(validar_data_nascimento())
     _validar_email = field_validator("email")(validar_email())
-    _validar_cpf = field_validator("numero_documento")(validar_cpf())
+    _validar_cpf = field_validator("numero_documento")(validar_cpf_simples())
     _validar_telefone = field_validator("telefone")(validar_telefone_br())
     _validar_senha = field_validator("senha")(validar_senha_forte())
     _validar_confirmar = field_validator("confirmar_senha")(validar_senha_forte())

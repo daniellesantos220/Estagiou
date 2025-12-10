@@ -40,7 +40,7 @@
                                 </td>
                                 <td>{{ item.recrutador_nome }}</td>
                                 <td class="text-center">
-                                    {{ item.candidatura.data_candidatura[:10] if item.candidatura.data_candidatura else 'N/A' }}
+                                    {{ item.candidatura.data_candidatura.strftime('%d/%m/%Y') if item.candidatura.data_candidatura else 'N/A' }}
                                 </td>
                                 <td class="text-center">
                                     {% if item.vaga_status == 'aberta' %}

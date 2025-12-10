@@ -43,7 +43,7 @@ async def listar(request: Request, usuario_logado: Optional[dict] = None):
         })
 
     return templates.TemplateResponse(
-        "admin/areas/listar.html", {"request": request, "areas": areas_enriquecidas}
+        "admin/areas/listar.html", {"request": request, "areas": areas_enriquecidas, "usuario_logado": usuario_logado}
     )
 
 
@@ -51,7 +51,7 @@ async def listar(request: Request, usuario_logado: Optional[dict] = None):
 @requer_autenticacao([Perfil.ADMIN.value])
 async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None):
     """Exibe formulário de cadastro de área"""
-    return templates.TemplateResponse("admin/areas/cadastro.html", {"request": request})
+    return templates.TemplateResponse("admin/areas/cadastro.html", {"request": request, "usuario_logado": usuario_logado})
 
 
 @router.post("/cadastrar")
@@ -77,7 +77,7 @@ async def post_cadastrar(
             informar_erro(request, "Já existe uma área cadastrada com este nome")
             return templates.TemplateResponse(
                 "admin/areas/cadastro.html",
-                {"request": request, "dados": dados_formulario},
+                {"request": request, "dados": dados_formulario, "usuario_logado": usuario_logado},
             )
 
         # Criar área
@@ -120,7 +120,7 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
 
     return templates.TemplateResponse(
         "admin/areas/editar.html",
-        {"request": request, "area": area, "dados": dados_area},
+        {"request": request, "area": area, "dados": dados_area, "usuario_logado": usuario_logado},
     )
 
 
@@ -155,7 +155,7 @@ async def post_editar(
             informar_erro(request, "Já existe outra área cadastrada com este nome")
             return templates.TemplateResponse(
                 "admin/areas/editar.html",
-                {"request": request, "area": area_atual, "dados": dados_formulario},
+                {"request": request, "area": area_atual, "dados": dados_formulario, "usuario_logado": usuario_logado},
             )
 
         # Atualizar área

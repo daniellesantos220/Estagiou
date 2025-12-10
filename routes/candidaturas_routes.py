@@ -1,4 +1,5 @@
 """Rotas de candidaturas para estudantes."""
+from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Request, status
 from fastapi.responses import RedirectResponse
@@ -66,6 +67,7 @@ async def candidatar(request: Request, id_vaga: int, usuario_logado: Optional[di
         id_candidatura=0,
         id_vaga=id_vaga,
         id_candidato=usuario_logado.id,
+        data_candidatura=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         status="pendente"
     )
 

@@ -61,6 +61,40 @@
         <div class="card h-100 shadow-sm shadow-hover">
             <div class="card-body text-center">
                 <div class="mb-3">
+                    <i class="bi bi-sliders text-primary display-3"></i>
+                </div>
+                <h5 class="card-title">Configurações</h5>
+                <p class="card-text text-muted">
+                    Configure parâmetros e preferências do sistema
+                </p>
+                <a href="/admin/configuracoes" class="btn btn-primary">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-diagram-3 text-secondary display-3"></i>
+                </div>
+                <h5 class="card-title">Áreas</h5>
+                <p class="card-text text-muted">
+                    Gerencie as áreas de atuação do sistema
+                </p>
+                <a href="/admin/areas/listar" class="btn btn-secondary">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
                     <i class="bi bi-palette text-danger display-3"></i>
                 </div>
                 <h5 class="card-title">Personalizar Tema</h5>
@@ -129,6 +163,108 @@
             </div>
         </div>
     </div>
+    {% elif usuario_logado and usuario_logado.perfil == 'Recrutador' %}
+    <!-- Minhas Vagas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-briefcase text-success display-3"></i>
+                </div>
+                <h5 class="card-title">Minhas Vagas</h5>
+                <p class="card-text text-muted">
+                    Gerencie as vagas de estágio que você publicou
+                </p>
+                <a href="/recrutador/vagas/listar" class="btn btn-success">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chamados para Recrutador -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-headset text-danger display-3"></i>
+                </div>
+                <h5 class="card-title">Meus Chamados</h5>
+                <p class="card-text text-muted">
+                    Abra chamados de suporte e acompanhe suas solicitações
+                </p>
+                {% if chamados_abertos > 0 %}
+                <div class="mb-3">
+                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                </div>
+                {% endif %}
+                <a href="/chamados/listar" class="btn btn-danger">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% elif usuario_logado and usuario_logado.perfil == 'Estudante' %}
+    <!-- Vagas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-file-earmark-text text-success display-3"></i>
+                </div>
+                <h5 class="card-title">Vagas</h5>
+                <p class="card-text text-muted">
+                    Explore e candidte-se às vagas de estágio disponíveis
+                </p>
+                <a href="/vagas" class="btn btn-success">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minhas Candidaturas -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-hand-thumbs-up text-info display-3"></i>
+                </div>
+                <h5 class="card-title">Minhas Candidaturas</h5>
+                <p class="card-text text-muted">
+                    Acompanhe suas candidaturas e respostas dos recrutadores
+                </p>
+                <a href="/candidaturas/minhas" class="btn btn-info">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chamados para Estudante -->
+    <div class="col">
+        <div class="card h-100 shadow-sm shadow-hover">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="bi bi-headset text-danger display-3"></i>
+                </div>
+                <h5 class="card-title">Meus Chamados</h5>
+                <p class="card-text text-muted">
+                    Abra chamados de suporte e acompanhe suas solicitações
+                </p>
+                {% if chamados_abertos > 0 %}
+                <div class="mb-3">
+                    <span class="badge bg-danger">{{ chamados_abertos }} em aberto</span>
+                </div>
+                {% endif %}
+                <a href="/chamados/listar" class="btn btn-danger">
+                    <i class="bi bi-arrow-right-circle"></i> Acessar
+                </a>
+            </div>
+        </div>
+    </div>
+
     {% else %}
     <!-- Chamados para usuários comuns -->
     <div class="col">

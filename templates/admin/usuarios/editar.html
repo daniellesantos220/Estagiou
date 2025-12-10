@@ -47,7 +47,7 @@
                         <div class="col-md-6 mb-3">
                             {{ field(name='telefone', label='Telefone', type='tel', required=true,
                             value=dados.telefone,
-                            attributes={'maxlength': 15, 'placeholder': '(00) 00000-0000', 'data-mask': 'phone'}) }}
+                            attributes={'maxlength': 15, 'placeholder': '(00) 00000-0000', 'data-mask': 'telefone'}) }}
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -57,7 +57,7 @@
 
                         <div class="col-12 mb-3">
                             {{ field(name='confirmado', label='Usuário Confirmado', type='checkbox',
-                            checked=dados.confirmado,
+                            value=dados.confirmado,
                             help_text='Marque para ativar o usuário') }}
                         </div>
 

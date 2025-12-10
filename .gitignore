@@ -31,7 +31,8 @@ env/
 .env
 
 # IDE
-.vscode/
+.vscode/settings.json
+.vscode/.DS_Store
 .idea/
 *.swp
 *.swo

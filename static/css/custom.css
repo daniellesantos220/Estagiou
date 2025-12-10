@@ -15,6 +15,13 @@
     --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 
+    /* Gradientes para page headers */
+    --gradient-header-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-header-info: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    --gradient-header-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    --gradient-header-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --gradient-header-secondary: linear-gradient(135deg, #64748b 0%, #475569 100%);
+
     /* Sombras suaves */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -529,36 +536,55 @@ body {
 
 /* ===== PAGE HEADER SECTION ===== */
 .page-header {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: var(--gradient-primary);
     border-radius: var(--radius-lg);
     padding: 3rem 2rem;
     margin-bottom: 2rem;
     border-left: 5px solid var(--primary-color);
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.page-header h1,
+.page-header h2,
+.page-header p {
+    position: relative;
+    z-index: 1;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+    z-index: 0;
 }
 
 .page-header.header-info {
-    border-left-color: #0dcaf0;
-    background: linear-gradient(135deg, rgba(13, 202, 240, 0.05) 0%, rgba(13, 202, 240, 0.02) 100%);
+    background: var(--gradient-header-info);
 }
 
 .page-header.header-success {
-    border-left-color: #198754;
-    background: linear-gradient(135deg, rgba(25, 135, 84, 0.05) 0%, rgba(25, 135, 84, 0.02) 100%);
+    background: var(--gradient-header-success);
 }
 
 .page-header.header-warning {
-    border-left-color: #ffc107;
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.02) 100%);
+    background: var(--gradient-header-warning);
 }
 
 .page-header.header-danger {
-    border-left-color: #dc3545;
-    background: linear-gradient(135deg, rgba(220, 53, 69, 0.05) 0%, rgba(220, 53, 69, 0.02) 100%);
+    background: var(--gradient-header-danger);
 }
 
 .page-header.header-secondary {
-    border-left-color: #6c757d;
-    background: linear-gradient(135deg, rgba(108, 117, 125, 0.05) 0%, rgba(108, 117, 125, 0.02) 100%);
+    background: var(--gradient-header-secondary);
 }
 
 /* ===== DASHBOARD CARDS IMPROVEMENTS ===== */

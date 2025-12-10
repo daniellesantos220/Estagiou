@@ -49,7 +49,7 @@ async def listar(request: Request, usuario_logado: Optional[dict] = None):
 
     return templates.TemplateResponse(
         "recrutador/vagas/listar.html",
-        {"request": request, "vagas": vagas_enriquecidas}
+        {"request": request, "vagas": vagas_enriquecidas, "usuario_logado": usuario_logado}
     )
 
 
@@ -61,7 +61,7 @@ async def get_cadastrar(request: Request, usuario_logado: Optional[dict] = None)
 
     return templates.TemplateResponse(
         "recrutador/vagas/cadastro.html",
-        {"request": request, "areas": areas}
+        {"request": request, "areas": areas, "usuario_logado": usuario_logado}
     )
 
 
@@ -123,7 +123,7 @@ async def post_cadastrar(
             areas = area_repo.obter_todas()
             return templates.TemplateResponse(
                 "recrutador/vagas/cadastro.html",
-                {"request": request, "areas": areas, "dados": dados_formulario},
+                {"request": request, "areas": areas, "dados": dados_formulario, "usuario_logado": usuario_logado},
             )
 
         # Criar vaga
@@ -202,7 +202,7 @@ async def get_editar(request: Request, id: int, usuario_logado: Optional[dict] =
 
     return templates.TemplateResponse(
         "recrutador/vagas/editar.html",
-        {"request": request, "vaga": vaga, "areas": areas, "dados": dados_vaga}
+        {"request": request, "vaga": vaga, "areas": areas, "dados": dados_vaga, "usuario_logado": usuario_logado}
     )
 
 
@@ -281,7 +281,7 @@ async def post_editar(
             areas = area_repo.obter_todas()
             return templates.TemplateResponse(
                 "recrutador/vagas/editar.html",
-                {"request": request, "vaga": vaga_atual, "areas": areas, "dados": dados_formulario},
+                {"request": request, "vaga": vaga_atual, "areas": areas, "dados": dados_formulario, "usuario_logado": usuario_logado},
             )
 
         # Atualizar vaga
@@ -437,5 +437,5 @@ async def listar_candidatos(request: Request, id: int, usuario_logado: Optional[
 
     return templates.TemplateResponse(
         "recrutador/vagas/candidatos.html",
-        {"request": request, "vaga": vaga, "candidaturas": candidaturas}
+        {"request": request, "vaga": vaga, "candidaturas": candidaturas, "usuario_logado": usuario_logado}
     )

@@ -284,3 +284,42 @@
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnCopiar = document.getElementById('btn-copiar-link');
+        const tooltip = document.getElementById('tooltip-copiado');
+
+        if (btnCopiar) {
+            btnCopiar.addEventListener('click', function() {
+                // Pega a URL atual da página
+                const url = window.location.href;
+
+                // Copia para a área de transferência
+                navigator.clipboard.writeText(url).then(function() {
+                    // Mostra o tooltip de sucesso
+                    tooltip.classList.add('show');
+
+                    // Muda o texto do botão temporariamente
+                    const textoOriginal = btnCopiar.innerHTML;
+                    btnCopiar.innerHTML = '<i class="bi bi-check me-1"></i>Copiado!';
+                    btnCopiar.classList.remove('btn-outline-secondary');
+                    btnCopiar.classList.add('btn-success');
+
+                    // Volta ao estado original após 2 segundos
+                    setTimeout(function() {
+                        tooltip.classList.remove('show');
+                        btnCopiar.innerHTML = textoOriginal;
+                        btnCopiar.classList.remove('btn-success');
+                        btnCopiar.classList.add('btn-outline-secondary');
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Erro ao copiar:', err);
+                    alert('Não foi possível copiar o link. Copie manualmente: ' + url);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

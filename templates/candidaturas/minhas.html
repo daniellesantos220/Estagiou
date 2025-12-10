@@ -2,6 +2,29 @@
 
 {% block titulo %}Minhas Candidaturas{% endblock %}
 
+{% block styles %}
+<style>
+    .filtro-status {
+        margin-bottom: 1.5rem;
+    }
+    .btn-filtro {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .btn-filtro.active {
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    }
+    .linha-candidatura.hidden {
+        display: none;
+    }
+    .contador-resultados {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Page Header -->
 <div class="page-header header-info mb-4">
@@ -23,6 +46,35 @@
     </div>
 </div>
 
+<!-- Filtros de Status -->
+<div class="filtro-status">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="text-muted me-2">Filtrar por status:</span>
+        <button type="button" class="btn btn-outline-secondary btn-sm btn-filtro active" data-status="todos">
+            Todos
+        </button>
+        <button type="button" class="btn btn-outline-warning btn-sm btn-filtro" data-status="pendente">
+            Pendente
+        </button>
+        <button type="button" class="btn btn-outline-info btn-sm btn-filtro" data-status="em_analise">
+            Em Análise
+        </button>
+        <button type="button" class="btn btn-outline-success btn-sm btn-filtro" data-status="aprovado">
+            Aprovado
+        </button>
+        <button type="button" class="btn btn-outline-danger btn-sm btn-filtro" data-status="rejeitado">
+            Rejeitado
+        </button>
+        <button type="button" class="btn btn-outline-dark btn-sm btn-filtro" data-status="cancelado">
+            Cancelado
+        </button>
+    </div>
+    <div class="contador-resultados">
+        Exibindo <span id="qtd-exibida">0</span> de <span id="qtd-total">0</span> candidaturas
+    </div>
+</div>
+
+
 <div class="row">
     <div class="col-12">
         <div class="card card-modern border-0 shadow-sm">
@@ -42,7 +94,7 @@
                         </thead>
                         <tbody>
                             {% for item in candidaturas %}
-                            <tr>
+                            <tr class="linha-candidatura" data-status="{{ item.candidatura.status }}">
                                 <td>
                                     <a href="/vagas/{{ item.candidatura.id_vaga }}" class="text-decoration-none">
                                         <strong>{{ item.vaga_titulo }}</strong>
@@ -121,6 +173,7 @@
 
 {% block scripts %}
 <script>
+    // Função existente para cancelar candidatura
     function cancelarCandidatura(candidaturaId, vagaTitulo) {
         const detalhes = `
         <div class="card bg-light">
@@ -145,5 +198,44 @@
             detalhes: detalhes
         });
     }
+
+    // Novo código para filtro de status
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnsFiltro = document.querySelectorAll('.btn-filtro');
+        const linhas = document.querySelectorAll('.linha-candidatura');
+        const qtdExibida = document.getElementById('qtd-exibida');
+        const qtdTotal = document.getElementById('qtd-total');
+
+        // Define os valores iniciais
+        if (qtdTotal && qtdExibida) {
+            qtdTotal.textContent = linhas.length;
+            qtdExibida.textContent = linhas.length;
+        }
+
+        btnsFiltro.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active de todos os botões
+                btnsFiltro.forEach(b => b.classList.remove('active'));
+                // Adiciona active no botão clicado
+                this.classList.add('active');
+
+                const statusSelecionado = this.dataset.status;
+                let visiveisCount = 0;
+
+                linhas.forEach(linha => {
+                    if (statusSelecionado === 'todos' || linha.dataset.status === statusSelecionado) {
+                        linha.classList.remove('hidden');
+                        visiveisCount++;
+                    } else {
+                        linha.classList.add('hidden');
+                    }
+                });
+
+                if (qtdExibida) {
+                    qtdExibida.textContent = visiveisCount;
+                }
+            });
+        });
+    });
 </script>
 {% endblock %}
